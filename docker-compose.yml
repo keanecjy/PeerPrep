@@ -1,0 +1,88 @@
+version: '3.8'
+services:
+  postgres:
+    image: postgres
+    environment: 
+      - POSTGRES_PASSWORD=postgres
+    volumes: 
+      - postgres:/var/lib/postgresql/data
+    ports: 
+      - 5432:5432
+
+  client:
+    image: peerprep-client
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    # env_file:
+    #   # Use .env file to handle secret env variables
+    #   - frontend/.env
+    environment:
+      # Add any development build env here
+      - BACKEND_URL:localhost
+    ports: 
+      - 8080:8080
+    volumes: 
+      - /app/node_modules
+      - ./frontend:/app
+
+  account:
+    image: peerprep-account
+    build:
+      context: ./backend/account
+      dockerfile: ../Dockerfile
+    depends_on: 
+      - postgres
+    environment: 
+      - PORT=8081
+    ports: 
+      - 8081:8081
+    volumes: 
+      - /app/node_modules
+      - ./backend/account:/app
+
+  chat:
+    image: peerprep-chat
+    build:
+      context: ./backend/chat
+      dockerfile: ../Dockerfile
+    environment: 
+      - PORT=8082
+    ports: 
+      - 8082:8082
+    volumes: 
+      - /app/node_modules
+      - ./backend/chat:/app
+
+  interview:
+    image: peerprep-interview
+    build:
+      context: ./backend/interview
+      dockerfile: ../Dockerfile
+    environment: 
+      - PORT=8083
+    ports: 
+      - 8083:8083
+    volumes: 
+      - /app/node_modules
+      - ./backend/interview:/app
+
+  match:
+    image: peerprep-match
+    build:
+      context: ./backend/match
+      dockerfile: ../Dockerfile
+    environment: 
+      - PORT=8084
+    ports: 
+      - 8084:8084
+    volumes: 
+      - /app/node_modules
+      - ./backend/match:/app
+
+volumes: 
+  postgres:
+
+networks:
+  default:
+    name: peerprep-development
