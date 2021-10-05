@@ -1,0 +1,23 @@
+{
+  "name": "peerprep",
+  "version": "2.0.0",
+  "private": true,
+  "scripts": {
+    "fe:start": "yarn workspace @peerprep/client start",
+    "be:start": "yarn run be:account:start & yarn run be:chat:start & yarn run be:interview:start & yarn run be:match:start",
+    "be:account:start": "yarn workspace @peerprep/account start:dev",
+    "be:chat:start": "yarn workspace @peerprep/chat start:dev",
+    "be:interview:start": "yarn workspace @peerprep/interview start:dev",
+    "be:match:start": "yarn workspace @peerprep/match start:dev"
+  },
+  "workspaces": {
+    "packages": [
+      "frontend",
+      "backend/*"
+    ],
+    "nohoist": [
+      "**/jest"
+    ]
+  },
+  "license": "MIT"
+}
