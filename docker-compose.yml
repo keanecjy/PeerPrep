@@ -7,7 +7,10 @@ services:
     volumes: 
       - postgres:/var/lib/postgresql/data
     ports: 
-      - 5432:5432
+      - 5432:5432 # Expose port 5432 to localhost:5432 (can use with pgAdmin locally)
+
+  redis:
+    image: "redis:alpine"
 
   client:
     image: peerprep-client
