@@ -11,6 +11,7 @@ import { IsEmail } from 'class-validator';
 import { Exclude } from 'class-transformer';
 
 import { Profile } from '../profile/profile.entity';
+import { ApiHideProperty } from '@nestjs/swagger';
 
 @Entity({ name: 'users' })
 export class User {
@@ -25,22 +26,26 @@ export class User {
   @Column({ default: false })
   isEmailConfirmed: boolean;
 
-  @Exclude()
-  @Column('varchar')
-  passwordHash: string;
-
-  @Exclude()
-  @Column('varchar', { nullable: true })
-  refreshTokenHash: string;
-
   @OneToOne(() => Profile, (profile) => profile.user, { nullable: true })
   profile?: Profile;
 
   @Exclude()
+  @ApiHideProperty()
+  @Column('varchar')
+  passwordHash: string;
+
+  @Exclude()
+  @ApiHideProperty()
+  @Column('varchar', { nullable: true })
+  refreshTokenHash: string;
+
+  @Exclude()
+  @ApiHideProperty()
   @CreateDateColumn()
   createdAt: Date;
 
   @Exclude()
+  @ApiHideProperty()
   @UpdateDateColumn()
   updatedAt: Date;
 }
