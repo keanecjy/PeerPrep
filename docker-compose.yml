@@ -7,7 +7,10 @@ services:
     volumes: 
       - postgres:/var/lib/postgresql/data
     ports: 
-      - 5432:5432
+      - 5432:5432 # Expose port 5432 to localhost:5432 (can use with pgAdmin locally)
+
+  redis:
+    image: "redis:alpine"
 
   client:
     image: peerprep-client
@@ -33,8 +36,15 @@ services:
       dockerfile: ../Dockerfile
     depends_on: 
       - postgres
+    env_file:
+      - ./backend/account/.env
     environment: 
+      # App variables
+      - CLIENT_URL=http://localhost:3000
       - PORT=8081
+      # Database Configuration
+      - DATABASE_URL=postgres://postgres:postgres@postgres:5432/postgres
+      - DB_SYNCHRONIZE=true
     ports: 
       - 8081:8081
     volumes: 

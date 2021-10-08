@@ -8,7 +8,8 @@
     "be:account:start": "yarn workspace @peerprep/account start:dev",
     "be:chat:start": "yarn workspace @peerprep/chat start:dev",
     "be:interview:start": "yarn workspace @peerprep/interview start:dev",
-    "be:match:start": "yarn workspace @peerprep/match start:dev"
+    "be:match:start": "yarn workspace @peerprep/match start:dev",
+    "lint": "yarn workspaces run lint"
   },
   "workspaces": {
     "packages": [
