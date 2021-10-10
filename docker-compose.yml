@@ -45,6 +45,9 @@ services:
       # Database Configuration
       - DATABASE_URL=postgres://postgres:postgres@postgres:5432/postgres
       - DB_SYNCHRONIZE=true
+      # JWT Configuration
+      - JWT_ACCESS_TOKEN_SECRET=accSecret
+      - JWT_REFRESH_TOKEN_SECRET=refSecret
     ports: 
       - 8081:8081
     volumes: 
