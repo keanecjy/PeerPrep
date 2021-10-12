@@ -8,6 +8,7 @@ import { ProfileModule } from './profile/profile.module';
 import { UsersModule } from './users/users.module';
 import { DatabaseConfigService } from './config/database.config';
 import { AuthModule } from './auth/auth.module';
+import { SeederModule } from './seeders/seeder.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { AuthModule } from './auth/auth.module';
       imports: [AppConfigModule],
       useClass: DatabaseConfigService,
     }),
+    SeederModule,
     AuthModule,
     UsersModule,
     ProfileModule,
