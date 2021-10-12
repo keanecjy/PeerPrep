@@ -6,6 +6,7 @@ import { AppConfigModule } from './config/config.module';
 import { ProfileModule } from './profile/profile.module';
 import { UsersModule } from './users/users.module';
 import { DatabaseConfigService } from './config/database.config';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -14,8 +15,9 @@ import { DatabaseConfigService } from './config/database.config';
       useClass: DatabaseConfigService,
     }),
     AppConfigModule,
-    ProfileModule,
+    AuthModule,
     UsersModule,
+    ProfileModule,
   ],
   controllers: [AppController],
   providers: [AppService],
