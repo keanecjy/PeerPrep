@@ -30,7 +30,7 @@ export class AppConfigService {
     if (this.isProd) {
       return env.CLIENT_URL;
     } else {
-      return 'https://localhost:8080';
+      return 'https://localhost:3000';
     }
   }
 }
