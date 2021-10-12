@@ -18,10 +18,14 @@ import { ChangePasswordDto } from './dto/change-password.dto';
 import { JwtResponseDto } from './dto/jwt-response.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { LoginUserDto } from './dto/login-user.dto';
+import { RefreshTokenDto } from './dto/refresh-token.dto';
+import { ConfirmEmailDto } from './dto/confirm-email.dto';
+import { ForgetPasswordDto } from './dto/forget-password.dto';
+import { ResendConfirmationDto } from './dto/resend-confirmation.dto';
+import { ResetPasswordDto } from './dto/reset-password.dto';
 
 import { AuthUser } from '../shared/decorators/user.decorator';
 import { UseAuth } from '../shared/decorators/auth.decorator';
-import { RefreshTokenDto } from './dto/refresh-token.dto';
 
 @ApiTags('Authentication')
 @Controller('auth')
@@ -71,10 +75,10 @@ export class AuthController {
   public async signup(@Body() createUserDto: CreateUserDto): Promise<string> {
     const user = await this.authService.signup(createUserDto);
 
-    // await this.authService.sendEmailConfirmation(user.email).then(() => {
-    //   console.log('Verification email sent');
-    //   return user;
-    // });
+    await this.authService.sendEmailConfirmation(user.email).then(() => {
+      console.log('Verification email sent');
+      return user;
+    });
 
     return 'Successfully created account. Please verify email before logging in';
   }
@@ -125,6 +129,74 @@ export class AuthController {
     await this.authService.deleteRefreshToken(user);
     response.setHeader('Set-Cookie', logoutCookies);
     return 'Successfully logged out. See you again!';
+  }
+
+  //============ Email Confirmation endpoint ===============
+
+  /**
+   * Request email confirmation mail
+   */
+  @ApiCreatedResponse({
+    description: 'Confirmation request sent to email',
+  })
+  @Post('/resend-confirm')
+  public async resendConfirmationEmail(
+    @Body() resendConfirmDto: ResendConfirmationDto
+  ): Promise<string> {
+    await this.authService.sendEmailConfirmation(resendConfirmDto.email);
+
+    return 'Email sent! Check your mailbox for confirmation email.';
+  }
+
+  /**
+   * Validate user's email confirmation request
+   */
+  @ApiCreatedResponse({
+    description: 'Email confirmed',
+  })
+  @Post('/confirm')
+  public async confirmEmail(
+    @Body() confirmEmailDto: ConfirmEmailDto
+  ): Promise<string> {
+    const isActivated = await this.authService.confirmEmail(confirmEmailDto);
+
+    if (!isActivated) {
+      return 'Email already verified. Proceed to login.';
+    } else {
+      return 'Email successfully verified. Proceed to login.';
+    }
+  }
+
+  // ============ Password related endpoint ===============
+
+  /**
+   * Request password reset email
+   */
+  @ApiCreatedResponse({
+    description: 'Reset request sent to email',
+  })
+  @Post('/forget-password')
+  public async requestPasswordResetEmail(
+    @Body() forgetPasswordDto: ForgetPasswordDto
+  ): Promise<string> {
+    await this.authService.sendPasswordResetUrl(forgetPasswordDto.email);
+
+    return 'Email sent! Check your mailbox for password reset email.';
+  }
+
+  /**
+   * Validate user's password reset request
+   */
+  @ApiCreatedResponse({
+    description: 'Password successfully reseted',
+  })
+  @Post('/password-reset')
+  public async confirmPasswordReset(
+    @Body() resetPasswordDto: ResetPasswordDto
+  ): Promise<string> {
+    await this.authService.resetPassword(resetPasswordDto);
+
+    return 'Password successfully resetted. Proceed to login.';
   }
 
   /**

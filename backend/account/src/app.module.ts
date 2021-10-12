@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AppConfigModule } from './config/config.module';
@@ -14,7 +15,6 @@ import { AuthModule } from './auth/auth.module';
       imports: [AppConfigModule],
       useClass: DatabaseConfigService,
     }),
-    AppConfigModule,
     AuthModule,
     UsersModule,
     ProfileModule,

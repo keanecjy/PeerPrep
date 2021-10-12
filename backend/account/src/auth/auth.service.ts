@@ -2,17 +2,23 @@ import {
   BadRequestException,
   ConflictException,
   Injectable,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 
+import { User } from '../users/user.entity';
+import { UsersService } from '../users/users.service';
+import { MailService } from '../mail/mail.service';
 import { AppConfigService } from '../config/app.config';
 import { JwtConfigService } from '../config/jwt.config';
 import { generateCookie } from '../shared/utils/cookies.helper';
-import { User } from '../users/user.entity';
-import { UsersService } from '../users/users.service';
 import { ChangePasswordDto } from './dto/change-password.dto';
+import { ConfirmEmailDto } from './dto/confirm-email.dto';
 import { CreateUserDto } from './dto/create-user.dto';
+import { ResetPasswordDto } from './dto/reset-password.dto';
+import { EmailConfirmPayload } from './interface/confirm-payload.interface';
+import { PasswordResetPayload } from './interface/reset-payload.interface';
 import { TokenPayload } from './interface/token-payload.interface';
 
 @Injectable()
@@ -21,7 +27,8 @@ export class AuthService {
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
     private readonly jwtConfigService: JwtConfigService,
-    private readonly appConfigService: AppConfigService
+    private readonly appConfigService: AppConfigService,
+    private readonly mailService: MailService
   ) {}
 
   /**
@@ -140,6 +147,106 @@ export class AuthService {
       lastName,
       passwordHash,
     });
+  }
+
+  public async sendEmailConfirmation(email: string): Promise<boolean> {
+    const user = await this.usersService.findByEmail(email);
+    if (!user) {
+      throw new BadRequestException('Email does not exist');
+    }
+
+    const payload: EmailConfirmPayload = {
+      userId: user.id,
+      email: user.email,
+      type: 'confirm',
+    };
+    const mailOptions = this.jwtConfigService.mailVerifyTokenOptions;
+    const token = this.jwtService.sign(payload, {
+      secret: mailOptions.secret,
+      expiresIn: `${mailOptions.expiry}s`,
+    });
+
+    console.log('Confirm email token:', token);
+    const url = `${this.appConfigService.clientUrl}/confirm-email?token=${token}`;
+
+    return this.mailService.sendEmailConfirmation(user, url);
+  }
+
+  public async sendPasswordResetUrl(email: string): Promise<boolean> {
+    const user = await this.usersService.findByEmail(email);
+    if (!user) {
+      throw new BadRequestException('Email does not exist');
+    }
+
+    const payload: PasswordResetPayload = {
+      userId: user.id,
+      hash: user.passwordHash,
+      type: 'reset',
+    };
+    const mailOptions = this.jwtConfigService.passwordResetTokenOptions;
+    const token = this.jwtService.sign(payload, {
+      secret: mailOptions.secret,
+      expiresIn: `${mailOptions.expiry}s`,
+    });
+
+    console.log('Password reset token:', token);
+    const url = `${this.appConfigService.clientUrl}/password-reset?token=${token}`;
+
+    return this.mailService.sendPasswordReset(user, url);
+  }
+
+  public confirmEmail(confirmEmailDto: ConfirmEmailDto): Promise<boolean> {
+    try {
+      const { token } = confirmEmailDto;
+      let payload: EmailConfirmPayload;
+      try {
+        payload = this.jwtService.verify<EmailConfirmPayload>(token, {
+          ignoreExpiration: false,
+          secret: this.jwtConfigService.mailVerifyTokenOptions.secret,
+        });
+      } catch (error) {
+        throw new BadRequestException('Invalid token');
+      }
+
+      const { email } = payload;
+      return this.usersService.activateAccount(email);
+    } catch (err) {
+      throw new BadRequestException('Invalid token');
+    }
+  }
+
+  public async resetPassword(
+    resetPasswordDto: ResetPasswordDto
+  ): Promise<string> {
+    const { token, password } = resetPasswordDto;
+    let payload: PasswordResetPayload;
+
+    try {
+      payload = this.jwtService.verify<PasswordResetPayload>(token, {
+        ignoreExpiration: false,
+        secret: this.jwtConfigService.passwordResetTokenOptions.secret,
+      });
+    } catch (error) {
+      throw new BadRequestException('Invalid token');
+    }
+
+    const { userId, hash: previousHash } = payload;
+    const user = await this.usersService.findById(userId);
+
+    if (previousHash !== user.passwordHash) {
+      // invalid password hash in jwt token
+      throw new UnauthorizedException();
+    }
+    const newPasswordHash = await bcrypt.hash(password, 12);
+    const resetStatus = await this.usersService.setPasswordHash(
+      userId,
+      newPasswordHash
+    );
+    if (!resetStatus) {
+      throw new BadRequestException('Password reset failed. Please try again');
+    } else {
+      return 'Password successfully resetted. Proceed to login.';
+    }
   }
 
   public async changePassword(

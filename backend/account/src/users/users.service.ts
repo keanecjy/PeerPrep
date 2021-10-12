@@ -15,11 +15,11 @@ export class UsersService {
   ) {}
 
   findById(id: string): Promise<User> {
-    return this.userRepository.findOne({ id });
+    return this.userRepository.findOne({ id }, { relations: ['profile'] });
   }
 
   findByEmail(email: string): Promise<User> {
-    return this.userRepository.findOne({ email });
+    return this.userRepository.findOne({ email }, { relations: ['profile'] });
   }
 
   async doesEmailExist(email: string): Promise<boolean> {

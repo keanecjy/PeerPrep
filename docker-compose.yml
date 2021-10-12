@@ -48,6 +48,8 @@ services:
       # JWT Configuration
       - JWT_ACCESS_TOKEN_SECRET=accSecret
       - JWT_REFRESH_TOKEN_SECRET=refSecret
+      - JWT_MAIL_VERIFY_SECRET=mailSecret
+      - JWT_PASSWORD_RESET_SECRET=pwSecret
     ports: 
       - 8081:8081
     volumes: 

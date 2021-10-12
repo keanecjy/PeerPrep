@@ -21,6 +21,9 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
         'Wrong email or password. Please try again.'
       );
     }
+    if (!user.isEmailConfirmed) {
+      throw new UnauthorizedException('Email not verified');
+    }
     return user;
   }
 }

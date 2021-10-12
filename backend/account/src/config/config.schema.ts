@@ -11,12 +11,11 @@ export default Joi.object({
   JWT_ACCESS_TOKEN_EXPIRATION_TIME: Joi.string().default(2400), // 40min in seconds
   JWT_REFRESH_TOKEN_SECRET: Joi.string().required(),
   JWT_REFRESH_TOKEN_EXPIRATION_TIME: Joi.string().default(1209600), // 2wk in seconds
-  // JWT_MAIL_VERIFY_SECRET: Joi.string().required(),
-  // JWT_MAIL_VERIFY_EXPIRATION_TIME: Joi.string().default(3600), // 1h in seconds
-  // JWT_PASSWORD_RESET_SECRET: Joi.string().required(),
-  // JWT_PASSWORD_RESET_EXPIRATION_TIME: Joi.string().default(1200), // 20min in seconds
+  JWT_MAIL_VERIFY_SECRET: Joi.string().required(),
+  JWT_MAIL_VERIFY_EXPIRATION_TIME: Joi.string().default(3600), // 1h in seconds
+  JWT_PASSWORD_RESET_SECRET: Joi.string().required(),
+  JWT_PASSWORD_RESET_EXPIRATION_TIME: Joi.string().default(1200), // 20min in seconds
 
-  // EMAIL_FROM: Joi.string().default('noreply@peerprep.com'),
-  // HOTMAIL_ID: Joi.string().required(), // user@outlook.com
-  // HOTMAIL_PASS: Joi.string().required(), // password
+  HOTMAIL_ID: Joi.string().required(), // user@outlook.com
+  HOTMAIL_PASS: Joi.string().required(), // password
 });
