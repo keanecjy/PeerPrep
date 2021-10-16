@@ -9,15 +9,18 @@ import { chatPing } from './services/chat';
 import { matchPing } from './services/match';
 import { accountPing } from './services/profile';
 import { interviewPing } from './services/interview';
+import { login } from './services/auth';
 
 const App = () => {
-  const { user, login } = useContext(UserContext);
+  const { user } = useContext(UserContext);
 
   useEffect(() => {
     chatPing().then(() => console.log('Chat service is up'));
     matchPing().then(() => console.log('Match service is up'));
     accountPing().then(() => console.log('Account service is up'));
     interviewPing().then(() => console.log('Interview service is up'));
+
+    // login test account
     login('seeder@email.com', 'seeder');
   }, []);
 
