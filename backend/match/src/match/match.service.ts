@@ -28,13 +28,19 @@ export class MatchService {
       if (res.status) {
         return res;
       }
-      setTimeout(() => {}, 5000);
+      await this.sleep(5000);
     }
 
     return {
       status: false,
       id: id,
     };
+  }
+
+  sleep(ms: number) {
+    return new Promise((resolve) => {
+      setTimeout(resolve, ms);
+    });
   }
 
   retry(key: string, id: string): Promise<MatchResponse> {
@@ -76,7 +82,7 @@ export class MatchService {
   createMatch(id: string, difficulty: string, language: string): string {
     const key = `${difficulty}_${language}`;
 
-    let map: {} = JSON.parse(this.redisClient.get(key));
+    const map = JSON.parse(this.redisClient.get(key));
     map[id] = '';
     this.redisClient.set(key, map);
 

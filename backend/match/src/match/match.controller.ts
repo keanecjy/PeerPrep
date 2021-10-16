@@ -1,5 +1,5 @@
 import { ApiTags } from '@nestjs/swagger';
-import { Controller, Get, Param, Query } from '@nestjs/common';
+import { Controller, Get, Query } from '@nestjs/common';
 import { MatchService } from './match.service';
 import { MatchResponse } from './match-response';
 
@@ -8,9 +8,9 @@ import { MatchResponse } from './match-response';
 export class MatchController {
   constructor(private readonly matchService: MatchService) {}
 
-  @Get('id')
+  @Get()
   async getMatch(
-    @Param('id') id: string,
+    @Query('id') id: string,
     @Query('difficulty') difficulty: string,
     @Query('language') language: string
   ): Promise<MatchResponse> {
