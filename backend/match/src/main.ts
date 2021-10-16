@@ -12,12 +12,20 @@ async function bootstrap() {
       whitelist: true,
     })
   );
-
+  if (process.env['NODE_ENV'] === 'development') {
+    app.enableCors({
+      origin: true,
+      methods: ['GET', 'POST', 'PUT', 'DELETE'],
+      credentials: true,
+    });
+  } else {
+    app.enableCors({ credentials: true }); // TODO: configure origin for prod
+  }
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
 
   const config = new DocumentBuilder()
-    .setTitle('Peerprep interview service')
-    .setDescription('The peerprep interview service API')
+    .setTitle('Peerprep match service')
+    .setDescription('The peerprep match service API')
     .setVersion('1.0')
     .build();
 
