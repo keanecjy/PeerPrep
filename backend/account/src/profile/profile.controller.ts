@@ -7,7 +7,7 @@ import {
   Put,
   ForbiddenException,
 } from '@nestjs/common';
-import { ApiOkResponse, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 
 import { ProfileService } from './profile.service';
 import { UpdateProfileDto } from './dto/update-profile.dto';
@@ -29,10 +29,7 @@ export class ProfileController {
   @UseAuth(JwtAuthGuard)
   @Get('me')
   findMe(@AuthUser() requester: User): Promise<Profile> {
-    return this.profileService.findOne(requester.id).then((user) => {
-      console.log(user);
-      return user;
-    });
+    return this.profileService.findOne(requester.id);
   }
 
   /**
