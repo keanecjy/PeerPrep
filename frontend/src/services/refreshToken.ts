@@ -1,21 +1,29 @@
-export const refTokenKey = 'ref';
+const refTokenKey = 'ref';
 
 type TokenListenerType = (token?: string) => any;
 const listeners: TokenListenerType[] = [];
 
-export const storeRefTokenKey = (token: string) => {
+const store = (token: string) => {
   localStorage.setItem(refTokenKey, token);
   listeners.forEach((cb) => cb(token));
 };
 
-export const removeRefTokenKey = () => {
+const remove = () => {
   localStorage.removeItem(refTokenKey);
 };
 
-export const getRefTokenKey = () => {
+const get = () => {
   return localStorage.getItem(refTokenKey);
 };
 
-export const addRefTokenListener = (cb: TokenListenerType) => {
+const addListener = (cb: TokenListenerType) => {
   listeners.push(cb);
+  return () => listeners.filter((x) => x !== cb);
+};
+
+export default {
+  store,
+  remove,
+  get,
+  addListener,
 };

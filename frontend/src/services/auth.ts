@@ -1,6 +1,6 @@
 import server from './server';
 import { apiKeys } from './config';
-import { getRefTokenKey, removeRefTokenKey, storeRefTokenKey } from './token';
+import RefreshTokenService from './refreshToken';
 import { AuthData } from '../shared/types';
 
 export const login = async (email: string, password: string) => {
@@ -9,12 +9,12 @@ export const login = async (email: string, password: string) => {
     password,
   });
   const data = res.data as any as AuthData;
-  storeRefTokenKey(data?.refreshToken || '');
+  RefreshTokenService.store(data?.refreshToken || '');
   return true;
 };
 
 export const refresh = async () => {
-  const refreshToken = getRefTokenKey();
+  const refreshToken = RefreshTokenService.get();
   if (!refreshToken) {
     throw Error('No refresh token');
   }
@@ -23,7 +23,7 @@ export const refresh = async () => {
     refreshToken,
   });
   const data = res.data as any as AuthData;
-  storeRefTokenKey(data?.refreshToken || '');
+  RefreshTokenService.store(data?.refreshToken || '');
   return true;
 };
 
@@ -38,8 +38,8 @@ export const signup = async (signupDetails: {
 };
 
 export const logout = async () => {
+  RefreshTokenService.remove();
   await server.post(apiKeys.auth.logout);
-  removeRefTokenKey();
   return true;
 };
 

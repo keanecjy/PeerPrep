@@ -1,7 +1,7 @@
 import React, { createContext, useState, useEffect } from 'react';
 import { refresh } from '../services/auth';
 import { getUserProfile } from '../services/profile';
-import { addRefTokenListener } from '../services/token';
+import RefreshTokenService from '../services/refreshToken';
 import { UserProfile } from '../shared/types';
 
 interface UserContextProps {
@@ -18,7 +18,7 @@ const UserProvider: React.FC = ({ children }) => {
 
   // init connection with background and maintain synced data
   useEffect(() => {
-    addRefTokenListener(getUser);
+    RefreshTokenService.addListener(getUser);
 
     // auto login
     refresh().catch(() => {
