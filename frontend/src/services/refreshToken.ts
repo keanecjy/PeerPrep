@@ -1,6 +1,6 @@
 const refTokenKey = 'ref';
 
-type TokenListenerType = (token?: string) => any;
+type TokenListenerType = (token?: string | null) => any;
 const listeners: TokenListenerType[] = [];
 
 const store = (token: string) => {
@@ -10,6 +10,7 @@ const store = (token: string) => {
 
 const remove = () => {
   localStorage.removeItem(refTokenKey);
+  listeners.forEach((cb) => cb(null));
 };
 
 const get = () => {
@@ -21,9 +22,11 @@ const addListener = (cb: TokenListenerType) => {
   return () => listeners.filter((x) => x !== cb);
 };
 
-export default {
+const RefreshTokenService = {
   store,
   remove,
   get,
   addListener,
 };
+
+export default RefreshTokenService;

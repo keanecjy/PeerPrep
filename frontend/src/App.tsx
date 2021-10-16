@@ -24,10 +24,6 @@ const App = () => {
     login('seeder@email.com', 'seeder');
   }, []);
 
-  useEffect(() => {
-    console.log(user);
-  }, [user]);
-
   return (
     <BrowserRouter>
       <Switch>

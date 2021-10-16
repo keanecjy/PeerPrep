@@ -20,19 +20,23 @@ server.interceptors.response.use(
     const refreshToken = RefreshTokenService.get();
     if (
       originalRequest.url !== apiKeys.auth.login &&
+      originalRequest.url !== apiKeys.auth.refresh &&
       err?.response?.status === 401 &&
       !originalRequest._retry &&
       refreshToken
     ) {
       originalRequest._retry = true;
 
-      const res = await server.post(apiKeys.auth.refresh, {
-        refreshToken,
-      });
-      const data = res.data as any as AuthData;
-      RefreshTokenService.store(data?.refreshToken || '');
-
-      return server(originalRequest);
+      return server
+        .post(apiKeys.auth.refresh, {
+          refreshToken,
+        })
+        .then((res) => {
+          if (res.status === 201) {
+            RefreshTokenService.store(res.data?.refreshToken || '');
+            return server(originalRequest);
+          }
+        });
     }
     return Promise.reject(err);
   }

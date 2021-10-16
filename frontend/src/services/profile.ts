@@ -8,7 +8,6 @@ export const accountPing = () => {
 
 export const getUserProfile = async () => {
   const res = await server.get(apiKeys.profile.me);
-  console.log(res);
   return res.data as UserProfile;
 };
 

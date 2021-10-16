@@ -26,9 +26,13 @@ const UserProvider: React.FC = ({ children }) => {
     });
   }, []);
 
-  const getUser = async () => {
-    const user = await getUserProfile();
-    setUser(user);
+  const getUser = async (auth?: string | null) => {
+    if (auth === null) {
+      setUser(null);
+    } else {
+      const user = await getUserProfile();
+      setUser(user);
+    }
     setLoading(false);
     return user;
   };
