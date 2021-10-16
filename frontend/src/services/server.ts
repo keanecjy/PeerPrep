@@ -2,7 +2,6 @@ import axios from 'axios';
 import { API_URL } from '../shared/variables';
 import { apiKeys } from './config';
 import RefreshTokenService from './refreshToken';
-import { AuthData } from '../shared/types';
 
 const server = axios.create({
   baseURL: API_URL,
