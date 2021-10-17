@@ -5,7 +5,6 @@ import { Repository } from 'typeorm';
 import { User } from '../users/user.entity';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { Profile } from './profile.entity';
-import { CreateUserDto } from '../users/dto/create-user.dto';
 
 @Injectable()
 export class ProfileService {
@@ -15,11 +14,11 @@ export class ProfileService {
   ) {}
 
   create(
-    createProfileDto: Pick<CreateUserDto, 'firstName' | 'lastName'>,
+    createProfileDetails: Pick<Profile, 'firstName' | 'lastName'>,
     user: User
   ): Promise<Profile> {
     const profile = this.profileRepository.create({
-      ...createProfileDto,
+      ...createProfileDetails,
       user: user,
       photo: `https://avatars.dicebear.com/api/gridy/${user.id}.svg`,
     });

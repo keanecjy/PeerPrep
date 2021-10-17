@@ -26,7 +26,10 @@ export class User {
   @Column({ default: false })
   isEmailConfirmed: boolean;
 
-  @OneToOne(() => Profile, (profile) => profile.user, { nullable: true })
+  @OneToOne(() => Profile, (profile) => profile.user, {
+    nullable: true,
+    cascade: true,
+  })
   profile?: Profile;
 
   @Exclude()

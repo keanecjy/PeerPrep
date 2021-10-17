@@ -1,3 +1,4 @@
+import { ApiHideProperty } from '@nestjs/swagger';
 import {
   Column,
   CreateDateColumn,
@@ -14,6 +15,7 @@ export class Profile {
   @PrimaryColumn('uuid')
   id: string;
 
+  @ApiHideProperty()
   @OneToOne(() => User, (user) => user.profile, {
     onUpdate: 'CASCADE',
     onDelete: 'CASCADE',
