@@ -1,5 +1,5 @@
 import React, { useContext, useEffect } from 'react';
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom';
 
 import LoginPage from './pages/LoginPage';
 import HomePage from './pages/HomePage';
@@ -27,9 +27,12 @@ const App = () => {
   return (
     <BrowserRouter>
       <Switch>
-        <Route path="/" component={HomePage} />
-        <Route path="/login" component={LoginPage} />
-        <Route path="/interview" component={InterviewPage} />
+        <Route exact path="/home" component={HomePage} />
+        <Route exact path="/login" component={LoginPage} />
+        <Route exact path="/interview" component={InterviewPage} />
+        <Route>
+          <Redirect to={{ pathname: '/home' }} />
+        </Route>
       </Switch>
     </BrowserRouter>
   );
