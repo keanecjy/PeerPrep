@@ -2,8 +2,6 @@ version: '3.8'
 services:
   nginx:
     image: nginx:1.13-alpine
-    networks:
-      - default
     ports:
       - 3001:80
     volumes:
@@ -18,15 +16,11 @@ services:
       - POSTGRES_PASSWORD=postgres
     volumes: 
       - postgres:/var/lib/postgresql/data
-    networks:
-      - default
     ports: 
       - 5432:5432 # Expose port 5432 to localhost:5432 (can use with pgAdmin locally)
 
   redis:
     image: "redis:alpine"
-    networks:
-      - default
 
   client:
     image: peerprep-client
@@ -35,9 +29,6 @@ services:
       dockerfile: Dockerfile
     depends_on: 
       - nginx
-    # env_file:
-    #   # Use .env file to handle secret env variables
-    #   - frontend/.env
     environment:
       # Add any development build env here
       - BACKEND_URL:localhost
@@ -46,7 +37,7 @@ services:
     networks:
       - default
     volumes: 
-      - /app/node_modules
+      - client_node_modules:/app/node_modules
       - ./frontend:/app
 
   account:
@@ -76,7 +67,7 @@ services:
     networks:
       - default
     volumes: 
-      - /app/node_modules
+      - account_node_modules:/app/node_modules
       - ./backend/account:/app
 
   chat:
@@ -84,8 +75,6 @@ services:
     build:
       context: ./backend/chat
       dockerfile: ../Dockerfile
-    depends_on: 
-      - nginx
     environment: 
       - PORT=8082
     ports: 
@@ -93,7 +82,7 @@ services:
     networks:
       - default
     volumes: 
-      - /app/node_modules
+      - chat_node_modules:/app/node_modules
       - ./backend/chat:/app
 
   interview:
@@ -101,8 +90,6 @@ services:
     build:
       context: ./backend/interview
       dockerfile: ../Dockerfile
-    depends_on: 
-      - nginx
     environment: 
       - PORT=8083
     ports: 
@@ -110,7 +97,7 @@ services:
     networks:
       - default
     volumes: 
-      - /app/node_modules
+      - interview_node_modules:/app/node_modules
       - ./backend/interview:/app
 
   match:
@@ -127,11 +114,16 @@ services:
     networks:
       - default
     volumes: 
-      - /app/node_modules
+      - match_node_modules:/app/node_modules
       - ./backend/match:/app
 
 volumes: 
   postgres:
+  match_node_modules:
+  interview_node_modules:
+  chat_node_modules:
+  account_node_modules:
+  client_node_modules:
 
 networks:
   default:
