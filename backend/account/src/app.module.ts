@@ -9,6 +9,7 @@ import { UsersModule } from './users/users.module';
 import { DatabaseConfigService } from './config/database.config';
 import { AuthModule } from './auth/auth.module';
 import { SeederModule } from './seeders/seeder.module';
+import { InterviewModule } from './interview/interview.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { SeederModule } from './seeders/seeder.module';
     AuthModule,
     UsersModule,
     ProfileModule,
+    InterviewModule,
   ],
   controllers: [AppController],
   providers: [AppService],
