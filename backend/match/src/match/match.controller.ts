@@ -4,11 +4,14 @@ import { MatchService } from './match.service';
 import { MatchResponse } from './match-response';
 
 @ApiTags('Server')
-@Controller('match')
+@Controller('api')
 export class MatchController {
   constructor(private readonly matchService: MatchService) {}
 
-  @Get()
+  /*
+  Gets a match for a user if there is a matching user
+  */
+  @Get('match')
   async getMatch(
     @Query('id') id: string,
     @Query('difficulty') difficulty: string,

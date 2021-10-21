@@ -1,21 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { createClient } from 'redis';
 import { MatchResponse } from './match-response';
+import { RedisCacheService } from '../redis/redisCache.service';
 
 @Injectable()
 export class MatchService {
-  private redisClient;
-
-  constructor() {
-    (async () => {
-      this.redisClient = createClient();
-      this.redisClient.on('error', (err) =>
-        console.log('Redis Client Error', err)
-      );
-      await this.redisClient.connect();
-      console.log('Client is connected!');
-    })();
-  }
+  constructor(private readonly redisService: RedisCacheService) {}
 
   async getMatch(
     id: string,
@@ -23,7 +12,10 @@ export class MatchService {
     language: string
   ): Promise<MatchResponse> {
     const key = `${difficulty}_${language}`;
-    for (let retries = 0; retries < 6; retries++) {
+
+    await this.createMatch(key, id);
+
+    for (let retries = 0; retries < 5; retries++) {
       const res = await this.retry(key, id);
       if (res.status) {
         return res;
@@ -43,48 +35,45 @@ export class MatchService {
     });
   }
 
-  retry(key: string, id: string): Promise<MatchResponse> {
-    return new Promise((resolve, reject) => {
-      this.redisClient.get(key, async (error, data) => {
-        if (error) {
-          return reject(error);
-        }
+  async retry(key: string, id: string): Promise<MatchResponse> {
+    return new Promise(async (resolve) => {
+      const data = await this.redisService.get(key);
 
-        const map = JSON.parse(data);
-        if (map[id] != '') {
+      const map = JSON.parse(data);
+      console.log(data);
+
+      if (map[id] != '') {
+        return resolve({
+          status: true,
+          id: id,
+          partnerId: map[id],
+        });
+      }
+
+      for (const [otherId, partnerId] of Object.entries(map)) {
+        if (otherId != id && partnerId != '') {
+          map[id] = otherId;
+          map[otherId] = id;
           return resolve({
             status: true,
             id: id,
-            partnerId: map[id],
+            partnerId: otherId,
           });
         }
+      }
 
-        for (const [otherId, partnerId] of Object.entries(map)) {
-          if (otherId != id && partnerId != '') {
-            map[id] = otherId;
-            map[otherId] = id;
-            return resolve({
-              status: true,
-              id: id,
-              partnerId: otherId,
-            });
-          }
-        }
-
-        return resolve({
-          status: false,
-          id: id,
-        });
+      return resolve({
+        status: false,
+        id: id,
       });
     });
   }
 
-  createMatch(id: string, difficulty: string, language: string): string {
-    const key = `${difficulty}_${language}`;
-
-    const map = JSON.parse(this.redisClient.get(key));
+  async createMatch(key: string, id: string): Promise<string> {
+    const data = await this.redisService.get(key);
+    const map = JSON.parse(data);
     map[id] = '';
-    this.redisClient.set(key, map);
+    await this.redisService.set(key, map);
 
     return `Starting match for ${id}`;
   }

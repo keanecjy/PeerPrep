@@ -3,7 +3,7 @@ import { Controller, Get } from '@nestjs/common';
 import { AppService } from './app.service';
 
 @ApiTags('Server')
-@Controller('match')
+@Controller('api')
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
