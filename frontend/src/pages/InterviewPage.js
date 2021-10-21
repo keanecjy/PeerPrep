@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { io } from 'socket.io-client';
 
-const chatSocket = io('https://localhost/8082', {
+const chatSocket = io('http://localhost:8082', {
   path: '/',
   forceNew: true,
 });
 
 const InterviewPage = () => {
   const [messages, setMessages] = useState([]);
+  const [sendMessage, setSendMessage] = useState('Hi');
+  const [sessionId, setSessionId] = useState('11');
 
   useEffect(() => {
     chatSocket.on('connect', () =>
@@ -16,18 +18,36 @@ const InterviewPage = () => {
         { sender: 'System', msg: 'You are connected!' },
       ])
     );
-    // chatSocket.on('11', (message) => {
-    //   setMessages((oldMessages) => [...oldMessages, message]);
-    //   const msgContainer = document.getElementById('chat-message-container');
-    // });
+    chatSocket.on(sessionId, (message) => {
+      setMessages((oldMessages) => [...oldMessages, message]);
+    });
   }, []);
 
+  const handleSend = () => {
+    if (sendMessage !== '') {
+      chatSocket.emit('newMessage', {
+        sessionId,
+        payload: {
+          sender: 'Ashley',
+          msg: sendMessage,
+        },
+      });
+      setSendMessage(sendMessage + 'hi');
+    }
+  };
   return (
     <div>
       <h1>This page will contain the InterviewPage.</h1>
       {messages.map((item) => {
         <div>{item.msg}</div>;
       })}
+      <div>length is {messages.length}</div>
+      <div
+        style={{ height: '50px', width: '50px', backgroundColor: 'grey' }}
+        onClick={() => handleSend()}
+      >
+        {sendMessage}
+      </div>
     </div>
   );
 };
