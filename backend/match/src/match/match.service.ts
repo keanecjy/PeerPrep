@@ -15,7 +15,7 @@ export class MatchService {
 
     await this.createMatch(key, id);
 
-    for (let retries = 0; retries < 5; retries++) {
+    for (let retries = 0; retries < 6; retries++) {
       const res = await this.retry(key, id);
       if (res.status) {
         return res;
@@ -38,11 +38,12 @@ export class MatchService {
   async retry(key: string, id: string): Promise<MatchResponse> {
     return new Promise(async (resolve) => {
       const data = await this.redisService.get(key);
-
       const map = JSON.parse(data);
-      console.log(data);
+      console.log(map);
 
-      if (map[id] != '') {
+      // Terminate if it gets matched with another user
+      if (map[id] !== '') {
+        console.log(`${id} has been matched with ${map[id]}`);
         return resolve({
           status: true,
           id: id,
@@ -51,9 +52,11 @@ export class MatchService {
       }
 
       for (const [otherId, partnerId] of Object.entries(map)) {
-        if (otherId != id && partnerId != '') {
+        if (otherId !== id && partnerId === '') {
           map[id] = otherId;
           map[otherId] = id;
+          await this.redisService.set(key, JSON.stringify(map));
+          console.log(`Successfully matched ${id} with ${otherId}`);
           return resolve({
             status: true,
             id: id,
@@ -69,12 +72,14 @@ export class MatchService {
     });
   }
 
-  async createMatch(key: string, id: string): Promise<string> {
+  async createMatch(key: string, id: string) {
     const data = await this.redisService.get(key);
-    const map = JSON.parse(data);
-    map[id] = '';
-    await this.redisService.set(key, map);
-
-    return `Starting match for ${id}`;
+    const map = data !== null ? JSON.parse(data) : {};
+    if (!(id in map)) {
+      console.log(`Setting ${id} in map`);
+      map[id] = '';
+      await this.redisService.set(key, JSON.stringify(map));
+    }
+    console.log(`Starting match for ${id}`);
   }
 }
