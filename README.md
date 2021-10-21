@@ -43,6 +43,15 @@ To clear local postgres data, run the following to clear all volumes
 $ docker-compose down -v
 ```
 
+#### Ports used
+* 3000: Frontend
+* 8081: Account service
+* 8082: Chat service
+* 8083: Interview service
+* 8084: Match service
+* 5432: Postgres service
+* 6379: Redis service
+
 ### Without Docker
 
 Note that without Docker, you will need to have your own instance of Postgres running (for account service) and set the necessary environment variables when running the backend.
