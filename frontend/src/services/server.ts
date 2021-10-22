@@ -1,4 +1,6 @@
 import axios from 'axios';
+import { toast } from 'react-toastify';
+
 import { API_URL } from '../shared/variables';
 import { apiKeys } from './config';
 import RefreshTokenService from './refreshToken';
@@ -38,6 +40,7 @@ server.interceptors.response.use(
         .catch((err) => {
           if (err?.response?.status === 401) {
             RefreshTokenService.remove();
+            toast.error('Not logged in');
             return Promise.reject();
           }
         });

@@ -1,5 +1,7 @@
+import 'react-toastify/dist/ReactToastify.css';
 import React, { useContext, useEffect } from 'react';
 import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom';
+import { toast, ToastContainer } from 'react-toastify';
 
 import LoginPage from './pages/LoginPage';
 import HomePage from './pages/HomePage';
@@ -9,29 +11,41 @@ import { chatPing } from './services/chat';
 import { matchPing } from './services/match';
 import { accountPing } from './services/profile';
 import { interviewPing } from './services/interview';
-import { login } from './services/auth';
 
 const App = () => {
   const { user } = useContext(UserContext);
 
   useEffect(() => {
-    chatPing().then(() => console.log('Chat service is up'));
-    matchPing().then(() => console.log('Match service is up'));
-    accountPing().then(() => console.log('Account service is up'));
-    interviewPing().then(() => console.log('Interview service is up'));
+    chatPing()
+      .then(() => console.log('Chat service is up'))
+      .catch(() => toast.error('Cannot connect to chat service'));
+    matchPing()
+      .then(() => console.log('Match service is up'))
+      .catch(() => toast.error('Cannot connect to match service'));
+    accountPing()
+      .then(() => console.log('Account service is up'))
+      .catch(() => toast.error('Cannot connect to account service'));
+    interviewPing()
+      .then(() => console.log('Interview service is up'))
+      .catch(() => toast.error('Cannot connect to interview service'));
 
     // login test account
-    login('seeder@email.com', 'seeder');
+    // login('seeder@email.com', 'seeder');
   }, []);
 
   return (
     <BrowserRouter>
+      <ToastContainer position="top-right" />
       <Switch>
         <Route exact path="/home" component={HomePage} />
         <Route exact path="/login" component={LoginPage} />
         <Route exact path="/interview" component={InterviewPage} />
         <Route>
-          <Redirect to={{ pathname: '/home' }} />
+          {user ? (
+            <Redirect to={{ pathname: '/home' }} />
+          ) : (
+            <Redirect to={{ pathname: '/login' }} />
+          )}
         </Route>
       </Switch>
     </BrowserRouter>

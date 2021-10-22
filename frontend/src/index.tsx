@@ -8,12 +8,14 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { UserProvider } from './context/UserContext';
 import theme from './theme';
+import { HeaderBar } from './components/HeaderBar';
 
 ReactDOM.render(
   <React.StrictMode>
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <UserProvider>
+        <HeaderBar />
         <App />
       </UserProvider>
     </ThemeProvider>
