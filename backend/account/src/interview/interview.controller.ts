@@ -1,3 +1,4 @@
+import { ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from './../auth/guard/jwt-auth.guard';
 import { User } from './../users/user.entity';
 import { AuthUser } from './../shared/decorators/user.decorator';
@@ -14,6 +15,7 @@ import { InterviewService } from './interview.service';
 import { CreateInterviewDto } from './dto/create-interview.dto';
 import { UseAuth } from 'src/shared/decorators/auth.decorator';
 
+@ApiTags('Interview')
 @Controller('interview')
 export class InterviewController {
   constructor(private readonly interviewService: InterviewService) {}
