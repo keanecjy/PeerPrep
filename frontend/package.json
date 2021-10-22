@@ -2,6 +2,7 @@
   "name": "@peerprep/client",
   "version": "0.1.0",
   "private": true,
+  "proxy": "http://localhost:8080",
   "scripts": {
     "start": "cross-env PORT=3000 react-scripts start",
     "build": "react-scripts build",
@@ -15,11 +16,15 @@
     "@material-ui/core": "^4.12.3",
     "@material-ui/icons": "^4.11.2",
     "@types/react-router-dom": "^5.3.1",
+    "@types/socket.io-client": "^3.0.0",
+    "add": "^2.0.6",
     "axios": "^0.22.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
+    "react-icons": "^4.3.1",
     "react-router-dom": "^5.3.0",
     "react-scripts": "4.0.3",
+    "socket.io-client": "^4.3.2",
     "web-vitals": "^1.0.1"
   },
   "devDependencies": {
