@@ -8,6 +8,8 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { UserProvider } from './context/UserContext';
 import theme from './theme';
+import './styles/common-components.css';
+import './styles/interview.css';
 
 ReactDOM.render(
   <React.StrictMode>

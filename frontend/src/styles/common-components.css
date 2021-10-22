@@ -1,0 +1,19 @@
+/* Styling for logo and its title */
+.logo-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    color: white;
+    width: 160px;
+}
+
+.logo {
+    font-size: 40px;
+}
+
+.logo-title {
+    margin-top: 18px;
+    font-size: 25px;
+    font-weight: 600;
+}
