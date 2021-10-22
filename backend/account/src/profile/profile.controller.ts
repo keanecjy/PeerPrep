@@ -16,6 +16,7 @@ import { AuthUser } from '../shared/decorators/user.decorator';
 import { UseAuth } from '../shared/decorators/auth.decorator';
 import { Profile } from './profile.entity';
 import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
+import { Interview } from 'src/interview/interview.entity';
 
 @ApiTags('Profile')
 @Controller('profile')
@@ -39,6 +40,17 @@ export class ProfileController {
   @Get(':id')
   findOne(@Param('id') id: string): Promise<Profile> {
     return this.profileService.findOne(id);
+  }
+
+  /**
+   * Get a user profile
+   */
+  @ApiOkResponse({ type: Profile })
+  @Get('/interview/:id')
+  findOneWithInterview(@Param('id') id: string): Promise<Interview[]> {
+    return this.profileService
+      .findOneWithInterviews(id)
+      .then((profile) => profile.interviews);
   }
 
   /**

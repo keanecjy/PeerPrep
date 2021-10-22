@@ -30,6 +30,13 @@ export class ProfileService {
     return this.profileRepository.findOne({ id });
   }
 
+  findOneWithInterviews(id: string): Promise<Profile> {
+    return this.profileRepository.findOne(
+      { id },
+      { relations: ['interviews'] }
+    );
+  }
+
   async update(
     id: string,
     updateProfileDto: UpdateProfileDto

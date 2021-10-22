@@ -1,3 +1,4 @@
+import { Interview } from './../interview/interview.entity';
 import { ApiHideProperty } from '@nestjs/swagger';
 import {
   Column,
@@ -7,6 +8,7 @@ import {
   JoinColumn,
   PrimaryColumn,
   Entity,
+  ManyToMany,
 } from 'typeorm';
 import { User } from '../users/user.entity';
 
@@ -34,6 +36,9 @@ export class Profile {
 
   @Column('varchar', { nullable: true })
   photo: string;
+
+  @ManyToMany(() => Interview, (interview: Interview) => interview.participants)
+  interviews: Interview[];
 
   @CreateDateColumn()
   createdAt: Date;
