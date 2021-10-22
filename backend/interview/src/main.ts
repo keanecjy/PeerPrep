@@ -13,7 +13,15 @@ async function bootstrap() {
       whitelist: true,
     })
   );
-
+  if (process.env['NODE_ENV'] === 'development') {
+    app.enableCors({
+      origin: true,
+      methods: ['GET', 'POST', 'PUT', 'DELETE'],
+      credentials: true,
+    });
+  } else {
+    app.enableCors({ credentials: true }); // TODO: configure origin for prod
+  }
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
 
   const config = new DocumentBuilder()
@@ -25,6 +33,6 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
-  await app.listen(process.env.PORT || 8083);
+  await app.listen(process.env.PORT || 8083, '0.0.0.0');
 }
 bootstrap();

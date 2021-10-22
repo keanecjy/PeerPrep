@@ -9,14 +9,7 @@ import {
 import { Logger } from '@nestjs/common';
 import { Socket, Server } from 'socket.io';
 
-const options = {
-    // cors: {
-    //     origin: ["http://localhost:8080"],
-    //     methods: ["GET", "POST"],
-    //     credentials: true
-    // }
-}
-@WebSocketGateway(options)
+@WebSocketGateway()
 export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
 
     @WebSocketServer() server: Server;

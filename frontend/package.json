@@ -4,18 +4,21 @@
   "private": true,
   "proxy": "http://localhost:8080",
   "scripts": {
-    "start": "cross-env PORT=8080 react-scripts start",
+    "start": "cross-env PORT=3000 react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "prettier": "npx prettier --write .",
-    "lint": "eslint \"src/**/*.{js,jsx,ts,tsx}\" --fix",
+    "prettier": "npx prettier --write ./src/*",
+    "lint": "npx prettier --write ./src/*",
     "precommit": "lint-staged"
   },
   "dependencies": {
+    "@material-ui/core": "^4.12.3",
+    "@material-ui/icons": "^4.11.2",
     "@types/react-router-dom": "^5.3.1",
     "@types/socket.io-client": "^3.0.0",
     "add": "^2.0.6",
+    "axios": "^0.22.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-router-dom": "^5.3.0",
@@ -57,8 +60,8 @@
     }
   },
   "lint-staged": {
-    "src/**/*.{js,jsx,ts,tsx}": [
-      "eslint --cache --fix"
+    "src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
+      "prettier --write ./src/*"
     ]
   }
 }

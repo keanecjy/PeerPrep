@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { io } from 'socket.io-client';
 
-const chatSocket = io('http://localhost:8082', {
-  path: '/',
-  forceNew: true,
+const chatSocket = io('http://localhost:8082/', {
+  //forceNew: true,
+  transports: ['websocket', 'polling', 'flashsocket'],
 });
 
 const InterviewPage = () => {
@@ -38,9 +38,9 @@ const InterviewPage = () => {
   return (
     <div>
       <h1>This page will contain the InterviewPage.</h1>
-      {messages.map((item) => {
-        <div>{item.msg}</div>;
-      })}
+      {messages.map((item) => (
+        <h1>{item.msg}</h1>
+      ))}
       <div>length is {messages.length}</div>
       <div
         style={{ height: '50px', width: '50px', backgroundColor: 'grey' }}

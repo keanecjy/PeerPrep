@@ -1,5 +1,15 @@
 version: '3.8'
 services:
+  nginx:
+    image: nginx:1.13-alpine
+    ports:
+      - 3001:80
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+    restart: always
+    logging:
+      driver: none
+
   postgres:
     image: postgres
     environment: 
@@ -17,16 +27,17 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    # env_file:
-    #   # Use .env file to handle secret env variables
-    #   - frontend/.env
+    depends_on: 
+      - nginx
     environment:
       # Add any development build env here
       - BACKEND_URL:localhost
     ports: 
-      - 8080:8080
+      - 3000:3000
+    networks:
+      - default
     volumes: 
-      - /app/node_modules
+      - client_node_modules:/app/node_modules
       - ./frontend:/app
 
   account:
@@ -36,6 +47,7 @@ services:
       dockerfile: ../Dockerfile
     depends_on: 
       - postgres
+      - nginx
     env_file:
       - ./backend/account/.env
     environment: 
@@ -48,10 +60,14 @@ services:
       # JWT Configuration
       - JWT_ACCESS_TOKEN_SECRET=accSecret
       - JWT_REFRESH_TOKEN_SECRET=refSecret
+      - JWT_MAIL_VERIFY_SECRET=mailSecret
+      - JWT_PASSWORD_RESET_SECRET=pwSecret
     ports: 
       - 8081:8081
+    networks:
+      - default
     volumes: 
-      - /app/node_modules
+      - account_node_modules:/app/node_modules
       - ./backend/account:/app
 
   chat:
@@ -63,8 +79,10 @@ services:
       - PORT=8082
     ports: 
       - 8082:8082
+    networks:
+      - default
     volumes: 
-      - /app/node_modules
+      - chat_node_modules:/app/node_modules
       - ./backend/chat:/app
 
   interview:
@@ -76,8 +94,10 @@ services:
       - PORT=8083
     ports: 
       - 8083:8083
+    networks:
+      - default
     volumes: 
-      - /app/node_modules
+      - interview_node_modules:/app/node_modules
       - ./backend/interview:/app
 
   match:
@@ -85,17 +105,27 @@ services:
     build:
       context: ./backend/match
       dockerfile: ../Dockerfile
+    depends_on: 
+      - nginx
     environment: 
       - PORT=8084
     ports: 
       - 8084:8084
+    networks:
+      - default
     volumes: 
-      - /app/node_modules
+      - match_node_modules:/app/node_modules
       - ./backend/match:/app
 
 volumes: 
   postgres:
+  match_node_modules:
+  interview_node_modules:
+  chat_node_modules:
+  account_node_modules:
+  client_node_modules:
 
 networks:
   default:
     name: peerprep-development
+    driver: bridge
