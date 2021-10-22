@@ -12,31 +12,33 @@ services:
 
   postgres:
     image: postgres
-    environment: 
+    environment:
       - POSTGRES_PASSWORD=postgres
-    volumes: 
+    volumes:
       - postgres:/var/lib/postgresql/data
-    ports: 
+    ports:
       - 5432:5432 # Expose port 5432 to localhost:5432 (can use with pgAdmin locally)
 
   redis:
     image: "redis:alpine"
+    ports:
+      - 6379:6379
 
   client:
     image: peerprep-client
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    depends_on: 
+    depends_on:
       - nginx
     environment:
       # Add any development build env here
       - BACKEND_URL:localhost
-    ports: 
+    ports:
       - 3000:3000
     networks:
       - default
-    volumes: 
+    volumes:
       - client_node_modules:/app/node_modules
       - ./frontend:/app
 
@@ -45,12 +47,12 @@ services:
     build:
       context: ./backend/account
       dockerfile: ../Dockerfile
-    depends_on: 
+    depends_on:
       - postgres
       - nginx
     env_file:
       - ./backend/account/.env
-    environment: 
+    environment:
       # App variables
       - CLIENT_URL=http://localhost:3000
       - PORT=8081
@@ -62,11 +64,11 @@ services:
       - JWT_REFRESH_TOKEN_SECRET=refSecret
       - JWT_MAIL_VERIFY_SECRET=mailSecret
       - JWT_PASSWORD_RESET_SECRET=pwSecret
-    ports: 
+    ports:
       - 8081:8081
     networks:
       - default
-    volumes: 
+    volumes:
       - account_node_modules:/app/node_modules
       - ./backend/account:/app
 
@@ -75,13 +77,13 @@ services:
     build:
       context: ./backend/chat
       dockerfile: ../Dockerfile
-    environment: 
+    environment:
       - PORT=8082
-    ports: 
+    ports:
       - 8082:8082
     networks:
       - default
-    volumes: 
+    volumes:
       - chat_node_modules:/app/node_modules
       - ./backend/chat:/app
 
@@ -90,13 +92,13 @@ services:
     build:
       context: ./backend/interview
       dockerfile: ../Dockerfile
-    environment: 
+    environment:
       - PORT=8083
-    ports: 
+    ports:
       - 8083:8083
     networks:
       - default
-    volumes: 
+    volumes:
       - interview_node_modules:/app/node_modules
       - ./backend/interview:/app
 
@@ -105,19 +107,20 @@ services:
     build:
       context: ./backend/match
       dockerfile: ../Dockerfile
-    depends_on: 
+    depends_on:
       - nginx
-    environment: 
+      - redis
+    environment:
       - PORT=8084
-    ports: 
+    ports:
       - 8084:8084
     networks:
       - default
-    volumes: 
+    volumes:
       - match_node_modules:/app/node_modules
       - ./backend/match:/app
 
-volumes: 
+volumes:
   postgres:
   match_node_modules:
   interview_node_modules:

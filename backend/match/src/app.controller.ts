@@ -7,8 +7,11 @@ import { AppService } from './app.service';
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
+  /*
+  Checks if the service is up
+   */
   @Get()
-  getHello(): string {
-    return this.appService.getHello();
+  ping(): string {
+    return this.appService.ping();
   }
 }
