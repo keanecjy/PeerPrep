@@ -6,10 +6,12 @@ import { UserProfile } from '../shared/types';
 
 interface UserContextProps {
   user: UserProfile | null;
+  setUser: React.Dispatch<React.SetStateAction<UserProfile | null>>;
 }
 
 const UserContext = createContext<UserContextProps>({
   user: null,
+  setUser: () => null,
 });
 
 const UserProvider: React.FC = ({ children }) => {
@@ -42,7 +44,9 @@ const UserProvider: React.FC = ({ children }) => {
   }
 
   return (
-    <UserContext.Provider value={{ user }}>{children}</UserContext.Provider>
+    <UserContext.Provider value={{ user, setUser }}>
+      {children}
+    </UserContext.Provider>
   );
 };
 

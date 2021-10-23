@@ -30,13 +30,13 @@ export class UsersService {
   async createUser(
     createDetails: Omit<CreateUserDto, 'password'> & Pick<User, 'passwordHash'>
   ): Promise<User> {
-    const { firstName, lastName, email, passwordHash } = createDetails;
+    const { name, email, passwordHash } = createDetails;
     const partialUser = this.userRepository.create({
       email,
       passwordHash,
     });
     const user = await this.userRepository.save(partialUser);
-    await this.profileService.create({ firstName, lastName }, user);
+    await this.profileService.create({ name }, user);
 
     return user;
   }

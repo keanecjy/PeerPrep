@@ -30,7 +30,10 @@ const theme = createTheme({
     },
   },
   typography: {
-    h1: {
+    h2: {
+      color: styles.WHITE,
+    },
+    h6: {
       color: styles.WHITE,
     },
   },

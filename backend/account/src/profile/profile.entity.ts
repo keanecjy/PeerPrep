@@ -26,13 +26,7 @@ export class Profile {
   user: User;
 
   @Column('varchar')
-  firstName: string;
-
-  @Column('varchar')
-  lastName: string;
-
-  @Column('varchar', { nullable: true })
-  alias: string;
+  name: string;
 
   @Column('varchar', { nullable: true })
   photo: string;
