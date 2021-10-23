@@ -1,51 +1,39 @@
-import { TextField, Button, Grid, Tab, Tabs } from '@material-ui/core';
-import { useHistory } from 'react-router';
+import { Typography, TextField, Button, Grid } from '@material-ui/core';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 
 import theme from '../theme';
-import { PasswordTextField } from './PasswordTextField';
-import { login as apiLogin } from '../services/auth';
+import { resendConfirmationMail } from '../services/auth';
 import { LoadingIndicator } from './LoadingIndicator';
 import { CARDS } from '../shared/variables';
+import { useState } from 'react';
+import { HighlightedText } from './HighlightedText';
 
 const validationSchema = yup.object({
   email: yup
     .string('Enter your email')
     .email('Enter a valid email')
     .required('Email is required'),
-  password: yup
-    .string('Enter your password')
-    // .min(8, 'Password should be of minimum 8 characters length')
-    .required('Password is required'),
 });
 
-export const LoginCard = ({ navigate }) => {
-  const history = useHistory();
+export const ResendConfirmationCard = ({ navigate }) => {
+  const [sent, setSent] = useState(false);
 
-  const handleSubmit = async (
-    { email, password },
-    { setSubmitting, setErrors }
-  ) => {
-    await apiLogin(email, password)
+  const handleSubmit = async ({ email }, { setSubmitting, setErrors }) => {
+    await resendConfirmationMail(email)
       .then(() => {
-        setTimeout(() => {
-          setSubmitting(false);
-          history.push('/home');
-        }, 150);
+        setSubmitting(false);
+        setSent(true);
       })
       .catch((error) => {
         console.log(error.response?.data?.message);
         setSubmitting(false);
-        setErrors({ email: ' ', password: 'Invalid login details' });
+        setErrors({ email: 'Account does not exist' });
       });
   };
 
   const formik = useFormik({
-    initialValues: {
-      email: '',
-      password: '',
-    },
+    initialValues: { email: '' },
     validationSchema: validationSchema,
     onSubmit: handleSubmit,
   });
@@ -54,18 +42,21 @@ export const LoginCard = ({ navigate }) => {
     <form onSubmit={formik.handleSubmit} noValidate>
       <Grid container direction="column" spacing={2}>
         <Grid item xs>
-          <Tabs
-            value={CARDS.LOGIN}
-            onChange={(_event, newValue) => navigate(newValue)}
-            variant="fullWidth"
-            indicatorColor="primary"
-            textColor="primary"
+          <Typography
+            variant="h5"
+            align="center"
+            color="primary"
+            style={{
+              fontWeight: 'bold',
+            }}
           >
-            <Tab label="LOGIN" value={CARDS.LOGIN} />
-            <Tab label="REGISTER" value={CARDS.REGISTER} />
-          </Tabs>
+            RESEND EMAIL CONFIRMATION
+          </Typography>
         </Grid>
         <Grid item xs>
+          <Typography>
+            Didn't receive your confirmation mail? Get one more from us
+          </Typography>
           <TextField
             required
             fullWidth
@@ -83,21 +74,11 @@ export const LoginCard = ({ navigate }) => {
               formik.errors.email
             }
           />
-          <PasswordTextField
-            required
-            fullWidth
-            variant="outlined"
-            margin="normal"
-            id="password"
-            name="password"
-            label="Password"
-            type="password"
-            value={formik.values.password}
-            onChange={formik.handleChange}
-            error={formik.touched.password && Boolean(formik.errors.password)}
-            helperText={formik.touched.password && formik.errors.password}
-            autoComplete="off"
-          />
+          {sent && (
+            <HighlightedText>
+              We have send an account activation mail to your email address.
+            </HighlightedText>
+          )}
         </Grid>
         <Grid item xs style={{ textAlign: 'center' }}>
           <Button
@@ -105,10 +86,10 @@ export const LoginCard = ({ navigate }) => {
             fullWidth
             variant="contained"
             color="primary"
-            disabled={formik.isSubmitting || formik.isValidating}
+            disabled={sent || formik.isSubmitting || formik.isValidating}
             size="large"
           >
-            Login
+            Send Password Reset Email
             {(formik.isSubmitting || formik.isValidating) && (
               <LoadingIndicator />
             )}
@@ -121,13 +102,13 @@ export const LoginCard = ({ navigate }) => {
             disableElevation={true}
             disableRipple={true}
             disabled={formik.isSubmitting || formik.isValidating}
-            onClick={() => navigate(CARDS.FORGET_PASSWORD)}
+            onClick={() => navigate(CARDS.REGISTER)}
             style={{
               marginTop: theme.spacing(1),
               marginBottom: theme.spacing(1),
             }}
           >
-            Forgot Password?
+            Back to register
           </Button>
         </Grid>
       </Grid>

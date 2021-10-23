@@ -14,7 +14,7 @@ export class UsersSeeder implements ISeeder {
   ) {}
 
   private async generateData(subject: string): Promise<User> {
-    const passwordHash = await bcrypt.hash(subject, 12);
+    const passwordHash = await bcrypt.hash('password', 12);
     return this.userRepository.create({
       id: '10c7e0a8-120b-45e0-a37f-be92170bfb8d',
       profile: {

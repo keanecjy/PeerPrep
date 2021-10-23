@@ -1,4 +1,5 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
+import { useHistory } from 'react-router';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
@@ -7,12 +8,12 @@ import { Avatar, Icon, Menu, MenuItem } from '@material-ui/core';
 
 import { UserContext } from '../context/UserContext';
 import theme from '../theme';
-import { useHistory } from 'react-router';
+import { logout } from '../services/auth';
 
 export const HeaderBar = () => {
   const { user } = useContext(UserContext);
   const history = useHistory();
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
 
   const handleMenu = (event) => {
@@ -32,7 +33,7 @@ export const HeaderBar = () => {
   const handleLogout = () => {
     setAnchorEl(null);
     logout();
-    history.push('/');
+    history.push('/login');
     return;
   };
 
@@ -78,7 +79,6 @@ export const HeaderBar = () => {
               onClose={handleClose}
             >
               <MenuItem onClick={handleHome}>Dashboard</MenuItem>
-              <MenuItem onClick={handleClose}>Change Avatar</MenuItem>
               <MenuItem onClick={handleLogout}>Logout</MenuItem>
             </Menu>
           </div>

@@ -167,7 +167,7 @@ export class AuthService {
     });
 
     console.log('Confirm email token:', token);
-    const url = `${this.appConfigService.clientUrl}/confirm-email?token=${token}`;
+    const url = `${this.appConfigService.clientUrl}/login?state=check&token=${token}`;
 
     return this.mailService.sendEmailConfirmation(user, url);
   }
@@ -190,7 +190,7 @@ export class AuthService {
     });
 
     console.log('Password reset token:', token);
-    const url = `${this.appConfigService.clientUrl}/password-reset?token=${token}`;
+    const url = `${this.appConfigService.clientUrl}/login?state=reset&token=${token}`;
 
     return this.mailService.sendPasswordReset(user, url);
   }
