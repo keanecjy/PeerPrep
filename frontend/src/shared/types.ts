@@ -1,9 +1,8 @@
 export interface UserProfile {
   id: string;
-  firstName: string;
-  lastName: string;
-  alias?: string;
+  name: string;
   photo: string;
+  isGuest?: boolean;
 }
 
 export interface AuthData {

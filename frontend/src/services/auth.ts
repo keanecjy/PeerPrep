@@ -29,8 +29,7 @@ export const refresh = async () => {
 
 export const signup = async (signupDetails: {
   email: string;
-  firstName: string;
-  lastName: string;
+  name: string;
   password: string;
 }) => {
   const res = await server.post(apiKeys.auth.signup, signupDetails);
@@ -59,7 +58,7 @@ export const sendPasswordReset = async (email: string) => {
 };
 
 export const processPasswordReset = async (token: string, password: string) => {
-  const res = await server.post(apiKeys.auth.forgetPassword, {
+  const res = await server.post(apiKeys.auth.passwordReset, {
     token,
     password,
   });

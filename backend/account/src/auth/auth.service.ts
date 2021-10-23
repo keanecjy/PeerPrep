@@ -139,12 +139,11 @@ export class AuthService {
       throw new ConflictException('Email already exists');
     }
 
-    const { password, email, firstName, lastName } = createUserDto;
+    const { password, email, name } = createUserDto;
     const passwordHash = await bcrypt.hash(password, 12);
     return this.usersService.createUser({
       email,
-      firstName,
-      lastName,
+      name,
       passwordHash,
     });
   }
@@ -167,7 +166,7 @@ export class AuthService {
     });
 
     console.log('Confirm email token:', token);
-    const url = `${this.appConfigService.clientUrl}/confirm-email?token=${token}`;
+    const url = `${this.appConfigService.clientUrl}/login?state=check&token=${token}`;
 
     return this.mailService.sendEmailConfirmation(user, url);
   }
@@ -190,7 +189,7 @@ export class AuthService {
     });
 
     console.log('Password reset token:', token);
-    const url = `${this.appConfigService.clientUrl}/password-reset?token=${token}`;
+    const url = `${this.appConfigService.clientUrl}/login?state=reset&token=${token}`;
 
     return this.mailService.sendPasswordReset(user, url);
   }
