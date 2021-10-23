@@ -112,6 +112,8 @@ services:
       - redis
     environment:
       - PORT=8084
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
     ports:
       - 8084:8084
     networks:
