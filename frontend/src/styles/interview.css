@@ -1,0 +1,117 @@
+.interview-page {
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+    flex-direction: column;
+    color: white;
+}
+
+.interview-container {
+    display: flex;
+    width: 100%;
+    height: 85%;
+}
+
+.collab-container {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+}
+
+.interview-submit-container {
+    height: 15%;
+}
+
+.code-editor-container {
+    display: flex;
+    height: 90%;
+    width: 35%;
+    flex-direction: column;
+}
+
+.code-editor {
+    flex: 1;
+    background-color: white;
+    border-radius: 10px;
+    -webkit-box-shadow: 0px 0px 13px -2px rgba(0,0,0,0.47);
+    box-shadow: 0px 0px 13px -2px rgba(0,0,0,0.47);
+}
+
+.chat-question-container {
+    height: 90%;
+    width: 30%;
+    margin-left: 5%;
+}
+
+.question-container {
+    display: flex;
+    height: 43%;
+    flex-direction: column;
+    margin-bottom: 2%;
+    overflow: auto;
+}
+
+.chat-container {
+    display: flex;
+    height: 55%;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.chat {
+    height: calc(100% - 35px);
+    max-height: 400px;
+    background-color: white;
+    border-radius: 5px;
+    -webkit-box-shadow: 0px 0px 13px -2px rgba(0,0,0,0.47);
+    box-shadow: 0px 0px 13px -2px rgba(0,0,0,0.47);
+}
+
+#chat-box {
+    height: calc(100% - 31px);
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.chat-text-field {
+    display: flex;
+    flex-direction: row;
+    height: 30px;
+    margin-bottom: 1px;
+}
+
+.chat-bubble-left,
+.chat-bubble-right {
+    display: flex;
+    flex-direction: column;
+    margin: 8px 16px;
+}
+
+.chat-bubble-left {
+    align-items: flex-start;
+}
+
+.chat-bubble-right {
+    align-items: flex-end;
+}
+
+.interview-pg-title {
+    font-size: 25px;
+    font-weight: 600;
+}
+
+/* Style for custom chip */
+.custom-chip {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    background-color: #1976D2;
+    padding: 4px 8px;
+    border-radius: 20px;
+    max-width: 90%;
+    word-break: break-word
+}

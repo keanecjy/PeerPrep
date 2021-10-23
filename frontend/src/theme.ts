@@ -2,7 +2,7 @@ import { createTheme } from '@material-ui/core/styles';
 
 export const styles = {
   BLUE: '#1976D2',
-  LIGHT_BLUE: '#338FED',
+  LIGHT_BLUE: '#2D8FFF',
   WHITE: '#FFFFFF',
   BLACK: '#000000',
 };
@@ -12,7 +12,7 @@ const theme = createTheme({
     MuiCssBaseline: {
       '@global': {
         body: {
-          background: `linear-gradient(45deg, ${styles.BLUE} 10%, ${styles.LIGHT_BLUE} 100%)`,
+          background: `linear-gradient(to right, ${styles.BLUE} 20%, ${styles.LIGHT_BLUE} 100%)`,
           backgroundRepeat: 'no-repeat',
           backgroundAttachment: 'fixed',
         },
