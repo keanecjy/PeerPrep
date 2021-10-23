@@ -1,4 +1,4 @@
-import { Grid, Typography, Paper } from '@material-ui/core';
+import { Grid, Typography, Paper, Box } from '@material-ui/core';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useHistory, useLocation } from 'react-router';
 import { CheckConfirmationCard } from '../components/CheckConfirmationCard';
@@ -53,28 +53,33 @@ const LandingPage = () => {
   return (
     <Grid
       container
-      spacing={5}
-      style={{ height: '100vh' }}
-      // direction="column"
+      spacing={10}
+      style={{
+        height: 'calc(100vh - 64px)',
+        flexGrow: 1,
+        padding: 20,
+      }}
       alignItems="center"
       justifyContent="center"
     >
-      <Grid item xs style={{ margin: 'auto 30px', minWidth: 460 }}>
-        <Typography variant="h2" gutterBottom style={{ marginTop: 10 }}>
-          Get better today!
-        </Typography>
-        <Typography variant="h6" component="p" align="justify">
-          PeerPreps a coding collaborative platform… dummy words to fill up the
-          space… dummy words to fill up the space… dummy words to fill up the
-          space… dummy words to fill up the space… dummy words to fill up the
-          space… dummy words to fill up the space… dummy words to fill up the
-          space… dummy words to fill up the space… dummy words to fill up the
-          space… dummy words to fill up the space… dummy words to fill up the
-          space… dummy words to fill up the space… dummy words to fill up the
-          space…
-        </Typography>
+      <Grid item xs={12} sm={10} md={8} lg={5} style={{ minWidth: 460 }}>
+        <Box>
+          <Typography variant="h2" gutterBottom>
+            Get better today!
+          </Typography>
+          <Typography variant="h6" component="p" align="justify">
+            PeerPreps a coding collaborative platform… dummy words to fill up
+            the space… dummy words to fill up the space… dummy words to fill up
+            the space… dummy words to fill up the space… dummy words to fill up
+            the space… dummy words to fill up the space… dummy words to fill up
+            the space… dummy words to fill up the space… dummy words to fill up
+            the space… dummy words to fill up the space… dummy words to fill up
+            the space… dummy words to fill up the space… dummy words to fill up
+            the space…
+          </Typography>
+        </Box>
       </Grid>
-      <Grid item xs style={{ margin: 'auto 30px' }}>
+      <Grid item xs={12} sm={10} md={8} lg={5}>
         <Paper
           style={{
             margin: 'auto',

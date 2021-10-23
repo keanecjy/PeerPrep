@@ -28,7 +28,9 @@ export const ResendConfirmationCard = ({ navigate }) => {
       .catch((error) => {
         console.log(error.response?.data?.message);
         setSubmitting(false);
-        setErrors({ email: 'Account does not exist' });
+        setErrors({
+          email: error.response?.data?.message || 'Account does not exist',
+        });
       });
   };
 
@@ -54,7 +56,7 @@ export const ResendConfirmationCard = ({ navigate }) => {
           </Typography>
         </Grid>
         <Grid item xs>
-          <Typography>
+          <Typography style={{ paddingBottom: theme.spacing(2) }}>
             Didn't receive your confirmation mail? Get one more from us
           </Typography>
           <TextField
@@ -64,19 +66,19 @@ export const ResendConfirmationCard = ({ navigate }) => {
             name="email"
             label="Email Address"
             variant="outlined"
-            margin="normal"
             value={formik.values.email}
             onChange={formik.handleChange}
             error={formik.touched.email && Boolean(formik.errors.email)}
             helperText={
-              formik.touched.email &&
-              formik.errors.email !== ' ' &&
-              formik.errors.email
+              (formik.touched.email &&
+                formik.errors.email !== ' ' &&
+                formik.errors.email) ||
+              ' '
             }
           />
           {sent && (
             <HighlightedText>
-              We have send an account activation mail to your email address.
+              We have resend an account activation mail to your email address.
             </HighlightedText>
           )}
         </Grid>
@@ -89,7 +91,7 @@ export const ResendConfirmationCard = ({ navigate }) => {
             disabled={sent || formik.isSubmitting || formik.isValidating}
             size="large"
           >
-            Send Password Reset Email
+            RESEND EMAIL CONFIRMATION
             {(formik.isSubmitting || formik.isValidating) && (
               <LoadingIndicator />
             )}

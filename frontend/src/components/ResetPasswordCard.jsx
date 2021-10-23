@@ -22,7 +22,7 @@ const validationSchema = yup.object({
     .oneOf([yup.ref('password'), null], 'Password does not match'),
 });
 
-export const ResetPasswordCard = () => {
+export const ResetPasswordCard = ({ navigate }) => {
   const [success, setSuccess] = useState(false);
   const [token, setToken] = useState(null);
   const { search } = useLocation();
@@ -42,12 +42,12 @@ export const ResetPasswordCard = () => {
         }, 150);
       })
       .catch((error) => {
-        console.log(error.response?.data?.message);
         setSubmitting(false);
         setErrors({
           password: ' ',
           confirm:
-            'Invalid password reset link. Token could be expired, please request for a new reset link.',
+            error.response?.data?.message ||
+            'Invalid password reset link. Please request for a new reset link.',
         });
       });
   };
@@ -83,7 +83,6 @@ export const ResetPasswordCard = () => {
                 required
                 fullWidth
                 variant="outlined"
-                margin="normal"
                 id="password"
                 name="password"
                 label="New Password"
@@ -94,9 +93,10 @@ export const ResetPasswordCard = () => {
                   formik.touched.password && Boolean(formik.errors.password)
                 }
                 helperText={
-                  formik.touched.password &&
-                  formik.errors.password !== ' ' &&
-                  formik.errors.password
+                  (formik.touched.password &&
+                    formik.errors.password !== ' ' &&
+                    formik.errors.password) ||
+                  ' '
                 }
                 autoComplete="off"
               />
@@ -104,7 +104,6 @@ export const ResetPasswordCard = () => {
                 required
                 fullWidth
                 variant="outlined"
-                margin="normal"
                 id="confirm"
                 name="confirm"
                 label="Confirm New Password"
@@ -112,7 +111,9 @@ export const ResetPasswordCard = () => {
                 value={formik.values.confirm}
                 onChange={formik.handleChange}
                 error={formik.touched.confirm && Boolean(formik.errors.confirm)}
-                helperText={formik.touched.confirm && formik.errors.confirm}
+                helperText={
+                  (formik.touched.confirm && formik.errors.confirm) || ' '
+                }
                 autoComplete="off"
               />
             </>
@@ -163,7 +164,7 @@ export const ResetPasswordCard = () => {
             disableElevation={true}
             disableRipple={true}
             disabled={formik.isSubmitting || formik.isValidating}
-            onClick={() => navigate(CARDS.REGISTER)}
+            onClick={() => navigate(CARDS.LOGIN)}
             style={{
               marginTop: theme.spacing(1),
               marginBottom: theme.spacing(1),

@@ -58,7 +58,7 @@ export const sendPasswordReset = async (email: string) => {
 };
 
 export const processPasswordReset = async (token: string, password: string) => {
-  const res = await server.post(apiKeys.auth.forgetPassword, {
+  const res = await server.post(apiKeys.auth.passwordReset, {
     token,
     password,
   });

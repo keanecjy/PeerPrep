@@ -26,9 +26,10 @@ export const ForgetPasswordCard = ({ navigate }) => {
         setSent(true);
       })
       .catch((error) => {
-        console.log(error.response?.data?.message);
         setSubmitting(false);
-        setErrors({ email: 'Account does not exist' });
+        setErrors({
+          email: error.response?.data?.message || 'Account does not exist',
+        });
       });
   };
 
@@ -54,7 +55,7 @@ export const ForgetPasswordCard = ({ navigate }) => {
           </Typography>
         </Grid>
         <Grid item xs>
-          <Typography>
+          <Typography style={{ marginBottom: theme.spacing(2) }}>
             Provide us your email and we will send you a password reset link
           </Typography>
           <TextField
@@ -64,19 +65,20 @@ export const ForgetPasswordCard = ({ navigate }) => {
             name="email"
             label="Email Address"
             variant="outlined"
-            margin="normal"
             value={formik.values.email}
             onChange={formik.handleChange}
             error={formik.touched.email && Boolean(formik.errors.email)}
             helperText={
-              formik.touched.email &&
-              formik.errors.email !== ' ' &&
-              formik.errors.email
+              (formik.touched.email &&
+                formik.errors.email !== ' ' &&
+                formik.errors.email) ||
+              ' '
             }
           />
           {sent && (
             <HighlightedText>
-              We have send an account activation mail to your email address.
+              We have send instructions on how to reset your password to your
+              email address
             </HighlightedText>
           )}
         </Grid>

@@ -35,9 +35,11 @@ export const LoginCard = ({ navigate }) => {
         }, 150);
       })
       .catch((error) => {
-        console.log(error.response?.data?.message);
         setSubmitting(false);
-        setErrors({ email: ' ', password: 'Invalid login details' });
+        setErrors({
+          email: ' ',
+          password: error.response?.data?.message || 'Invalid login details',
+        });
       });
   };
 
@@ -73,21 +75,20 @@ export const LoginCard = ({ navigate }) => {
             name="email"
             label="Email Address"
             variant="outlined"
-            margin="normal"
             value={formik.values.email}
             onChange={formik.handleChange}
             error={formik.touched.email && Boolean(formik.errors.email)}
             helperText={
-              formik.touched.email &&
-              formik.errors.email !== ' ' &&
-              formik.errors.email
+              (formik.touched.email &&
+                formik.errors.email !== ' ' &&
+                formik.errors.email) ||
+              ' '
             }
           />
           <PasswordTextField
             required
             fullWidth
             variant="outlined"
-            margin="normal"
             id="password"
             name="password"
             label="Password"
@@ -96,6 +97,9 @@ export const LoginCard = ({ navigate }) => {
             onChange={formik.handleChange}
             error={formik.touched.password && Boolean(formik.errors.password)}
             helperText={formik.touched.password && formik.errors.password}
+            helperText={
+              (formik.touched.password && formik.errors.password) || ' '
+            }
             autoComplete="off"
           />
         </Grid>

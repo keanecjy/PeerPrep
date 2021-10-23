@@ -4,12 +4,14 @@ import * as yup from 'yup';
 
 import theme from '../theme';
 import { PasswordTextField } from './PasswordTextField';
-import { login as apiLogin } from '../services/auth';
+import { signup } from '../services/auth';
 import { LoadingIndicator } from './LoadingIndicator';
 import { CARDS } from '../shared/variables';
 import { useState } from 'react';
+import { HighlightedText } from './HighlightedText';
 
 const validationSchema = yup.object({
+  name: yup.string('Enter your name').required('Name is required'),
   email: yup
     .string('Enter your email')
     .email('Enter a valid email')
@@ -20,6 +22,7 @@ const validationSchema = yup.object({
     .required('Password is required'),
   confirm: yup
     .string('Confirm your password')
+    .required('Confirm Password is required')
     .oneOf([yup.ref('password'), null], 'Password does not match'),
 });
 
@@ -27,27 +30,25 @@ export const RegisterCard = ({ navigate }) => {
   const [registered, setRegistered] = useState(false);
 
   const handleSubmit = async (
-    { email, password },
+    { email, password, name },
     { setSubmitting, setErrors }
   ) => {
-    await apiLogin(email, password)
+    await signup({ name, email, password })
       .then(() => {
         setSubmitting(false);
         setRegistered(true);
       })
       .catch((error) => {
-        console.log(error.response?.data?.message);
         setSubmitting(false);
         setErrors({
-          email: ' ',
-          password: ' ',
-          confirm: 'Invalid login details',
+          email: error.response?.data?.message || 'Email already exists',
         });
       });
   };
 
   const formik = useFormik({
     initialValues: {
+      name: '',
       email: '',
       password: '',
       confirm: '',
@@ -75,25 +76,32 @@ export const RegisterCard = ({ navigate }) => {
           <TextField
             required
             fullWidth
+            id="name"
+            name="name"
+            label="Name"
+            placeholder="How should we call you?"
+            variant="outlined"
+            value={formik.values.name}
+            onChange={formik.handleChange}
+            error={formik.touched.name && Boolean(formik.errors.name)}
+            helperText={(formik.touched.name && formik.errors.name) || ' '}
+          />
+          <TextField
+            required
+            fullWidth
             id="email"
             name="email"
             label="Email Address"
             variant="outlined"
-            margin="normal"
             value={formik.values.email}
             onChange={formik.handleChange}
             error={formik.touched.email && Boolean(formik.errors.email)}
-            helperText={
-              formik.touched.email &&
-              formik.errors.email !== ' ' &&
-              formik.errors.email
-            }
+            helperText={(formik.touched.email && formik.errors.email) || ' '}
           />
           <PasswordTextField
             required
             fullWidth
             variant="outlined"
-            margin="normal"
             id="password"
             name="password"
             label="Password"
@@ -102,9 +110,7 @@ export const RegisterCard = ({ navigate }) => {
             onChange={formik.handleChange}
             error={formik.touched.password && Boolean(formik.errors.password)}
             helperText={
-              formik.touched.password &&
-              formik.errors.password !== ' ' &&
-              formik.errors.password
+              (formik.touched.password && formik.errors.password) || ' '
             }
             autoComplete="off"
           />
@@ -112,7 +118,6 @@ export const RegisterCard = ({ navigate }) => {
             required
             fullWidth
             variant="outlined"
-            margin="normal"
             id="confirm"
             name="confirm"
             label="Confirm Password"
@@ -120,13 +125,14 @@ export const RegisterCard = ({ navigate }) => {
             value={formik.values.confirm}
             onChange={formik.handleChange}
             error={formik.touched.confirm && Boolean(formik.errors.confirm)}
-            helperText={formik.touched.confirm && formik.errors.confirm}
+            helperText={
+              (formik.touched.confirm && formik.errors.confirm) || ' '
+            }
             autoComplete="off"
           />
           {registered && (
             <HighlightedText>
-              We have send instructions on how to reset your password to your
-              email address
+              We have send an account activation mail to your email address.
             </HighlightedText>
           )}
         </Grid>
