@@ -60,7 +60,7 @@ export const RegisterCard = ({ navigate }) => {
   return (
     <form onSubmit={formik.handleSubmit} noValidate>
       <Grid container direction="column" spacing={2}>
-        <Grid item xs>
+        <Grid item xs style={{ marginBottom: theme.spacing(2) }}>
           <Tabs
             value={CARDS.REGISTER}
             onChange={(_event, newValue) => navigate(newValue)}

@@ -1,14 +1,12 @@
 import React, { useContext, useState } from 'react';
 import { useHistory } from 'react-router';
 import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
-import { Avatar, Icon, Menu, MenuItem } from '@material-ui/core';
+import { Avatar, Menu, MenuItem } from '@material-ui/core';
 
 import { UserContext } from '../context/UserContext';
-import theme from '../theme';
 import { logout } from '../services/auth';
+import PeerPrepLogo from './PeerPrepLogo';
 
 export const HeaderBar = () => {
   const { user } = useContext(UserContext);
@@ -40,17 +38,7 @@ export const HeaderBar = () => {
   return (
     <div style={{ flexGrow: 1 }}>
       <Toolbar>
-        <Icon
-          edge="start"
-          style={{ marginRight: theme.spacing(2) }}
-          color="secondary"
-          aria-label="menu"
-        >
-          <MenuIcon />
-        </Icon>
-        <Typography variant="h6" style={{ flexGrow: 1 }}>
-          PeerPrep
-        </Typography>
+        <PeerPrepLogo />
         {user && (
           <div>
             <IconButton

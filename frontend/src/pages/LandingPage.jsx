@@ -46,7 +46,7 @@ const LandingPage = () => {
 
       case CARDS.LOGIN:
       default:
-        return <LoginCard navigate={setCard} />;
+        return <LoginCard navigate={customNavigate} />;
     }
   }, [card]);
 
@@ -68,14 +68,9 @@ const LandingPage = () => {
             Get better today!
           </Typography>
           <Typography variant="h6" component="p" align="justify">
-            PeerPreps a coding collaborative platform… dummy words to fill up
-            the space… dummy words to fill up the space… dummy words to fill up
-            the space… dummy words to fill up the space… dummy words to fill up
-            the space… dummy words to fill up the space… dummy words to fill up
-            the space… dummy words to fill up the space… dummy words to fill up
-            the space… dummy words to fill up the space… dummy words to fill up
-            the space… dummy words to fill up the space… dummy words to fill up
-            the space…
+            PeerPreps is a collaborative coding platform for you to practise
+            coding interviews. Match with a partner and start coding with them
+            live.
           </Typography>
         </Box>
       </Grid>
@@ -87,6 +82,7 @@ const LandingPage = () => {
             minWidth: 460,
             maxWidth: 500,
             padding: 20,
+            borderRadius: 10,
           }}
         >
           <CurrentCard />
