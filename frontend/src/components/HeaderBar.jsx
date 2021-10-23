@@ -37,7 +37,7 @@ export const HeaderBar = () => {
 
   return (
     <div style={{ flexGrow: 1 }}>
-      <Toolbar>
+      <Toolbar style={{ justifyContent: 'space-between' }}>
         <PeerPrepLogo />
         {user && (
           <div>
@@ -49,6 +49,8 @@ export const HeaderBar = () => {
               onClick={handleMenu}
             >
               <Avatar
+                style={{ padding: 2, backgroundColor: 'white' }}
+                sizes={10}
                 alt={user?.name || 'Guest User'}
                 src={
                   user?.photo ||

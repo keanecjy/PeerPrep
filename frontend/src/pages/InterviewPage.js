@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { io } from 'socket.io-client';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import Chip from '@material-ui/core/Chip';
 import { Grid } from '@material-ui/core';
+import { UserContext } from '../context/UserContext';
 
 const chatSocket = io('http://localhost:8082/', {
   //forceNew: true,
@@ -24,12 +25,13 @@ const InterviewPage = () => {
   const [messages, setMessages] = useState([]);
   const [currMessage, setCurrMessage] = useState('');
   const [sessionId, setSessionId] = useState('11');
+  const { user } = useContext(UserContext);
 
   useEffect(() => {
     chatSocket.on('connect', () =>
       setMessages((oldMessages) => [
         ...oldMessages,
-        { sender: 'System', msg: 'You are connected!' },
+        { id: '0', sender: 'System', msg: 'You are connected!' },
       ])
     );
     chatSocket.on(sessionId, (message) => {
@@ -44,8 +46,8 @@ const InterviewPage = () => {
       chatSocket.emit('newMessage', {
         sessionId,
         payload: {
-          id: '123',
-          sender: 'Ashley',
+          id: user.id,
+          sender: user.name,
           msg: currMessage,
         },
       });
@@ -87,7 +89,7 @@ const InterviewPage = () => {
                       <div
                         key={key}
                         className={
-                          data.sender === 'Ashley'
+                          data.id === user.id
                             ? 'chat-bubble-right'
                             : 'chat-bubble-left'
                         }

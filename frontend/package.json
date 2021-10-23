@@ -17,6 +17,7 @@
     "@material-ui/icons": "^4.11.2",
     "@types/react-router-dom": "^5.3.1",
     "@types/socket.io-client": "^3.0.0",
+    "@types/uuid": "^8.3.1",
     "add": "^2.0.6",
     "axios": "^0.22.0",
     "formik": "^2.2.9",
@@ -27,6 +28,8 @@
     "react-scripts": "4.0.3",
     "react-toastify": "^8.0.3",
     "socket.io-client": "^4.3.2",
+    "unique-names-generator": "^4.6.0",
+    "uuid": "^8.3.2",
     "web-vitals": "^1.0.1",
     "yup": "^0.32.11"
   },

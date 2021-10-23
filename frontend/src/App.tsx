@@ -39,9 +39,9 @@ const App = () => {
       <HeaderBar />
       <ToastContainer position="top-right" />
       <Switch>
-        <Route exact path="/home" component={HomePage} />
+        {user && <Route exact path="/home" component={HomePage} />}
         <Route exact path="/login" component={LandingPage} />
-        <Route exact path="/interview" component={InterviewPage} />
+        {user && <Route exact path="/interview" component={InterviewPage} />}
         <Route>
           {user ? (
             <Redirect to={{ pathname: '/home' }} />

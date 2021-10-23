@@ -2,12 +2,15 @@ import { TextField, Button, Grid, Tab, Tabs } from '@material-ui/core';
 import { useHistory } from 'react-router';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
+import { useContext } from 'react';
+import { UserContext } from '../context/UserContext';
 
 import theme from '../theme';
 import { PasswordTextField } from './PasswordTextField';
 import { login as apiLogin } from '../services/auth';
 import { LoadingIndicator } from './LoadingIndicator';
 import { CARDS } from '../shared/variables';
+import { getGuestAccount } from '../shared/functions';
 
 const validationSchema = yup.object({
   email: yup
@@ -22,6 +25,7 @@ const validationSchema = yup.object({
 
 export const LoginCard = ({ navigate }) => {
   const history = useHistory();
+  const { setUser } = useContext(UserContext);
 
   const handleSubmit = async (
     { email, password },
@@ -120,6 +124,7 @@ export const LoginCard = ({ navigate }) => {
           <Button
             align="center"
             size="small"
+            fullWidth
             variant="text"
             color="primary"
             disableElevation={true}
@@ -128,10 +133,31 @@ export const LoginCard = ({ navigate }) => {
             onClick={() => navigate(CARDS.FORGET_PASSWORD)}
             style={{
               marginTop: theme.spacing(1),
-              marginBottom: theme.spacing(1),
             }}
           >
             Forgot Password?
+          </Button>
+          <Button
+            align="center"
+            size="small"
+            fullWidth
+            variant="text"
+            color="primary"
+            disableElevation={true}
+            disableRipple={true}
+            disabled={formik.isSubmitting || formik.isValidating}
+            onClick={() => {
+              const guest = getGuestAccount();
+              setUser(guest);
+              setTimeout(() => {
+                history.push('/home');
+              }, 150);
+            }}
+            style={{
+              marginBottom: theme.spacing(1),
+            }}
+          >
+            Continue as Guest
           </Button>
         </Grid>
       </Grid>
