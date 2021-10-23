@@ -1,6 +1,5 @@
 import { Button, CircularProgress } from '@material-ui/core';
 import { Check } from '@material-ui/icons';
-import { useState } from 'react';
 
 const LoadingButton = (props) => {
   const { loading, done, ...other } = props;

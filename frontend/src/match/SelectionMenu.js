@@ -1,11 +1,11 @@
-import { Menu, MenuItem } from '@material-ui/core';
-import { useState } from 'react';
+import { Button, Menu } from '@material-ui/core';
+import React, { useState } from 'react';
 import SelectionItem from './SelectionItem';
 
 const SelectionMenu = (props) => {
   const { header, list, value, setValue } = props;
 
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -17,7 +17,7 @@ const SelectionMenu = (props) => {
 
   return (
     <div>
-      <Text>{header}</Text>
+      <p>{header}</p>
       <Button
         id="basic-button"
         aria-controls="basic-menu"
