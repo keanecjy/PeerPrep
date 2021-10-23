@@ -18,10 +18,10 @@ export const getProfileById = async (id: string) => {
 
 export const updateProfile = async (
   id: string,
-  { alias, photo }: { alias?: string; photo?: string }
+  { name, photo }: { name?: string; photo?: string }
 ) => {
   const res = await server.put(`${apiKeys.profile.key}/${id}`, {
-    alias,
+    name,
     photo,
   });
   return res.data as UserProfile;

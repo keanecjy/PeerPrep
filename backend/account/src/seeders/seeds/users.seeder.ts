@@ -18,8 +18,7 @@ export class UsersSeeder implements ISeeder {
     return this.userRepository.create({
       id: '10c7e0a8-120b-45e0-a37f-be92170bfb8d',
       profile: {
-        firstName: subject,
-        lastName: 'User',
+        name: subject,
       },
       passwordHash,
       email: `${subject}@email.com`,

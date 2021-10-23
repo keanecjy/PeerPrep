@@ -139,12 +139,11 @@ export class AuthService {
       throw new ConflictException('Email already exists');
     }
 
-    const { password, email, firstName, lastName } = createUserDto;
+    const { password, email, name } = createUserDto;
     const passwordHash = await bcrypt.hash(password, 12);
     return this.usersService.createUser({
       email,
-      firstName,
-      lastName,
+      name,
       passwordHash,
     });
   }

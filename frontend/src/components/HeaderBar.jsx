@@ -61,7 +61,7 @@ export const HeaderBar = () => {
               onClick={handleMenu}
             >
               <Avatar
-                alt={user?.alias || user?.firstName}
+                alt={user?.name || 'Guest User'}
                 src={
                   user?.photo ||
                   `https://avatars.dicebear.com/api/gridy/${user.id}.svg`

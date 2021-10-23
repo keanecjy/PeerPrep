@@ -14,7 +14,7 @@ export class ProfileService {
   ) {}
 
   create(
-    createProfileDetails: Pick<Profile, 'firstName' | 'lastName'>,
+    createProfileDetails: Pick<Profile, 'name'>,
     user: User
   ): Promise<Profile> {
     const profile = this.profileRepository.create({

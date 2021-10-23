@@ -29,8 +29,7 @@ export const refresh = async () => {
 
 export const signup = async (signupDetails: {
   email: string;
-  firstName: string;
-  lastName: string;
+  name: string;
   password: string;
 }) => {
   const res = await server.post(apiKeys.auth.signup, signupDetails);
