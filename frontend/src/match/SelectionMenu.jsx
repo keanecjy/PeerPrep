@@ -1,6 +1,7 @@
-import { Button, Menu } from '@material-ui/core';
+import { Box, Button, Menu, Typography } from '@material-ui/core';
 import React, { useState } from 'react';
 import SelectionItem from './SelectionItem';
+import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 
 const SelectionMenu = (props) => {
   const { header, list, value, setValue } = props;
@@ -10,22 +11,35 @@ const SelectionMenu = (props) => {
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
-  const handleClose = (item) => {
+  const handleClose = () => {
     setAnchorEl(null);
+  };
+
+  const setItem = (item) => {
     setValue(item);
   };
 
   return (
-    <div>
-      <p>{header}</p>
+    <Box marginTop={4}>
+      <Typography color="primary" style={{ fontWeight: 'bold' }}>
+        {header}
+      </Typography>
       <Button
+        style={{
+          marginTop: 4,
+          minWidth: 200,
+          justifyContent: 'space-between',
+        }}
         id="basic-button"
+        variant="contained"
+        color="secondary"
         aria-controls="basic-menu"
         aria-haspopup="true"
         aria-expanded={open ? 'true' : undefined}
         onClick={handleClick}
       >
         {value}
+        <KeyboardArrowDownIcon />
       </Button>
       <Menu
         id="basic-menu"
@@ -37,10 +51,10 @@ const SelectionMenu = (props) => {
         }}
       >
         {list.map((item) => (
-          <SelectionItem handleClose={() => handleClose(item)} text={item} />
+          <SelectionItem handleClose={() => setItem(item)} text={item} />
         ))}
       </Menu>
-    </div>
+    </Box>
   );
 };
 

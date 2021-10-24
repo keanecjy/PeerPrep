@@ -1,4 +1,4 @@
-import { Box, Button, Modal, Typography } from '@material-ui/core';
+import { Box, Button, Modal, Typography, Paper } from '@material-ui/core';
 import React, { useContext, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { UserContext } from '../context/UserContext';
@@ -86,6 +86,9 @@ const MatchPage = () => {
   const MatchButton = () => {
     return (
       <Button
+        style={{
+          marginTop: 60,
+        }}
         type="submit"
         fullWidth
         variant="contained"
@@ -103,10 +106,21 @@ const MatchPage = () => {
 
   return (
     <div className="match-page">
-      <p>{sessionText}</p>
-      <DifficultyMenu />
-      <LanguageMenu />
-      <MatchButton />
+      <Paper
+        style={{
+          margin: 'auto',
+          minHeight: 300,
+          minWidth: 460,
+          maxWidth: 500,
+          padding: 20,
+          borderRadius: 10,
+        }}
+      >
+        <Typography color="primary">{sessionText}</Typography>
+        <DifficultyMenu />
+        <LanguageMenu />
+        <MatchButton />
+      </Paper>
       <Modal
         open={open}
         aria-labelledby="modal-modal-title"
@@ -114,7 +128,7 @@ const MatchPage = () => {
       >
         <Box sx={modalStyle}>
           <LoadingButton loading={true} done={finished} />
-          <Typography>Matching is in progress...</Typography>
+          <Typography color="primary">Matching is in progress...</Typography>
           <Button
             type="submit"
             fullWidth
