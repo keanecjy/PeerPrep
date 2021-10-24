@@ -15,7 +15,7 @@ const modalStyle = {
   transform: 'translate(-50%, -50%)',
   width: 400,
   bgcolor: 'background.paper',
-  border: '2px solid #000',
+  borderRadius: 25,
   boxShadow: 24,
   p: 4,
 };
@@ -31,6 +31,7 @@ const MatchPage = () => {
 
   const handleMatch = (counter, retry) => {
     console.log(`Language: ${language}, Difficulty: ${difficulty}`);
+    console.log(`Counter: ${counter}`);
     if (!retry) {
       return;
     }
@@ -126,7 +127,15 @@ const MatchPage = () => {
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <Box sx={modalStyle}>
+        <Box
+          sx={modalStyle}
+          style={{
+            alignItems: 'center',
+            justifyContent: 'center',
+            display: 'flex',
+            flexDirection: 'column',
+          }}
+        >
           <LoadingButton loading={true} done={finished} />
           <Typography color="primary">Matching is in progress...</Typography>
           <Button
