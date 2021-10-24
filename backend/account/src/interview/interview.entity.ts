@@ -27,14 +27,14 @@ export class Interview {
   timeTaken: string;
 
   @Column({ type: 'varchar', nullable: true })
-  code: string;
+  code?: string;
 
   @Column({ type: 'varchar', nullable: true })
-  language: string;
+  language?: string;
 
   @Column({ type: 'boolean', default: true })
   isCompleted: boolean;
 
   @CreateDateColumn()
-  createdAt: string;
+  createdAt: Date;
 }
