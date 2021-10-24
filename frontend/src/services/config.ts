@@ -20,4 +20,7 @@ export const apiKeys = {
     me: '/profile/me',
     key: '/profile',
   },
+  match: {
+    find: '/match/find',
+  },
 };

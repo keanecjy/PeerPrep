@@ -11,6 +11,7 @@ import { chatPing } from './services/chat';
 import { matchPing } from './services/match';
 import { accountPing } from './services/profile';
 import { interviewPing } from './services/interview';
+import MatchPage from './pages/MatchPage';
 import { HeaderBar } from './components/HeaderBar';
 
 const App = () => {
@@ -42,6 +43,7 @@ const App = () => {
         {user && <Route exact path="/home" component={HomePage} />}
         <Route exact path="/login" component={LandingPage} />
         {user && <Route exact path="/interview" component={InterviewPage} />}
+        {user && <Route exact path="/match" component={MatchPage} />}
         <Route>
           {user ? (
             <Redirect to={{ pathname: '/home' }} />
