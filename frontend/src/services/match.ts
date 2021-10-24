@@ -1,3 +1,4 @@
+import { MatchResponse } from '../match/match-response';
 import { apiKeys } from './config';
 import server from './server';
 
@@ -17,5 +18,5 @@ export const getMatch = async (
       language: language,
     },
   });
-  return res;
+  return res.data as MatchResponse;
 };
