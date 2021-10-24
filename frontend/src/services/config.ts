@@ -1,7 +1,7 @@
 export const apiKeys = {
   serverCheck: {
     account: '/',
-    match: '/',
+    match: '/match',
     interview: '/interview',
     chat: '/chat',
   },
@@ -21,6 +21,6 @@ export const apiKeys = {
     key: '/profile',
   },
   match: {
-    match: '/match',
+    find: '/match/find',
   },
 };

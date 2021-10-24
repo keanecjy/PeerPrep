@@ -11,7 +11,7 @@ export const getMatch = async (
   difficulty: string,
   language: string
 ) => {
-  const res = await server.get(apiKeys.match.match, {
+  const res = await server.get(apiKeys.match.find, {
     params: {
       id: id,
       difficulty: difficulty,

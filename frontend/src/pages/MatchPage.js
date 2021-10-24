@@ -29,8 +29,9 @@ const MatchPage = () => {
   const [finished, setFinished] = useState(false);
   const [open, openModal] = useState(false);
 
-  const handleMatch = (counter) => {
-    if (!open) {
+  const handleMatch = (counter, retry) => {
+    console.log(`Language: ${language}, Difficulty: ${difficulty}`);
+    if (!retry) {
       return;
     }
 
@@ -39,7 +40,9 @@ const MatchPage = () => {
       return;
     }
 
-    getMatch(user.id, difficulty, language)
+    console.log(`Language: ${language}, Difficulty: ${difficulty}`);
+
+    getMatch(user ? user.id : Math.random(), difficulty, language)
       .then((response) => {
         console.log(response);
         if (response.status) {
@@ -51,7 +54,7 @@ const MatchPage = () => {
           }, 150);
         } else {
           setTimeout(() => {
-            handleMatch(counter - 1);
+            handleMatch(counter - 1, open);
           }, 5000);
         }
       })
@@ -90,7 +93,7 @@ const MatchPage = () => {
         size="large"
         onClick={() => {
           openModal(true);
-          handleMatch(6);
+          handleMatch(6, true);
         }}
       >
         Start coding!
