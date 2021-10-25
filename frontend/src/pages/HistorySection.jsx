@@ -21,7 +21,7 @@ const mockData = [
 ];
 
 const HistorySection = () => {
-  const [interviewHistory, setInterviewHistory] = useState(mockData);
+  const [interviewHistory, setInterviewHistory] = useState([]);
   const { user } = useContext(UserContext);
   const history = useHistory();
 
