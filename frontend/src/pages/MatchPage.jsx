@@ -106,12 +106,10 @@ const MatchPage = () => {
   };
 
   return (
-    <div className="match-page">
+    <Box>
       <Paper
         style={{
-          margin: 'auto',
           minHeight: 300,
-          minWidth: 460,
           maxWidth: 500,
           padding: 20,
           borderRadius: 10,
@@ -152,7 +150,7 @@ const MatchPage = () => {
           </Button>
         </Box>
       </Modal>
-    </div>
+    </Box>
   );
 };
 
