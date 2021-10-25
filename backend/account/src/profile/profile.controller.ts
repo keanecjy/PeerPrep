@@ -50,7 +50,9 @@ export class ProfileController {
   findOneWithInterview(@Param('id') id: string): Promise<Interview[]> {
     return this.profileService
       .findOneWithInterviews(id)
-      .then((profile) => profile.interviews);
+      .then((profile) =>
+        profile.interviews.sort((a, b) => (a.createdAt > b.createdAt ? -1 : 1))
+      );
   }
 
   /**
