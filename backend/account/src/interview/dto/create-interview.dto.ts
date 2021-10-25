@@ -12,19 +12,15 @@ export class CreateInterviewDto {
   leetcodeSlug: string;
 
   @IsString()
+  @IsNotEmpty()
+  questionName: string;
+
+  @IsString()
   @IsOptional()
   partner?: string;
 
   @IsString()
   timeTaken: string;
-
-  @IsString()
-  @IsOptional()
-  code?: string;
-
-  @IsString()
-  @IsOptional()
-  language?: string;
 
   @IsBoolean()
   @IsDefined()

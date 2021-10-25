@@ -11,3 +11,12 @@ export interface AuthData {
   expiresIn: number;
   refreshToken: string;
 }
+
+export interface InterviewHistory {
+  id: number;
+  questionName: string;
+  participants: UserProfile[];
+  timeTaken: string;
+  isCompleted: boolean;
+  createdAt: Date;
+}

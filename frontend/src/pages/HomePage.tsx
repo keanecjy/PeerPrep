@@ -1,21 +1,66 @@
-import { Button } from '@material-ui/core';
-import React, { useContext, useEffect } from 'react';
-import { useHistory } from 'react-router';
+import { Grid, Typography } from '@material-ui/core';
+import React, { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
+import HistorySection from './HistorySection';
+import MatchPage from './MatchPage';
 
 const HomePage = () => {
   const { user } = useContext(UserContext);
-  const history = useHistory();
-  useEffect(() => {
-    console.log(user);
-  }, [user]);
 
   return (
-    <div>
-      <h1>This page will contain the HomePage.</h1>
-      <p>Logged in as: {user?.name}</p>
-      <Button onClick={() => history.push('interview')}>Go to Interview</Button>
-    </div>
+    <Grid
+      container
+      spacing={4}
+      style={{
+        flexGrow: 1,
+        padding: '10px 50px',
+        width: '100%',
+        margin: 0,
+      }}
+      alignItems="flex-start"
+      justifyContent="center"
+      direction="row-reverse"
+    >
+      <Grid item xs={12} sm={10} md={8} style={{ margin: '10px' }}>
+        <Typography variant="h2">
+          Welcome Back, {user?.name || 'Guest'}!
+        </Typography>
+      </Grid>
+      <Grid
+        container
+        item
+        xs={12}
+        sm={10}
+        md={8}
+        lg={4}
+        direction="column"
+        justifyContent="space-between"
+      >
+        <Grid item>
+          <Typography variant="h5" style={{ marginBottom: 10, color: 'white' }}>
+            Start a Session
+          </Typography>
+          <MatchPage />
+        </Grid>
+      </Grid>
+      <Grid
+        container
+        item
+        xs={12}
+        sm={10}
+        md={8}
+        lg={4}
+        direction="column"
+        justifyContent="space-between"
+      >
+        <Grid item>
+          <Typography variant="h5" style={{ color: 'white' }}>
+            Your History
+          </Typography>
+          <HistorySection />
+        </Grid>
+      </Grid>
+    </Grid>
   );
 };
 

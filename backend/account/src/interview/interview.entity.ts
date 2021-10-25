@@ -16,6 +16,9 @@ export class Interview {
   @Column({ type: 'varchar' })
   leetcodeSlug: string;
 
+  @Column({ type: 'varchar' })
+  questionName: string;
+
   @ManyToMany(() => Profile, (profile: Profile) => profile.interviews, {
     cascade: true,
     eager: true,
@@ -26,15 +29,9 @@ export class Interview {
   @Column({ type: 'varchar' })
   timeTaken: string;
 
-  @Column({ type: 'varchar', nullable: true })
-  code: string;
-
-  @Column({ type: 'varchar', nullable: true })
-  language: string;
-
   @Column({ type: 'boolean', default: true })
   isCompleted: boolean;
 
   @CreateDateColumn()
-  createdAt: string;
+  createdAt: Date;
 }
