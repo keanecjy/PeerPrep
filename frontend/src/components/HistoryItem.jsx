@@ -9,6 +9,7 @@ import {
 } from '@material-ui/core';
 import React, { useContext, useMemo } from 'react';
 import { UserContext } from '../context/UserContext';
+import { styles } from '../theme';
 
 export const HistoryItem = ({ data }) => {
   const { user } = useContext(UserContext);
@@ -34,14 +35,18 @@ export const HistoryItem = ({ data }) => {
       <TableContainer component={Box}>
         <TableHead>
           <TableRow hover>
-            <TableCell padding="none" color="primary" style={{ width: 100 }}>
+            <TableCell
+              padding="none"
+              color="primary"
+              style={{ width: 100, borderBottom: 'none', color: styles.BLUE }}
+            >
               Date:
             </TableCell>
             <TableCell
               colSpan="5"
               align="right"
-              color="primary"
-              style={{ width: 400 }}
+              padding="none"
+              style={{ width: 400, borderBottom: 'none', color: styles.BLUE }}
             >
               {data.createdAt.toLocaleString('en-us', {
                 day: 'numeric',
@@ -53,7 +58,11 @@ export const HistoryItem = ({ data }) => {
             </TableCell>
           </TableRow>
           <TableRow hover>
-            <TableCell padding="none" color="primary">
+            <TableCell
+              padding="none"
+              color="primary"
+              style={{ borderBottom: 'none', color: styles.BLUE }}
+            >
               Question:
             </TableCell>
             <TableCell
@@ -62,25 +71,48 @@ export const HistoryItem = ({ data }) => {
               color="primary"
               component="a"
               target="_blank"
+              padding="none"
               rel="noreferrer"
               href={`https://leetcode.com/problems/${data.leetcodeSlug}`}
+              style={{ borderBottom: 'none', color: styles.BLUE }}
             >
               {data.questionName}
             </TableCell>
           </TableRow>
           <TableRow hover>
-            <TableCell padding="none" color="primary">
+            <TableCell
+              padding="none"
+              color="primary"
+              style={{ borderBottom: 'none', color: styles.BLUE }}
+            >
               Time Taken:
             </TableCell>
-            <TableCell colSpan="5" align="right" color="primary">
+            <TableCell
+              colSpan="5"
+              align="right"
+              color="primary"
+              padding="none"
+              style={{ borderBottom: 'none', color: styles.BLUE }}
+            >
               {data.timeTaken}
             </TableCell>
           </TableRow>
           <TableRow hover>
-            <TableCell padding="none" color="inherit" color="primary">
+            <TableCell
+              padding="none"
+              color="inherit"
+              color="primary"
+              style={{ borderBottom: 'none', color: styles.BLUE }}
+            >
               Status:
             </TableCell>
-            <TableCell colSpan="5" align="right" color="primary">
+            <TableCell
+              colSpan="5"
+              align="right"
+              color="primary"
+              padding="none"
+              style={{ borderBottom: 'none', color: styles.BLUE }}
+            >
               {data.isCompleted ? 'Completed' : 'Forfeitted'}
             </TableCell>
           </TableRow>
