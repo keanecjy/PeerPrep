@@ -40,12 +40,12 @@ const App = () => {
       <HeaderBar />
       <ToastContainer position="top-right" />
       <Switch>
-        {user && <Route exact path="/home" component={HomePage} />}
+        <Route exact path="/home" component={HomePage} />
         <Route exact path="/login" component={LandingPage} />
-        {user && <Route exact path="/interview" component={InterviewPage} />}
-        {user && <Route exact path="/match" component={MatchPage} />}
+        <Route path="/interview/:sessionId" component={InterviewPage} />
+        <Route exact path="/match" component={MatchPage} />
         <Route>
-          {user ? (
+          {user && !user.isGuest ? (
             <Redirect to={{ pathname: '/home' }} />
           ) : (
             <Redirect to={{ pathname: '/login' }} />

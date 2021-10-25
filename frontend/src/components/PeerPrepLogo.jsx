@@ -6,7 +6,7 @@ const PeerPrepLogo = () => {
   return (
     <div
       className="logo-container"
-      onClick={() => history.push('home')}
+      onClick={() => history.push('/')}
       role="button"
     >
       <GiSpellBook className="logo" />

@@ -1,5 +1,5 @@
-import React, { useContext, useState } from 'react';
-import { useHistory } from 'react-router';
+import React, { useContext, useMemo, useState } from 'react';
+import { useHistory, useLocation } from 'react-router';
 import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
 import { Avatar, Menu, MenuItem } from '@material-ui/core';
@@ -13,6 +13,11 @@ export const HeaderBar = () => {
   const history = useHistory();
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
+  const location = useLocation();
+
+  const shouldShowUser = useMemo(() => {
+    return location.pathname !== '/login';
+  }, [location]);
 
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
@@ -39,7 +44,7 @@ export const HeaderBar = () => {
     <div style={{ flexGrow: 1 }}>
       <Toolbar style={{ justifyContent: 'space-between' }}>
         <PeerPrepLogo />
-        {user && (
+        {shouldShowUser && (
           <div>
             <IconButton
               aria-label="account of current user"
@@ -69,7 +74,9 @@ export const HeaderBar = () => {
               onClose={handleClose}
             >
               <MenuItem onClick={handleHome}>Dashboard</MenuItem>
-              <MenuItem onClick={handleLogout}>Logout</MenuItem>
+              <MenuItem onClick={handleLogout}>
+                {user.isGuest ? 'Login' : 'Logout'}
+              </MenuItem>
             </Menu>
           </div>
         )}
