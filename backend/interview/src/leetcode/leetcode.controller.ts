@@ -1,10 +1,11 @@
 import {
   DifficultyType,
+  LanguageType,
   LeetcodeQuestionDto,
 } from './dto/leetcode-question.dto';
 import { Controller, Get, Param, Query } from '@nestjs/common';
 import { LeetcodeService } from './leetcode.service';
-import { map, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 
 @Controller('leetcode')
 export class LeetcodeController {
@@ -12,17 +13,17 @@ export class LeetcodeController {
 
   @Get('random')
   findAll(
-    @Query('difficulty') difficulty: DifficultyType
+    @Query('diff') difficulty: DifficultyType = DifficultyType.MEDIUM,
+    @Query('lang') language: LanguageType = LanguageType.JAVASCRIPT
   ): Observable<LeetcodeQuestionDto> {
-    return this.leetcodeService
-      .findRandom(difficulty)
-      .pipe(map((data) => data.data.randomQuestion));
+    return this.leetcodeService.getRandomWithFallback(difficulty, language);
   }
 
   @Get(':slug')
-  findOne(@Param('slug') id: string): Observable<LeetcodeQuestionDto> {
-    return this.leetcodeService
-      .findOne(id)
-      .pipe(map((data) => data.data.question));
+  findOne(
+    @Param('slug') id: string,
+    @Query('lang') language: LanguageType = LanguageType.JAVASCRIPT
+  ): Observable<LeetcodeQuestionDto> {
+    return this.leetcodeService.getOneWithFallback(id, language);
   }
 }
