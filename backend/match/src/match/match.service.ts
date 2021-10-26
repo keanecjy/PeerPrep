@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { MatchResponse } from './match-response';
 import { RedisCacheService } from '../redis/redisCache.service';
+import { MatchResponse } from './match-response';
 
 @Injectable()
 export class MatchService {
