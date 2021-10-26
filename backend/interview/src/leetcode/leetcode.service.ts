@@ -43,7 +43,7 @@ export class LeetcodeService {
         const filteredQuestions = QUESTIONS.filter(
           (x) => x.difficulty.toLowerCase() === difficulty
         );
-        const question = Object.values(filteredQuestions)[random] as any;
+        const question = filteredQuestions[random] as any;
         const code = question.code?.filter(
           (snippets) => snippets.langSlug === lang
         )[0];
@@ -76,8 +76,6 @@ export class LeetcodeService {
                 code
             }
             hints
-            exampleTestcases
-            sampleTestCase
             metaData
         }
     }`,
@@ -137,8 +135,6 @@ export class LeetcodeService {
                   code
               }
               hints
-              exampleTestcases
-              sampleTestCase
               metaData
         }
     }`,
@@ -178,8 +174,6 @@ export class LeetcodeService {
       topics: question.topicTags?.map((topic) => topic.name) ?? [],
       code: code.length > 0 ? code[0].code : '',
       hints: question.hints,
-      exampleTestcases: question.exampleTestcases,
-      sampleTestCase: question.sampleTestCase,
       metaData: question.metaData,
     };
   };

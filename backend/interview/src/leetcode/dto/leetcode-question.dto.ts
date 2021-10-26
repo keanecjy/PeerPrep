@@ -38,12 +38,6 @@ export class LeetcodeQuestionDto {
   hints: string[];
 
   @IsString()
-  exampleTestcases: string;
-
-  @IsString()
-  sampleTestCase: string;
-
-  @IsString()
   metaData: string;
 }
 
@@ -75,12 +69,6 @@ export class LeetcodeResponseDto {
 
   @IsArray()
   hints: string[];
-
-  @IsString()
-  exampleTestcases: string;
-
-  @IsString()
-  sampleTestCase: string;
 
   @IsString()
   metaData: string;

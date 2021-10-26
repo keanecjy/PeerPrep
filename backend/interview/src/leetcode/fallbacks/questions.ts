@@ -24,10 +24,6 @@ const EASY_1 = {
     },
   ],
   hints: [],
-  exampleTestcases:
-    '"Bob hit a ball, the hit BALL flew far after it was hit."\n["hit"]\n"a."\n[]',
-  sampleTestCase:
-    '"Bob hit a ball, the hit BALL flew far after it was hit."\n["hit"]',
   metaData:
     '{\r\n  "name": "mostCommonWord",\r\n  "params": [\r\n    {\r\n      "name": "paragraph",\r\n      "type": "string"\r\n    },\r\n    {\r\n      "name": "banned",\r\n      "type": "string[]"\r\n    }\r\n  ],\r\n  "return": {\r\n    "type": "string"\r\n  }\r\n}\r\n',
 };
@@ -58,8 +54,6 @@ const EASY_2 = {
     },
   ],
   hints: [],
-  exampleTestcases: '[1,2,3,1]\n[1,2,3,4]\n[1,1,1,3,3,4,3,2,4,2]',
-  sampleTestCase: '[1,2,3,1]',
   metaData:
     '{\r\n  "name": "containsDuplicate",\r\n  "params": [\r\n    {\r\n      "name": "nums",\r\n      "type": "integer[]"\r\n    }\r\n  ],\r\n  "return": {\r\n    "type": "boolean"\r\n  }\r\n}',
 };
@@ -93,8 +87,6 @@ const EASY_3 = {
     'Brute force for each array element.',
     'In order to improve the time complexity, we can sort the array and get the answer for each array element.',
   ],
-  exampleTestcases: '[8,1,2,2,3]\n[6,5,4,8]\n[7,7,7,7]',
-  sampleTestCase: '[8,1,2,2,3]',
   metaData:
     '{\n  "name": "smallerNumbersThanCurrent",\n  "params": [\n    {\n      "name": "nums",\n      "type": "integer[]"\n    }\n  ],\n  "return": {\n    "type": "integer[]"\n  }\n}',
 };
@@ -127,10 +119,6 @@ const MEDIUM_1 = {
   hints: [
     'Do the filtering and sort as said. Note that the id may not be the index in the array.',
   ],
-  exampleTestcases:
-    '[[1,4,1,40,10],[2,8,0,50,5],[3,8,1,30,4],[4,10,0,10,3],[5,1,1,15,1]]\n1\n50\n10\n[[1,4,1,40,10],[2,8,0,50,5],[3,8,1,30,4],[4,10,0,10,3],[5,1,1,15,1]]\n0\n50\n10\n[[1,4,1,40,10],[2,8,0,50,5],[3,8,1,30,4],[4,10,0,10,3],[5,1,1,15,1]]\n0\n30\n3',
-  sampleTestCase:
-    '[[1,4,1,40,10],[2,8,0,50,5],[3,8,1,30,4],[4,10,0,10,3],[5,1,1,15,1]]\n1\n50\n10',
   metaData:
     '{\n  "name": "filterRestaurants",\n  "params": [\n    {\n      "name": "restaurants",\n      "type": "integer[][]"\n    },\n    {\n      "type": "integer",\n      "name": "veganFriendly"\n    },\n    {\n      "type": "integer",\n      "name": "maxPrice"\n    },\n    {\n      "type": "integer",\n      "name": "maxDistance"\n    }\n  ],\n  "return": {\n    "type": "list<integer>"\n  }\n}',
 };
@@ -161,8 +149,6 @@ const MEDIUM_2 = {
     },
   ],
   hints: [],
-  exampleTestcases: '"/home/"\n"/../"\n"/home//foo/"\n"/a/./b/../../c/"',
-  sampleTestCase: '"/home/"',
   metaData:
     '{ \r\n  "name": "simplifyPath",\r\n  "params": [\r\n    { \r\n      "name": "path",\r\n      "type": "string"\r\n    }\r\n  ],\r\n  "return": {\r\n    "type": "string"\r\n  }\r\n}',
 };
@@ -202,9 +188,6 @@ const MEDIUM_3 = {
     'For each row i, create an array nums where:  if mat[i][j] == 0 then nums[j] = 0 else nums[j] = nums[j-1] +1.',
     'In the row i, number of rectangles between column j and k(inclusive) and ends in row i, is equal to SUM(min(nums[j, .. idx])) where idx go from j to k.  Expected solution is O(n^3).',
   ],
-  exampleTestcases:
-    '[[1,0,1],[1,1,0],[1,1,0]]\n[[0,1,1,0],[0,1,1,1],[1,1,1,0]]\n[[1,1,1,1,1,1]]\n[[1,0,1],[0,1,0],[1,0,1]]',
-  sampleTestCase: '[[1,0,1],[1,1,0],[1,1,0]]',
   metaData:
     '{\n  "name": "numSubmat",\n  "params": [\n    {\n      "name": "mat",\n      "type": "integer[][]"\n    }\n  ],\n  "return": {\n    "type": "integer"\n  }\n}',
 };
@@ -237,8 +220,6 @@ const HARD_1 = {
   hints: [
     'Each k for which some permutation of arr[:k] is equal to sorted(arr)[:k] is where we should cut each chunk.',
   ],
-  exampleTestcases: '[5,4,3,2,1]\n[2,1,3,4,4]',
-  sampleTestCase: '[5,4,3,2,1]',
   metaData:
     '{\r\n  "name": "maxChunksToSorted",\r\n  "params": [\r\n    {\r\n      "name": "arr",\r\n      "type": "integer[]"\r\n    }\r\n  ],\r\n  "return": {\r\n    "type": "integer"\r\n  }\r\n}\r\n',
 };
@@ -269,8 +250,6 @@ const HARD_2 = {
     },
   ],
   hints: [],
-  exampleTestcases: '"4"\n"1000"\n"1"\n"2"',
-  sampleTestCase: '"4"\n"1000"',
   metaData:
     '{\n  "name": "superpalindromesInRange",\n  "params": [\n    {\n      "name": "left",\n      "type": "string"\n    },\n    {\n      "name": "right",\n      "type": "string"\n    }\n  ],\n  "return": {\n    "type": "integer"\n  }\n}',
 };
@@ -301,9 +280,6 @@ const HARD_3 = {
     },
   ],
   hints: [],
-  exampleTestcases:
-    '"0.(52)"\n"0.5(25)"\n"0.1666(6)"\n"0.166(66)"\n"0.9(9)"\n"1."',
-  sampleTestCase: '"0.(52)"\n"0.5(25)"',
   metaData:
     '{\n  "name": "isRationalEqual",\n  "params": [\n    {\n      "name": "s",\n      "type": "string"\n    },\n    {\n      "name": "t",\n      "type": "string"\n    }\n  ],\n  "return": {\n    "type": "boolean"\n  }\n}',
 };
