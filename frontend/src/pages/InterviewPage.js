@@ -67,7 +67,20 @@ const InterviewPage = () => {
         >
           <Grid item xs={12} md={6} className="code-editor-container">
             <span className="interview-pg-title"> Editor </span>
-            <div className="code-editor"></div>
+            <div className="code-editor">
+              <div className="code-editor-text-field">
+                <TextField
+                  fullWidth
+                  type="text"
+                  name="message"
+                  variant = "outlined"
+                  multiline
+                  placeholder=" Enter your code!"
+                  //onChange={(e) => } //TO IMPLEMENT
+                  //onKeyUp={(e) => }
+                />
+              </div>
+            </div>
           </Grid>
           <Grid item xs={12} md={6} className="chat-question-container">
             <Grid
