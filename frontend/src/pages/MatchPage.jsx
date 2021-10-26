@@ -1,6 +1,7 @@
-import { Box, Button, Modal, Typography, Paper } from '@material-ui/core';
+import { Box, Button, Modal, Paper, Typography } from '@material-ui/core';
 import React, { useContext, useState } from 'react';
 import { useHistory } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { UserContext } from '../context/UserContext';
 import { difficulties, languages, sessionText } from '../match/constants';
 import LoadingButton from '../match/LoadingButton';
@@ -21,7 +22,7 @@ const modalStyle = {
 };
 
 const MatchPage = () => {
-  const user = useContext(UserContext);
+  const { user } = useContext(UserContext);
   const history = useHistory();
 
   const [difficulty, setDifficulty] = useState(difficulties[0]);
@@ -29,33 +30,30 @@ const MatchPage = () => {
   const [finished, setFinished] = useState(false);
   const [open, openModal] = useState(false);
 
-  const handleMatch = (counter, retry) => {
-    console.log(`Language: ${language}, Difficulty: ${difficulty}`);
+  const handleMatch = (counter) => {
     console.log(`Counter: ${counter}`);
-    if (!retry) {
-      return;
-    }
-
     if (counter === 0) {
-      // Fail to find match modal
+      toast.warn('Failed to find matching user');
+      openModal(false);
       return;
     }
 
-    console.log(`Language: ${language}, Difficulty: ${difficulty}`);
+    console.log(
+      `Id: ${user.id}, Language: ${language}, Difficulty: ${difficulty}`
+    );
 
-    getMatch(user ? user.id : Math.random(), difficulty, language)
+    getMatch(user.id, difficulty, language)
       .then((response) => {
         console.log(response);
         if (response.status) {
           setFinished(true);
-          const sessionId = `${response.id}${response.partnerId}`;
-          sessionStorage.setItem(sessionId, response.partnerId);
+          const sessionId = `${response.id}+${response.partnerId}`;
           setTimeout(() => {
             history.push(`/interview/${sessionId}`);
           }, 150);
         } else {
           setTimeout(() => {
-            handleMatch(counter - 1, open);
+            handleMatch(counter - 1);
           }, 5000);
         }
       })
@@ -97,7 +95,7 @@ const MatchPage = () => {
         size="large"
         onClick={() => {
           openModal(true);
-          handleMatch(6, true);
+          handleMatch(6);
         }}
       >
         Start coding!
