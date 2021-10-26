@@ -80,6 +80,12 @@
     height: 43%;
     flex-direction: column;
     margin-bottom: 2%;
+    overflow: hidden;
+}
+
+.question-container-content {
+    flex-grow: 1;
+    font-size: 14px;
     overflow: auto;
 }
 

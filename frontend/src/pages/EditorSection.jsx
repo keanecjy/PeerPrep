@@ -15,8 +15,7 @@ const SUPPORTED_LANGUAGES = {
   PYTHON: 'python',
 };
 
-export const Editor = () => {
-  const [code, setCode] = useState(`console.log('hello world');`);
+export const Editor = ({ code, setCode }) => {
   const hightlightWithLineNumbers = (input, language) =>
     highlight(input, language)
       .split('\n')

@@ -24,4 +24,10 @@ export const apiKeys = {
   match: {
     find: '/match/find',
   },
+  interview: {
+    leetcode: {
+      random: '/interview/leetcode/random',
+      find: '/interview/leetcode',
+    },
+  },
 };

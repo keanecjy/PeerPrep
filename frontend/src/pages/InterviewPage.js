@@ -7,6 +7,9 @@ import Chip from '@material-ui/core/Chip';
 import { Grid } from '@material-ui/core';
 import { UserContext } from '../context/UserContext';
 import { Editor } from './EditorSection';
+import { toast } from 'react-toastify';
+import { randomQuestion } from '../services/interview';
+import parse from 'html-react-parser';
 
 const chatSocket = io('http://localhost:8082/', {
   //forceNew: true,
@@ -23,10 +26,21 @@ const CustomChip = ({ message }) => {
 
 const InterviewPage = () => {
   const [question, setQuestion] = useState('This is a sample question....');
+  const [code, setCode] = useState(`console.log('hello world');`);
   const [messages, setMessages] = useState([]);
   const [currMessage, setCurrMessage] = useState('');
   const [sessionId, setSessionId] = useState('11');
   const { user } = useContext(UserContext);
+
+  useEffect(() => {
+    randomQuestion('easy', 'javascript')
+      .then((res) => {
+        const leetcodeQn = res.data;
+        setCode(leetcodeQn.code || '');
+        setQuestion(leetcodeQn.content || '');
+      })
+      .catch((error) => toast.error(error.message));
+  }, []);
 
   useEffect(() => {
     chatSocket.on('connect', () =>
@@ -69,7 +83,7 @@ const InterviewPage = () => {
           <Grid item xs={12} md={6} className="code-editor-container">
             <span className="interview-pg-title"> Editor </span>
             <div className="code-editor">
-              <Editor />
+              <Editor code={code} setCode={setCode} />
             </div>
           </Grid>
           <Grid item xs={12} md={6} className="chat-question-container">
@@ -82,7 +96,9 @@ const InterviewPage = () => {
             >
               <Grid item className="question-container">
                 <span className="interview-pg-title"> Question </span>
-                <span> {question} </span>
+                <div className="question-container-content">
+                  {parse(question)}
+                </div>
               </Grid>
               <Grid item className="chat-container">
                 <span className="interview-pg-title"> Chat </span>
