@@ -38,7 +38,12 @@ const App = () => {
   return (
     <BrowserRouter>
       <HeaderBar />
-      <ToastContainer position="top-right" />
+      <ToastContainer
+        position="top-right"
+        hideProgressBar={true}
+        pauseOnHover={false}
+        autoClose={3000}
+      />
       <Switch>
         <Route exact path="/home" component={HomePage} />
         <Route exact path="/login" component={LandingPage} />

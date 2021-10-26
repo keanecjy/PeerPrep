@@ -20,7 +20,9 @@ services:
       - 5432:5432 # Expose port 5432 to localhost:5432 (can use with pgAdmin locally)
 
   redis:
-    image: "redis:alpine"
+    image: 'redis:alpine'
+    ports:
+      - 6379:6379
 
   client:
     image: peerprep-client
