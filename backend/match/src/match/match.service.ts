@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { MatchResponse } from './match-response';
 import { RedisCacheService } from '../redis/redisCache.service';
+import { MatchResponse } from './match-response';
 
 @Injectable()
 export class MatchService {
@@ -12,30 +12,11 @@ export class MatchService {
     language: string
   ): Promise<MatchResponse> {
     const key = `${difficulty}_${language}`;
-
     await this.createMatch(key, id);
-
-    for (let retries = 0; retries < 6; retries++) {
-      const res = await this.retry(key, id);
-      if (res.status) {
-        return res;
-      }
-      await this.sleep(5000);
-    }
-
-    return {
-      status: false,
-      id: id,
-    };
+    return await this.findMatch(key, id);
   }
 
-  sleep(ms: number) {
-    return new Promise((resolve) => {
-      setTimeout(resolve, ms);
-    });
-  }
-
-  async retry(key: string, id: string): Promise<MatchResponse> {
+  async findMatch(key: string, id: string): Promise<MatchResponse> {
     return new Promise(async (resolve) => {
       const data = await this.redisService.get(key);
       const map = JSON.parse(data);

@@ -11,7 +11,7 @@ export class MatchController {
   /*
   Gets a match for a user if there is a matching user
   */
-  @Get('match')
+  @Get('find')
   @ApiOkResponse({ type: MatchResponse })
   async getMatch(
     @Query('id') id: string,

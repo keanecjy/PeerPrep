@@ -19,5 +19,15 @@ export const apiKeys = {
   profile: {
     me: '/profile/me',
     key: '/profile',
+    interview: '/interview',
+  },
+  match: {
+    find: '/match/find',
+  },
+  interview: {
+    leetcode: {
+      random: '/interview/leetcode/random',
+      find: '/interview/leetcode',
+    },
   },
 };

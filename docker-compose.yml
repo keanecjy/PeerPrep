@@ -20,7 +20,7 @@ services:
       - 5432:5432 # Expose port 5432 to localhost:5432 (can use with pgAdmin locally)
 
   redis:
-    image: "redis:alpine"
+    image: 'redis:alpine'
     ports:
       - 6379:6379
 
@@ -112,6 +112,8 @@ services:
       - redis
     environment:
       - PORT=8084
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
     ports:
       - 8084:8084
     networks:

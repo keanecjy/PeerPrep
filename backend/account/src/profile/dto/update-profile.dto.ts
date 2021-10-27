@@ -2,13 +2,7 @@ import { IsString, IsUrl } from 'class-validator';
 
 export class UpdateProfileDto {
   @IsString()
-  firstName?: string;
-
-  @IsString()
-  lastName?: string;
-
-  @IsString()
-  alias?: string;
+  name?: string;
 
   @IsUrl({
     allow_underscores: true,

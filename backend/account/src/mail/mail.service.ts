@@ -23,7 +23,7 @@ export class MailService {
       template: './index',
       context: {
         title: 'Email Confirmation',
-        username: user.profile?.firstName || 'there',
+        username: user.profile?.name || 'there',
         content:
           'Welcome to PeerPrep!\n' +
           'Please click the button below to verify your account',
@@ -46,7 +46,7 @@ export class MailService {
       template: './index',
       context: {
         title: 'Password reset',
-        username: user.profile?.firstName || 'there',
+        username: user.profile?.name || 'there',
         content:
           'You requested to reset your password.\n' +
           'Please click the button below to reset your password.',

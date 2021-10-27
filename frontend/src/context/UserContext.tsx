@@ -2,6 +2,7 @@ import React, { createContext, useState, useEffect } from 'react';
 import { refresh } from '../services/auth';
 import { getUserProfile } from '../services/profile';
 import RefreshTokenService from '../services/refreshToken';
+import { getGuestAccount } from '../shared/functions';
 import { UserProfile } from '../shared/types';
 
 interface UserContextProps {
@@ -22,13 +23,17 @@ const UserProvider: React.FC = ({ children }) => {
 
     // auto login
     refresh().catch(() => {
+      // preload guest account
+      const guest = getGuestAccount();
+      setUser(guest);
       setLoading(false);
     });
   }, []);
 
   const getUser = async (auth?: string | null) => {
     if (auth === null) {
-      setUser(null);
+      const guest = getGuestAccount();
+      setUser(guest);
     } else {
       const user = await getUserProfile();
       setUser(user);

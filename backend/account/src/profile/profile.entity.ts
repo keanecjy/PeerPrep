@@ -11,6 +11,7 @@ import {
   ManyToMany,
 } from 'typeorm';
 import { User } from '../users/user.entity';
+import { Exclude } from 'class-transformer';
 
 @Entity()
 export class Profile {
@@ -26,13 +27,7 @@ export class Profile {
   user: User;
 
   @Column('varchar')
-  firstName: string;
-
-  @Column('varchar')
-  lastName: string;
-
-  @Column('varchar', { nullable: true })
-  alias: string;
+  name: string;
 
   @Column('varchar', { nullable: true })
   photo: string;
@@ -40,9 +35,11 @@ export class Profile {
   @ManyToMany(() => Interview, (interview: Interview) => interview.participants)
   interviews: Interview[];
 
+  @Exclude()
   @CreateDateColumn()
   createdAt: Date;
 
+  @Exclude()
   @UpdateDateColumn()
   updatedAt: Date;
 }

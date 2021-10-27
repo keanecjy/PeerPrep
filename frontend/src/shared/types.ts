@@ -1,9 +1,8 @@
 export interface UserProfile {
   id: string;
-  firstName: string;
-  lastName: string;
-  alias?: string;
+  name: string;
   photo: string;
+  isGuest?: boolean;
 }
 
 export interface AuthData {
@@ -11,4 +10,13 @@ export interface AuthData {
   userEmail: string;
   expiresIn: number;
   refreshToken: string;
+}
+
+export interface InterviewHistory {
+  id: number;
+  questionName: string;
+  participants: UserProfile[];
+  timeTaken: string;
+  isCompleted: boolean;
+  createdAt: Date;
 }

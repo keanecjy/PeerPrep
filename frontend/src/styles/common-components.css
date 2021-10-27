@@ -6,6 +6,7 @@
     justify-content: space-between;
     color: white;
     width: 160px;
+    cursor: pointer;
 }
 
 .logo {
