@@ -31,10 +31,42 @@
 .code-editor {
     flex: 1;
     flex-grow: 1;
-    background-color: white;
+    background-color: #f5f5f5;
     border-radius: 10px;
     -webkit-box-shadow: 0px 0px 13px -2px rgba(0,0,0,0.47);
     box-shadow: 0px 0px 13px -2px rgba(0,0,0,0.47);
+    color: black;
+    max-height: 100%;
+    overflow-y: auto;
+}
+
+.editor {
+    counter-reset: line;
+}
+
+/* .editor_no_border {
+    border: none;
+    outline: none;
+} */
+
+.editor #code-area {
+    border: none;
+    outline: none;
+    padding-left: 40px !important;
+}
+
+.editor pre {
+    padding-left: 40px !important;
+    hidden: true
+}
+
+.editor .editor_line_number {
+    position: absolute;
+    left: 0px;
+    color: #aaaaaa;
+    text-align: right;
+    width: 30px;
+    font-weight: 100;
 }
 
 .chat-question-container {
@@ -48,6 +80,12 @@
     height: 43%;
     flex-direction: column;
     margin-bottom: 2%;
+    overflow: hidden;
+}
+
+.question-container-content {
+    flex-grow: 1;
+    font-size: 14px;
     overflow: auto;
 }
 
@@ -98,6 +136,7 @@
 .interview-pg-title {
     font-size: 25px;
     font-weight: 600;
+    margin-bottom: 8px;
 }
 
 /* Style for custom chip */
