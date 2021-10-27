@@ -10,11 +10,15 @@ import { Editor } from './EditorSection';
 import { toast } from 'react-toastify';
 import { randomQuestion } from '../services/interview';
 import parse from 'html-react-parser';
+import create from 'zustand'
 
+
+// chat client socket
 const chatSocket = io('http://localhost:8082/', {
   //forceNew: true,
   transports: ['websocket', 'polling', 'flashsocket'],
 });
+
 
 const CustomChip = ({ message }) => {
   return (
@@ -24,6 +28,14 @@ const CustomChip = ({ message }) => {
   );
 };
 
+
+export const useStore = create((set) => ({
+  username: null,
+  roomId: null,
+  setUsername: (username) => set(() => ({ username })),
+  setRoomId: (roomId) => set(() => ({ roomId: roomId })),
+}))
+
 const InterviewPage = () => {
   const [question, setQuestion] = useState('This is a sample question....');
   const [code, setCode] = useState(`console.log('hello world');`);
@@ -32,6 +44,46 @@ const InterviewPage = () => {
   const [sessionId, setSessionId] = useState('11');
   const { user } = useContext(UserContext);
 
+  // editor client socket
+  const editorSocket = io('http://localhost:8083');
+  const [users, setUsers] = useState([]);
+  const { username, roomId } = useStore(({ username, roomId }) => ({
+    username,
+    roomId,
+  }));
+
+  // code editor hook
+  useEffect(() => {
+   
+
+    editorSocket.on('CODE_CHANGED', (code) => {
+      console.log(code)
+      editor.setValue(code)
+    })
+
+    editorSocket.on('connect', () => {
+      editorSocket.emit('CONNECTED_TO_ROOM', { roomId, username })
+    })
+
+    editorSocket.on('disconnect', () => {
+      editorSocket.emit('DISCONNECT_FROM_ROOM', { roomId, username })
+    })
+
+    editorSocket.on('ROOM:CONNECTION', (users) => {
+      setUsers(users)
+      console.log(users)
+    })
+
+    editor.on('change', (instance, changes) => {
+      const { origin } = changes
+      // if (origin === '+input' || origin === '+delete' || origin === 'cut') {
+      if (origin !== 'setValue') {
+        editorSocket.emit('CODE_CHANGED', instance.getValue())
+      }
+    })
+  }, []);
+
+  //chat hook
   useEffect(() => {
     randomQuestion('easy', 'javascript')
       .then((res) => {

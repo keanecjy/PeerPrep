@@ -33,7 +33,7 @@ const App = () => {
 
     // login test account
     // login('seeder@email.com', 'password');
-  }, []);
+  }, []); 
 
   return (
     <BrowserRouter>
