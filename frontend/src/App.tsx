@@ -47,7 +47,7 @@ const App = () => {
       <Switch>
         <Route exact path="/home" component={HomePage} />
         <Route exact path="/login" component={LandingPage} />
-        <Route path="/interview/:sessionId" component={InterviewPage} />
+        <Route path="/interview" component={InterviewPage} />
         <Route exact path="/match" component={MatchPage} />
         <Route>
           {user && !user.isGuest ? (

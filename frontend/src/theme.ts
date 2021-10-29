@@ -33,6 +33,12 @@ const theme = createTheme({
     h2: {
       color: styles.WHITE,
     },
+    h3: {
+      color: styles.WHITE,
+    },
+    h4: {
+      color: styles.WHITE,
+    },
     h5: {
       color: styles.WHITE,
     },

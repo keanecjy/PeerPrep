@@ -3,11 +3,11 @@ import ReactDOM from 'react-dom';
 import { ThemeProvider } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 
-import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { UserProvider } from './context/UserContext';
 import theme from './theme';
+import './index.css';
 import './styles/common-components.css';
 import './styles/interview.css';
 
