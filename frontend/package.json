@@ -13,6 +13,7 @@
     "precommit": "lint-staged"
   },
   "dependencies": {
+    "@convergencelabs/codemirror-collab-ext": "^0.1.2",
     "@material-ui/core": "^4.12.3",
     "@material-ui/icons": "^4.11.2",
     "@types/codemirror": "^5.60.5",

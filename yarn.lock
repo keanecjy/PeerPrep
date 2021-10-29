@@ -1268,6 +1268,15 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
+"@convergencelabs/codemirror-collab-ext@^0.1.2":
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/@convergencelabs/codemirror-collab-ext/-/codemirror-collab-ext-0.1.2.tgz#21d1e6efc0c290b0f92fcb5d755c61865e04e13b"
+  integrity sha512-jysEMToImIQtMuhmNy4IN9C5/z5y5yNQTngz1etKxlT0lp2RYmPTYP5zbxSTJ1BiibBOjL8l3DoTsPqRVz7fpw==
+  dependencies:
+    "@ctrl/tinycolor" "2.5.4"
+    "@types/codemirror" "0.0.81"
+    codemirror "5.49.2"
+
 "@cspotcode/source-map-consumer@0.8.0":
   version "0.8.0"
   resolved "https://registry.yarnpkg.com/@cspotcode/source-map-consumer/-/source-map-consumer-0.8.0.tgz#33bf4b7b39c178821606f669bbc447a6a629786b"
@@ -1289,6 +1298,11 @@
   version "10.1.0"
   resolved "https://registry.yarnpkg.com/@csstools/normalize.css/-/normalize.css-10.1.0.tgz#f0950bba18819512d42f7197e56c518aa491cf18"
   integrity sha512-ij4wRiunFfaJxjB0BdrYHIH8FxBJpOwNPhhAcunlmPdXudL1WQV1qoP9un6JsEBAgQH+7UXyyjh0g7jTxXK6tg==
+
+"@ctrl/tinycolor@2.5.4":
+  version "2.5.4"
+  resolved "https://registry.yarnpkg.com/@ctrl/tinycolor/-/tinycolor-2.5.4.tgz#fa20f45eaae74696070328342553ed5de224bb4d"
+  integrity sha512-PXqAcLD6R8GL8dFcls728HrYzDdYN60U8RXvc39wmOs1pJIcyc3g+dleWu+fGgLnEGG4SwblEUu+EF4/dH/2ew==
 
 "@emotion/hash@^0.8.0":
   version "0.8.0"
@@ -2315,6 +2329,13 @@
   version "3.4.2"
   resolved "https://registry.yarnpkg.com/@types/cache-manager/-/cache-manager-3.4.2.tgz#d57e7e5e6374d1037bdce753a05c9703e4483401"
   integrity sha512-1IwA74t5ID4KWo0Kndal16MhiPSZgMe1fGc+MLT6j5r+Ab7jku36PFTl4PP6MiWw0BJscM9QpZEo00qixNQoRg==
+
+"@types/codemirror@0.0.81":
+  version "0.0.81"
+  resolved "https://registry.yarnpkg.com/@types/codemirror/-/codemirror-0.0.81.tgz#3cea2c1006406973d4aad212e617638cbfc2965b"
+  integrity sha512-QoeIb9tn/TZp0IzNyMKlcwHR6pHxNoIW9mKqF7asAsj+AWqpFOEUsxia756L6WKBQNk2psHpu+aFuIFqo3Ac0A==
+  dependencies:
+    "@types/tern" "*"
 
 "@types/codemirror@^5.60.5":
   version "5.60.5"
@@ -4715,6 +4736,11 @@ code-point-at@^1.0.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/code-point-at/-/code-point-at-1.1.0.tgz#0d070b4d043a5bea33a2f1a40e2edb3d9a4ccf77"
   integrity sha1-DQcLTQQ6W+ozovGkDi7bPZpMz3c=
+
+codemirror@5.49.2:
+  version "5.49.2"
+  resolved "https://registry.yarnpkg.com/codemirror/-/codemirror-5.49.2.tgz#c84fdaf11b19803f828b0c67060c7bc6d154ccad"
+  integrity sha512-dwJ2HRPHm8w51WB5YTF9J7m6Z5dtkqbU9ntMZ1dqXyFB9IpjoUFDj80ahRVEoVanfIp6pfASJbOlbWdEf8FOzQ==
 
 codemirror@^5.63.3:
   version "5.63.3"
