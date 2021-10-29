@@ -44,78 +44,64 @@ const InterviewPage = () => {
   // editor client socket
   const editorSocket = io('http://localhost:8083');
 
-  // code editor hook
-  useEffect(() => {
-    const editor = CodeMirror.fromTextArea(document.getElementById('codeEditor'), {
+// code editor hook
+useEffect(() => {
+  const editor = CodeMirror.fromTextArea(
+    document.getElementById('codeEditor'),
+    {
       lineNumbers: true,
       keyMap: 'sublime',
       theme: 'material-ocean',
       mode: 'javascript',
-    })
-    setCodeEditor(editor);
-
-    editorSocket.on('CODE_CHANGED', (code) => {
-      console.log(code);
-      editor.setValue(code);
+    }
+  );
+  setCodeEditor(editor);
+  
+  editorSocket.on('CODE_CHANGED', (code) => {
+    const cursor = editor.getCursor();
+    editor.setValue(code);
+    editor.setCursor(cursor);
+  });
+  editorSocket.on('connect', () => {
+    console.log('connect');
+    editorSocket.emit('CONNECTED_TO_ROOM', {
+      sessionId: sessionId,
+      userId: user.id,
     });
+  });
+  editorSocket.on('disconnect', () => {
+    console.log('client disconnect');
+    editorSocket.emit('DISCONNECT_FROM_ROOM', {
+      sessionId: sessionId,
+      userId: user.id,
+    });
+  });
 
-    
-    editorSocket.on('connect', () => {
-      console.log("connect");
-      editorSocket.emit('CONNECTED_TO_ROOM', {
-        sessionId: sessionId,
-        userId: user.id,
+  //Codemirror
+  editor.on('change', (instance, changes) => {
+    console.log(changes);
+    const { origin } = changes;
+    // if (origin === '+input' || origin === '+delete' || origin === 'cut') {
+    if (origin !== 'setValue') {
+      editorSocket.emit('CODE_CHANGED', {
+        sessionId,
+        code: instance.getValue(),
       });
-    });
-    editorSocket.on('disconnect', () => {
-      console.log("client disconnect");
-      editorSocket.emit('DISCONNECT_FROM_ROOM', {
-        sessionId: sessionId,
-        userId: user.id,
-      });
-    });
+    }
+  });
+  editor.on('cursorActivity', (instance) => {
+    console.log(instance.cursorCoords());
+  });
 
-    //CodeMirror-collab-ext
-    // const contentManager  = new CodeMirrorCollabExt.EditorContentManager({
-    //   editor: editor,
-    //   id: "source",
-    //   onInsert(index, text) {
-    //     console.log("Insert", index, text);
-    //     contentManager.insert(index, text);
-    //   },
-    //   onReplace(index, length, text) {
-    //     console.log("Replace", index, length, text);
-    //     contentManager.replace(index, length, text);
-    //   },
-    //   onDelete(index, length) {
-    //     console.log("Delete", index, length);
-    //     contentManager.delete(index, length);
-    //   }
-    // });
-
-    //Codemirror
-    editor.on('change', (instance, changes) => {
-      console.log(changes);
-      const { origin } = changes;
-      // if (origin === '+input' || origin === '+delete' || origin === 'cut') {
-      if (origin !== 'setValue') {
-        editorSocket.emit('CODE_CHANGED', {sessionId, code:instance.getValue()});
-      }
-    });
-    editor.on('cursorActivity', (instance) => {
-      console.log(instance.cursorCoords())
+  //leetcodeQns hook
+  randomQuestion('easy', 'javascript')
+    .then((res) => {
+      const leetcodeQn = res.data;
+      editor?.getDoc().setValue(leetcodeQn.code || '');
+      setQuestion(leetcodeQn.content || '');
     })
-  }, []);
-
-  useEffect(() => {
-    randomQuestion('easy', 'javascript')
-      .then((res) => {
-        const leetcodeQn = res.data;
-        setCode(leetcodeQn.code || '');
-        setQuestion(leetcodeQn.content || '');
-      })
-      .catch((error) => toast.error(error.message));
-  }, []);
+    .catch((error) => toast.error(error.message));
+}, []);
 
   //chat hook
   useEffect(() => {
