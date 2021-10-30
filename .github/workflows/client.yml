@@ -21,17 +21,30 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Setup S3
-        run: |
-          # Login to AWS ECR
-          $( aws ecr get-login --no-include-email )
-      - name: Build and tag the image
+      - name: Cache modules
+        uses: actions/cache@v1
+        id: yarn-cache
+        with:
+          path: node_modules
+          key:${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: ${{ runner.os }}-yarn-
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id:$AWS_ACCESS_KEY_ID
+          aws-secret-access-key:$AWS_SECRET_ACCESS_KEY
+          aws-region: $AWS_DEFAULT_REGION
+      - name: Use Node.js 12.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12.x
+      - name: Install dependencies
         working-directory: ./frontend
-        run: |
-          # Build the image
-          docker-compose -f ./docker-compose.prod.yml
-
-      - name: Push the image into S3
-        run: |
-          docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$CONTAINER_IMAGE
+        run: yarn
+      - name: Build
+        working-directory: ./frontend
+        run: yarn build
+      - name: Deploy
+        working-directory: ./frontend
+        run: aws s3 sync build/ s3://peerprep
     # Add additional steps here like scanning of image
