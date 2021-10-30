@@ -30,6 +30,14 @@ jobs:
         run: |
           # Build and tag the image
           docker build \
+            --build-arg CLIENT_URL=${{ secrets.CLIENT_URL }} \
+            --build-arg DATABASE_URL=${{ secrets.DATABASE_URL }} \
+            --build-arg DB_SYNCHRONIZE=${{ secrets.DB_SYNCHRONIZE }} \
+            --build-arg JWT_ACCESS_TOKEN_SECRET=${{ secrets.JWT_ACCESS_TOKEN_SECRET }} \
+            --build-arg JWT_REFRESH_TOKEN_SECRET=${{ secrets.JWT_REFRESH_TOKEN_SECRET }} \
+            --build-arg JWT_MAIL_VERIFY_SECRET=${{ secrets.JWT_MAIL_VERIFY_SECRET }} \
+            --build-arg JWT_PASSWORD_RESET_SECRET=${{ secrets.JWT_PASSWORD_RESET_SECRET }} \
+            --build-arg environment=${{ secrets.environment }} \
             -t $CONTAINER_IMAGE \
             -t latest:$GITHUB_SHA \
             -t $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$CONTAINER_IMAGE .
