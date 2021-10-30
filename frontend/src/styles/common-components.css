@@ -7,6 +7,7 @@
     color: white;
     width: 160px;
     cursor: pointer;
+    margin-left: 2%;
 }
 
 .logo {
@@ -17,4 +18,13 @@
     margin-top: 18px;
     font-size: 25px;
     font-weight: 600;
+}
+
+.stopwatch-container {
+    height: 35px;
+    display: flex;
+    align-items: center;
+    margin-right: 20px;
+    padding: 0px 5px;
+    font-size: 20px;
 }
