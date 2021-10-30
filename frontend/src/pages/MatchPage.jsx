@@ -44,6 +44,8 @@ const MatchPage = () => {
         return;
       }
 
+      console.log(`Counter: ${count}`);
+
       getMatch(user.id, difficulty, language).then((response) => {
         if (response.status) {
           const sessionId =
