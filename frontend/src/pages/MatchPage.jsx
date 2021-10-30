@@ -47,7 +47,14 @@ const MatchPage = () => {
         console.log(response);
         if (response.status) {
           setFinished(true);
-          const sessionId = `${response.id}+${response.partnerId}`;
+          const sessionId =
+            response.partnerId > response.id
+              ? `${response.id}+${response.partnerId}`
+              : `${response.partnerId}+${response.id}`;
+          sessionStorage.setItem(
+            sessionId,
+            JSON.stringify({ difficulty, language })
+          );
           setTimeout(() => {
             history.push(`/interview/${sessionId}`);
           }, 150);

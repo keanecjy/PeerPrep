@@ -20,7 +20,9 @@ const SelectionMenu = (props) => {
         variant="outlined"
         color="secondary"
         SelectProps={{
-          MenuProps: { MenuListProps: { style: { width: '100%' } } },
+          MenuProps: {
+            MenuListProps: { style: { width: '100%' } },
+          },
         }}
       >
         {list.map((item) => (
