@@ -109,7 +109,7 @@
 }
 
 .chat {
-  height: calc(100% - 35px);
+  height: calc(100% - 43px);
   max-height: 400px;
   background-color: white;
   border-radius: 5px;
