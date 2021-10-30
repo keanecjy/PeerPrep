@@ -21,7 +21,14 @@ const HomePage = () => {
       justifyContent="center"
       direction="row-reverse"
     >
-      <Grid className="welcome-text" item xs={12} sm={10} md={8} style={{ margin: '1px' }}>
+      <Grid
+        className="welcome-text"
+        item
+        xs={12}
+        sm={10}
+        md={8}
+        style={{ margin: '1px' }}
+      >
         <Typography variant="h4">
           Welcome Back, {user?.name || 'Guest'}!
         </Typography>

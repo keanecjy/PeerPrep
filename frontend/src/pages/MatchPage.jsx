@@ -46,8 +46,17 @@ const MatchPage = () => {
 
       getMatch(user.id, difficulty, language).then((response) => {
         if (response.status) {
-          const sessionId = `${response.id}+${response.partnerId}`;
-          setTimeout(() => history.push(`/interview/${sessionId}`), 150);
+          const sessionId =
+            response.partnerId > response.id
+              ? `${response.id}+${response.partnerId}`
+              : `${response.partnerId}+${response.id}`;
+          sessionStorage.setItem(
+            sessionId,
+            JSON.stringify({ difficulty, language })
+          );
+          setTimeout(() => {
+            history.push(`/interview/${sessionId}`);
+          }, 150);
         } else {
           setCount((count) => count + 1);
         }

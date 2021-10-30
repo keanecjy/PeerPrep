@@ -43,6 +43,7 @@ export const CheckConfirmationCard = ({ navigate }) => {
         }, 150);
       })
       .catch((error) => {
+        console.log(error);
         setLoading(false);
         setSuccess(false);
       });
