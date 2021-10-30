@@ -10,7 +10,8 @@
     "eject": "react-scripts eject",
     "prettier": "npx prettier --write ./src/*",
     "lint": "npx prettier --write ./src/*",
-    "precommit": "lint-staged"
+    "precommit": "lint-staged",
+    "deploy": "yarn build && aws s3 sync build/ s3://peerprep"
   },
   "dependencies": {
     "@convergencelabs/codemirror-collab-ext": "^0.1.2",
