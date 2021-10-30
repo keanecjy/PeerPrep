@@ -28,8 +28,11 @@ jobs:
       - name: Build and tag the image
         working-directory: ./backend/chat
         run: |
-          # Build the image
-          docker-compose -f ./docker-compose.prod.yml
+          # Build and tag the image
+          docker build \
+            -t $CONTAINER_IMAGE \
+            -t latest:$GITHUB_SHA \
+            -t $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$CONTAINER_IMAGE .
 
       - name: Push the image into ECR
         run: |
