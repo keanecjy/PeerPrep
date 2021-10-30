@@ -55,7 +55,6 @@ export const HeaderBar = () => {
             >
               <Avatar
                 style={{ padding: 2, backgroundColor: 'white' }}
-                sizes={10}
                 alt={user?.name || 'Guest User'}
                 src={
                   user?.photo ||

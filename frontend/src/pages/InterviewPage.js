@@ -1,28 +1,20 @@
 import React, { useState, useEffect, useContext } from 'react';
-import StopWatch from '../components/StopWatch'
+import StopWatch from '../components/StopWatch';
 import { io } from 'socket.io-client';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import { UserContext } from '../context/UserContext';
-//import { Editor } from './EditorSection';
-import { toast } from 'react-toastify';
-import { randomQuestion } from '../services/interview';
 import parse from 'html-react-parser';
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/theme/mdn-like.css';
 import 'codemirror/mode/javascript/javascript';
 import 'codemirror/keymap/sublime';
+import '@convergencelabs/codemirror-collab-ext/css/codemirror-collab-ext.css';
 import CodeMirror from 'codemirror';
-import {Editor, EditorChangeCancellable, EditorChangeLinkedList} from "codemirror";
-
-
-// chat client socket
-const chatSocket = io('http://localhost:8082/', {
-  //forceNew: true,
-  transports: ['websocket', 'polling', 'flashsocket'],
-});
+import * as CodeMirrorCollabExt from '@convergencelabs/codemirror-collab-ext';
+import { useParams } from 'react-router';
 
 const CustomChip = ({ message }) => {
   return (
@@ -33,16 +25,70 @@ const CustomChip = ({ message }) => {
 };
 
 const InterviewPage = () => {
+  const [loading, setLoading] = useState(true);
+  const [questionTitle, setQuestionTitle] = useState('');
+  const [questionSlug, setQuestionSlug] = useState('');
+  const [hints, setHints] = useState([]);
   const [question, setQuestion] = useState('This is a sample question....');
-  const [code, setCode] = useState(`console.log('hello world');`);
+  const [initialCode, setInitialCode] = useState('');
   const [messages, setMessages] = useState([]);
   const [currMessage, setCurrMessage] = useState('');
-  const [sessionId, setSessionId] = useState('11');
   const { user } = useContext(UserContext);
-  const [codeEditor, setCodeEditor] = useState(null);
+  const { sessionId } = useParams('sessionId');
+  const [sessionParams, setSessionParams] = useState(null);
+  const [chatSocket, setChatSocket] = useState(null);
+  const [editorSocket, setEditorSocket] = useState(null);
 
-  // editor client socket
-  const editorSocket = io('http://localhost:8083');
+  useEffect(() => {
+    const sessionDetails = sessionStorage.getItem(sessionId);
+    if (sessionDetails) {
+      const data = JSON.stringify(sessionDetails);
+      setSessionParams({
+        difficulty: data.difficulty || 'medium',
+        language: data.language || 'javascript',
+      });
+    }
+  }, [sessionId]);
+
+  useEffect(() => {
+    // editor client socket
+    const editorSocket = io('http://localhost:8083');
+    setEditorSocket(editorSocket);
+
+    return () => editorSocket.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (sessionParams && editorSocket) {
+      editorSocket.on('connect', () => {
+        console.log('connect');
+        editorSocket.emit('CONNECTED_TO_ROOM', {
+          sessionId: sessionId,
+          userId: user.id,
+          difficulty: sessionParams.difficulty,
+          language: sessionParams.language,
+        });
+      });
+
+      editorSocket.on('disconnect', () => {
+        console.log('client disconnect');
+        editorSocket.emit('DISCONNECT_FROM_ROOM', {
+          sessionId: sessionId,
+          userId: user.id,
+        });
+      });
+
+      editorSocket.once('ROOM:CONNECTION', ({ code, question }) => {
+        console.log(code, question);
+        setQuestionTitle(question.title);
+        setQuestionSlug(question.titleSlug);
+        setHints(question.hints);
+        setInitialCode(code);
+        setQuestion(question.content);
+        setLoading(false);
+      });
+    }
+  }, [sessionParams, editorSocket]);
 
   // code editor hook
   useEffect(() => {
@@ -53,35 +99,105 @@ const InterviewPage = () => {
         keyMap: 'sublime',
         theme: 'mdn-like',
         mode: 'javascript',
+        lineWrapping: true,
+        scrollBarStyle: 'null',
       }
     );
-    setCodeEditor(editor);
+    editor.setValue(initialCode);
+    if (!editorSocket) {
+      return () => {
+        editor.toTextArea();
+      };
+    }
+    const remoteCursorManager = new CodeMirrorCollabExt.RemoteCursorManager({
+      editor: editor,
+      tooltips: true,
+      tooltipDuration: 2,
+    });
 
-    editorSocket.on('CODE_CHANGED', (code) => {
-      const cursor = editor.getCursor();
-      editor.setValue(code);
-      editor.setCursor(cursor);
+    const sourceUserCursor = remoteCursorManager.addCursor(
+      user.id,
+      'orange',
+      'you'
+    );
+    const targetUserCursor = remoteCursorManager.addCursor(
+      'Partner_Cursor',
+      'blue',
+      'Partner'
+    );
+    const remoteSelectionManager =
+      new CodeMirrorCollabExt.RemoteSelectionManager({ editor: editor });
+    const sourceUserSelection = remoteSelectionManager.addSelection(
+      user.id,
+      'orange'
+    );
+    const targetUserSelection = remoteSelectionManager.addSelection(
+      'Partner_selection',
+      'blue'
+    );
+
+    editorSocket.on('CODE_CHANGED', (_code) => {
+      console.log('CODE_CHANGED');
     });
-    editorSocket.on('connect', () => {
-      console.log('connect');
-      editorSocket.emit('CONNECTED_TO_ROOM', {
-        sessionId: sessionId,
-        userId: user.id,
-      });
+
+    editorSocket.on('CURSOR_CHANGED', ({ cursor, from, to }) => {
+      console.log('CURSOR_CHANGED');
+      setTimeout(() => {
+        targetUserCursor.setPosition(cursor);
+        targetUserSelection.setPositions(from, to);
+        targetUserCursor.show();
+        targetUserSelection.show();
+      }, 0);
     });
-    editorSocket.on('disconnect', () => {
-      console.log('client disconnect');
-      editorSocket.emit('DISCONNECT_FROM_ROOM', {
-        sessionId: sessionId,
-        userId: user.id,
+
+    editor.on('cursorActivity', () => {
+      editorSocket.emit('CURSOR_CHANGED', {
+        cursor: editor.getCursor(),
+        from: editor.getCursor('from'),
+        to: editor.getCursor('to'),
       });
+
+      setTimeout(() => {
+        sourceUserCursor.setPosition(editor.getCursor());
+
+        sourceUserSelection.setPositions(
+          editor.getCursor('from'),
+          editor.getCursor('to')
+        );
+      }, 0);
+    });
+
+    const sourceContentManager = new CodeMirrorCollabExt.EditorContentManager({
+      editor,
+      id: 'source',
+      onInsert(index, text) {
+        editorSocket.emit('CODE_INSERTED', { index, text });
+      },
+      onReplace(index, length, text) {
+        editorSocket.emit('CODE_REPLACED', { index, length, text });
+      },
+      onDelete(index, length) {
+        editorSocket.emit('CODE_DELETED', { index, length });
+      },
+    });
+
+    editorSocket.on('CODE_INSERTED', ({ index, text }) => {
+      console.log('insert');
+      sourceContentManager.insert(index, text);
+    });
+
+    editorSocket.on('CODE_REPLACED', ({ index, length, text }) => {
+      console.log('replace');
+      sourceContentManager.replace(index, length, text);
+    });
+
+    editorSocket.on('CODE_DELETED', ({ index, length }) => {
+      console.log('delete');
+      sourceContentManager.delete(index, length);
     });
 
     // Codemirror
-    editor.on('change', (instance, changes) => {
-      console.log(changes);
-      const { origin } = changes;
-      // if (origin === '+input' || origin === '+delete' || origin === 'cut') {
+    editor.on('change', (instance, { origin }) => {
       if (origin !== 'setValue') {
         editorSocket.emit('CODE_CHANGED', {
           sessionId,
@@ -89,22 +205,22 @@ const InterviewPage = () => {
         });
       }
     });
-    editor.on('cursorActivity', (instance) => {
-      console.log(instance.cursorCoords());
-    });
 
-    //leetcodeQns hook
-    randomQuestion('easy', 'javascript')
-      .then((res) => {
-        const leetcodeQn = res.data;
-        editor?.getDoc().setValue(leetcodeQn.code || '');
-        setQuestion(leetcodeQn.content || '');
-      })
-      .catch((error) => toast.error(error.message));
-  }, []);
+    return () => {
+      editor.toTextArea();
+      sourceContentManager.dispose();
+    };
+  }, [loading, editorSocket]);
 
   // Chat hook
   useEffect(() => {
+    // chat client socket
+    const chatSocket = io('http://localhost:8082/', {
+      //forceNew: true,
+      transports: ['websocket', 'polling', 'flashsocket'],
+    });
+    setChatSocket(chatSocket);
+
     chatSocket.on('connect', () =>
       setMessages((oldMessages) => [
         ...oldMessages,
@@ -116,7 +232,8 @@ const InterviewPage = () => {
       const ref = document.getElementById('chat-box');
       ref.scrollTo(0, ref.scrollHeight);
     });
-  }, []);
+    return () => chatSocket.disconnect();
+  }, [sessionId]);
 
   const handleSend = () => {
     if (currMessage !== '') {
@@ -157,9 +274,24 @@ const InterviewPage = () => {
               style={{ height: '100%' }}
             >
               <Grid item className="question-container">
-                <span className="interview-pg-title"> Question123 </span>
+                <span className="interview-pg-title">
+                  {' '}
+                  {questionTitle || 'Question'}{' '}
+                </span>
                 <div className="question-container-content">
                   {parse(question)}
+                  {hints.length > 0 && (
+                    <>
+                      <p>
+                        <strong>Hints:</strong>
+                      </p>
+                      <ul>
+                        {hints.map((hint, index) => (
+                          <li key={index}>{hint}</li>
+                        ))}
+                      </ul>
+                    </>
+                  )}
                 </div>
               </Grid>
               <Grid item className="chat-container">
@@ -201,14 +333,14 @@ const InterviewPage = () => {
             </Grid>
           </Grid>
           <Grid item container xs={12} justifyContent="flex-end">
-            <StopWatch/>
+            <StopWatch />
             <Button
               onClick={handleSend}
               variant="outlined"
               style={{
                 backgroundColor: '#cc3733',
                 color: 'white',
-                marginRight: '20px'
+                marginRight: '20px',
               }}
             >
               Forfeit

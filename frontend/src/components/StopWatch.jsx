@@ -13,9 +13,7 @@ const Stopwatch = () => (
     render={({ formatted }) => {
       return (
         <div className="stopwatch-container">
-          <p>
-            {formatted}
-          </p>
+          <p>{formatted}</p>
         </div>
       );
     }}

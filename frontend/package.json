@@ -25,7 +25,6 @@
     "codemirror": "^5.63.3",
     "formik": "^2.2.9",
     "html-react-parser": "^1.4.0",
-    "prismjs": "^1.25.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-icons": "^4.3.1",
@@ -38,8 +37,7 @@
     "unique-names-generator": "^4.6.0",
     "uuid": "^8.3.2",
     "web-vitals": "^1.0.1",
-    "yup": "^0.32.11",
-    "zustand": "^3.6.1"
+    "yup": "^0.32.11"
   },
   "devDependencies": {
     "@types/codemirror": "^5.60.5",

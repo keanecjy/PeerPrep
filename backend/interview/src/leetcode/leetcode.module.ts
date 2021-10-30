@@ -7,5 +7,6 @@ import { HttpModule } from '@nestjs/axios';
   imports: [HttpModule],
   controllers: [LeetcodeController],
   providers: [LeetcodeService],
+  exports: [LeetcodeService],
 })
 export class LeetcodeModule {}
