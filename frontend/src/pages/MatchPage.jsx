@@ -1,8 +1,8 @@
 import { Box, Button, Modal, Paper, Typography } from '@material-ui/core';
 import React, { useContext, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { toast } from 'react-toastify';
 import { UserContext } from '../context/UserContext';
+import useInterval from '../hooks/useInterval';
 import { difficulties, languages, sessionText } from '../match/constants';
 import LoadingButton from '../match/LoadingButton';
 import SelectionMenu from '../match/SelectionMenu';
@@ -27,38 +27,34 @@ const MatchPage = () => {
 
   const [difficulty, setDifficulty] = useState(difficulties[0]);
   const [language, setLanguage] = useState(languages[0]);
-  const [finished, setFinished] = useState(false);
   const [open, openModal] = useState(false);
+  const [isRetrying, setIsRetrying] = useState(false);
+  const [count, setCount] = useState(0);
 
-  const handleMatch = (counter) => {
-    console.log(`Counter: ${counter}`);
-    if (counter === 0) {
-      toast.warn('Failed to find matching user');
-      openModal(false);
-      return;
-    }
-
-    console.log(
-      `Id: ${user.id}, Language: ${language}, Difficulty: ${difficulty}`
-    );
-
-    getMatch(user.id, difficulty, language)
-      .then((response) => {
-        console.log(response);
-        if (response.status) {
-          setFinished(true);
-          const sessionId = `${response.id}+${response.partnerId}`;
-          setTimeout(() => {
-            history.push(`/interview/${sessionId}`);
-          }, 150);
-        } else {
-          setTimeout(() => {
-            handleMatch(counter - 1);
-          }, 5000);
-        }
-      })
-      .catch((err) => console.log(err));
+  const closeModal = () => {
+    openModal(false);
+    setIsRetrying(false);
+    setCount(0);
   };
+
+  useInterval(
+    () => {
+      if (count === 6) {
+        closeModal();
+        return;
+      }
+
+      getMatch(user.id, difficulty, language).then((response) => {
+        if (response.status) {
+          const sessionId = `${response.id}+${response.partnerId}`;
+          setTimeout(() => history.push(`/interview/${sessionId}`), 150);
+        } else {
+          setCount((count) => count + 1);
+        }
+      });
+    },
+    isRetrying ? 5000 : null
+  );
 
   const DifficultyMenu = () => {
     return (
@@ -95,7 +91,7 @@ const MatchPage = () => {
         size="large"
         onClick={() => {
           openModal(true);
-          handleMatch(6);
+          setIsRetrying(true);
         }}
       >
         Start coding!
@@ -132,7 +128,7 @@ const MatchPage = () => {
             flexDirection: 'column',
           }}
         >
-          <LoadingButton loading={true} done={finished} />
+          <LoadingButton loading={true} />
           <Typography color="primary">Matching is in progress...</Typography>
           <Button
             type="submit"
@@ -140,9 +136,7 @@ const MatchPage = () => {
             variant="contained"
             color="primary"
             size="large"
-            onClick={() => {
-              openModal(false);
-            }}
+            onClick={closeModal}
           >
             Cancel
           </Button>
