@@ -25,13 +25,13 @@ jobs:
         id: yarn-cache
         with:
           path: node_modules
-          key:${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: ${{ runner.os }}-yarn-
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          aws-access-key-id:$AWS_ACCESS_KEY_ID
-          aws-secret-access-key:$AWS_SECRET_ACCESS_KEY
+          aws-access-key-id: $AWS_ACCESS_KEY_ID
+          aws-secret-access-key: $AWS_SECRET_ACCESS_KEY
           aws-region: $AWS_DEFAULT_REGION
       - name: Use Node.js 12.x
         uses: actions/setup-node@v1
