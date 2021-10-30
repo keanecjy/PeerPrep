@@ -9,7 +9,8 @@
     "be:chat:start": "yarn workspace @peerprep/chat start:dev",
     "be:interview:start": "yarn workspace @peerprep/interview start:dev",
     "be:match:start": "yarn workspace @peerprep/match start:dev",
-    "lint": "yarn workspaces run lint"
+    "lint": "yarn workspaces run lint",
+    "aws:login": "aws ecr get-login-password --region ap-southeast-1 | docker login --username AWS --password-stdin 656831507331.dkr.ecr.ap-southeast-1.amazonaws.com"
   },
   "workspaces": {
     "packages": [
