@@ -26,13 +26,12 @@ jobs:
           # Login to AWS ECR
           $( aws ecr get-login --no-include-email )
       - name: Build and tag the image
-        working-directory: ./backend/account
+        working-directory: ./frontend
         run: |
           # Build the image
           docker-compose -f ./docker-compose.prod.yml
 
-      - name: Push the image into ECR
-        #      if: github.ref == 'refs/heads/master'
+      - name: Push the image into S3
         run: |
           docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$CONTAINER_IMAGE
     # Add additional steps here like scanning of image

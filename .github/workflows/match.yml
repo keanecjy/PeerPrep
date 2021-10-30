@@ -32,7 +32,6 @@ jobs:
           docker-compose -f ./docker-compose.prod.yml
 
       - name: Push the image into ECR
-        #      if: github.ref == 'refs/heads/master'
         run: |
           docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$CONTAINER_IMAGE
     # Add additional steps here like scanning of image
