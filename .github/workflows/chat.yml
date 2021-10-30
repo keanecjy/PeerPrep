@@ -1,8 +1,5 @@
 name: Build and Push Chat Service to EKS
 on:
-  # push:
-  #   branches:
-  #   - '*'
   pull_request:
     types: [closed]
 
@@ -37,4 +34,3 @@ jobs:
       - name: Push the image into ECR
         run: |
           docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$CONTAINER_IMAGE
-    # Add additional steps here like scanning of image

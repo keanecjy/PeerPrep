@@ -1,8 +1,5 @@
 name: Build and Push Frontend Client to S3
 on:
-  # push:
-  #   branches:
-  #   - '*'
   pull_request:
     types: [closed]
 
@@ -46,4 +43,3 @@ jobs:
       - name: Deploy
         working-directory: ./frontend
         run: aws s3 sync build/ s3://peerprep
-    # Add additional steps here like scanning of image
