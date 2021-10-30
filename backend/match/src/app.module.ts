@@ -10,7 +10,6 @@ import * as Joi from 'joi';
     ConfigModule.forRoot({
       validationSchema: Joi.object({
         REDIS_HOST: Joi.string().required(),
-        REDIS_PORT: Joi.number().required(),
       }),
     }),
     MatchModule,

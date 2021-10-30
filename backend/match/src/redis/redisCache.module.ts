@@ -11,7 +11,7 @@ import { RedisCacheService } from './redisCache.service';
       useFactory: async (configService: ConfigService) => ({
         store: redisStore,
         host: configService.get('REDIS_HOST'),
-        port: configService.get('REDIS_PORT'),
+        port: 6379,
         ttl: 0,
       }),
     }),
