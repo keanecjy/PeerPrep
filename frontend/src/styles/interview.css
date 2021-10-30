@@ -1,47 +1,47 @@
 .interview-page {
-    display: flex;
-    height: calc(100vh - 64px);
-    flex-direction: column;
-    color: white;
+  display: flex;
+  height: calc(100vh - 64px);
+  flex-direction: column;
+  color: white;
 }
 
 .interview-container {
-    display: flex;
-    height: calc(100vh - 64px);
-    color: white;
-    padding: 30px 50px;
+  display: flex;
+  height: calc(100vh - 64px);
+  color: white;
+  padding: 30px 50px;
 }
 
 .collab-container {
-    display: flex;
-    width: 100%;
-    height: 100%;
-    justify-content: center;
-    align-items: center;
-    flex-direction: row;
+  display: flex;
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
 }
 
 .code-editor-container {
-    display: flex;
-    height: 90%;
-    width: 35%;
-    flex-direction: column;
+  display: flex;
+  height: 90%;
+  width: 35%;
+  flex-direction: column;
 }
 
 .code-editor {
-    flex: 1;
-    flex-grow: 1;
-    background-color: #f5f5f5;
-    border-radius: 10px;
-    -webkit-box-shadow: 0px 0px 13px -2px rgba(0,0,0,0.47);
-    box-shadow: 0px 0px 13px -2px rgba(0,0,0,0.47);
-    color: black;
-    max-height: 100%;
-    overflow-y: auto;
+  flex: 1;
+  flex-grow: 1;
+  background-color: #f5f5f5;
+  border-radius: 10px;
+  -webkit-box-shadow: 0px 0px 13px -2px rgba(0, 0, 0, 0.47);
+  box-shadow: 0px 0px 13px -2px rgba(0, 0, 0, 0.47);
+  color: black;
+  max-height: 100%;
+  overflow-y: auto;
 }
 
 .editor {
-    counter-reset: line;
+  counter-reset: line;
 }
 
 /* .editor_no_border {
@@ -50,104 +50,116 @@
 } */
 
 .editor #code-area {
-    border: none;
-    outline: none;
-    padding-left: 40px !important;
+  border: none;
+  outline: none;
+  padding-left: 40px !important;
 }
 
 .editor pre {
-    padding-left: 40px !important;
-    hidden: true
+  padding-left: 40px !important;
+  hidden: true;
 }
 
 .editor .editor_line_number {
-    position: absolute;
-    left: 0px;
-    color: #aaaaaa;
-    text-align: right;
-    width: 30px;
-    font-weight: 100;
+  position: absolute;
+  left: 0px;
+  color: #aaaaaa;
+  text-align: right;
+  width: 30px;
+  font-weight: 100;
 }
 
 .chat-question-container {
-    height: 90%;
-    width: 30%;
-    margin-left: 5%;
+  height: 90%;
+  width: 30%;
+  margin-left: 5%;
 }
 
 .question-container {
-    display: flex;
-    height: 43%;
-    flex-direction: column;
-    margin-bottom: 2%;
-    overflow: hidden;
+  display: flex;
+  height: 43%;
+  flex-direction: column;
+  margin-bottom: 2%;
+  overflow: hidden;
+  width: 100%;
 }
 
 .question-container-content {
-    flex-grow: 1;
-    font-size: 14px;
-    overflow: auto;
+  font-size: 14px;
+  overflow: auto;
+}
+
+.question-container-content p {
+  white-space: wrap;
+}
+
+.question-container-content pre {
+  white-space: pre-wrap;
+}
+
+.CodeMirror {
+  height: 100%;
 }
 
 .chat-container {
-    display: flex;
-    height: 55%;
-    flex-direction: column;
-    overflow: hidden;
+  display: flex;
+  height: 55%;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 .chat {
-    height: calc(100% - 35px);
-    max-height: 400px;
-    background-color: white;
-    border-radius: 5px;
-    -webkit-box-shadow: 0px 0px 13px -2px rgba(0,0,0,0.47);
-    box-shadow: 0px 0px 13px -2px rgba(0,0,0,0.47);
+  height: calc(100% - 35px);
+  max-height: 400px;
+  background-color: white;
+  border-radius: 5px;
+  -webkit-box-shadow: 0px 0px 13px -2px rgba(0, 0, 0, 0.47);
+  box-shadow: 0px 0px 13px -2px rgba(0, 0, 0, 0.47);
 }
 
 #chat-box {
-    height: calc(100% - 31px);
-    max-height: 500px;
-    overflow-y: auto;
+  height: calc(100% - 31px);
+  max-height: 500px;
+  overflow-y: auto;
 }
 
 .chat-text-field {
-    display: flex;
-    flex-direction: row;
-    height: 30px;
-    margin-bottom: 1px;
+  display: flex;
+  flex-direction: row;
+  height: 30px;
+  margin-bottom: 1px;
 }
 
 .chat-bubble-left,
 .chat-bubble-right {
-    display: flex;
-    flex-direction: column;
-    margin: 8px 16px;
+  display: flex;
+  flex-direction: column;
+  margin: 8px 16px;
 }
 
 .chat-bubble-left {
-    align-items: flex-start;
+  align-items: flex-start;
 }
 
 .chat-bubble-right {
-    align-items: flex-end;
+  align-items: flex-end;
 }
 
 .interview-pg-title {
-    font-size: 25px;
-    font-weight: 600;
-    margin-bottom: 8px;
+  font-size: 25px;
+  font-weight: 600;
+  margin-bottom: 8px;
 }
 
 /* Style for custom chip */
 .custom-chip {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: center;
-    background-color: #1976D2;
-    padding: 4px 8px;
-    border-radius: 20px;
-    max-width: 90%;
-    word-break: break-word
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  background-color: #1976d2;
+  padding: 4px 8px;
+  border-radius: 20px;
+  max-width: 90%;
+  word-break: break-word;
 }

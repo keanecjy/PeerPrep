@@ -94,6 +94,8 @@ services:
       dockerfile: ../Dockerfile
     environment:
       - PORT=8083
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
     ports:
       - 8083:8083
     networks:
