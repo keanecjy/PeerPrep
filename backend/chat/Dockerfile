@@ -1,9 +1,8 @@
-# Development only
 FROM node:12
 WORKDIR /app
 COPY package*.json ./
 RUN yarn install
 COPY . .
 
-EXPOSE 3000
-CMD ["yarn", "start"]
+EXPOSE 8082
+CMD ["yarn", "start:dev"]

@@ -81,7 +81,6 @@ services:
     environment:
       - PORT=8083
       - REDIS_HOST=peerprep-redis.9po7zs.ng.0001.apse1.cache.amazonaws.com
-      - REDIS_PORT=6379
     ports:
       - 8083:8083
     networks:
@@ -95,7 +94,6 @@ services:
     environment:
       - PORT=8084
       - REDIS_HOST=peerprep-redis.9po7zs.ng.0001.apse1.cache.amazonaws.com
-      - REDIS_PORT=6379
     ports:
       - 8084:8084
     networks:

@@ -1,0 +1,41 @@
+name: Build and Push Match Service to EKS
+on:
+  # push:
+  #   branches:
+  #   - '*'
+  pull_request:
+    types: [closed]
+
+env:
+  AWS_DEFAULT_REGION: ap-southeast-1
+  AWS_DEFAULT_OUTPUT: json
+  AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  CONTAINER_IMAGE: peerprep-match:${{ github.sha }}
+
+jobs:
+  build-and-push:
+    name: Build and deploy Match Service to ECR
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup ECR
+        run: |
+          # Login to AWS ECR
+          $( aws ecr get-login --no-include-email )
+      - name: Build and tag the image
+        working-directory: ./backend/match
+        run: |
+          # Build and tag the image
+          docker build \
+            --build-arg REDIS_HOST=${{ secrets.REDIS_HOST }} \
+            -t $CONTAINER_IMAGE \
+            -t latest:$GITHUB_SHA \
+            -t $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$CONTAINER_IMAGE .
+
+      - name: Push the image into ECR
+        run: |
+          docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$CONTAINER_IMAGE
+    # Add additional steps here like scanning of image
