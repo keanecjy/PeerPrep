@@ -1,6 +1,7 @@
 import { Box, Button, Modal, Paper, Typography } from '@material-ui/core';
 import React, { useContext, useState } from 'react';
 import { useHistory } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { UserContext } from '../context/UserContext';
 import useInterval from '../hooks/useInterval';
 import { difficulties, languages, sessionText } from '../match/constants';
@@ -41,6 +42,7 @@ const MatchPage = () => {
     () => {
       if (count === 6) {
         closeModal();
+        toast.warn('Failed to find matching user');
         return;
       }
 
