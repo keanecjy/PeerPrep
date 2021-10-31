@@ -42,7 +42,7 @@ const InterviewPage = () => {
   useEffect(() => {
     const sessionDetails = sessionStorage.getItem(sessionId);
     if (sessionDetails) {
-      const data = JSON.stringify(sessionDetails);
+      const data = JSON.parse(sessionDetails);
       setSessionParams({
         difficulty: data.difficulty || 'medium',
         language: data.language || 'javascript',
@@ -98,7 +98,7 @@ const InterviewPage = () => {
         lineNumbers: true,
         keyMap: 'sublime',
         theme: 'mdn-like',
-        mode: 'javascript',
+        mode: sessionParams?.language || 'javascript',
         lineWrapping: true,
         scrollBarStyle: 'null',
       }
@@ -210,7 +210,7 @@ const InterviewPage = () => {
       editor.toTextArea();
       sourceContentManager.dispose();
     };
-  }, [loading, editorSocket]);
+  }, [sessionParams, loading, editorSocket]);
 
   // Chat hook
   useEffect(() => {

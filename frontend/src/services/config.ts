@@ -23,6 +23,7 @@ export const apiKeys = {
   },
   match: {
     find: '/match/find',
+    delete: '/match/delete',
   },
   interview: {
     leetcode: {

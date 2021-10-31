@@ -7,7 +7,7 @@ import useInterval from '../hooks/useInterval';
 import { difficulties, languages, sessionText } from '../match/constants';
 import LoadingButton from '../match/LoadingButton';
 import SelectionMenu from '../match/SelectionMenu';
-import { getMatch } from '../services/match';
+import { deleteMatch, getMatch } from '../services/match';
 import '../styles/match.css';
 
 const modalStyle = {
@@ -36,6 +36,10 @@ const MatchPage = () => {
     openModal(false);
     setIsRetrying(false);
     setCount(0);
+    console.log(`Deleting match for ${user.id}`);
+    deleteMatch(user.id, difficulty, language).then((response) => {
+      console.log(response);
+    });
   };
 
   useInterval(
@@ -50,13 +54,14 @@ const MatchPage = () => {
 
       getMatch(user.id, difficulty, language).then((response) => {
         if (response.status) {
-          const sessionId =
-            response.partnerId > response.id
-              ? `${response.id}+${response.partnerId}`
-              : `${response.partnerId}+${response.id}`;
+          const sessionId = response.sessionId;
           sessionStorage.setItem(
             sessionId,
-            JSON.stringify({ difficulty, language })
+            JSON.stringify({
+              ...response,
+              difficulty: response.difficulty.toLowerCase(),
+              language: response.language.toLowerCase(),
+            })
           );
           setTimeout(() => {
             history.push(`/interview/${sessionId}`);

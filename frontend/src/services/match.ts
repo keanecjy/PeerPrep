@@ -20,3 +20,17 @@ export const getMatch = async (
   });
   return res.data as MatchResponse;
 };
+
+export const deleteMatch = async (
+  id: string,
+  difficulty: string,
+  language: string
+) => {
+  await server.delete(apiKeys.match.delete, {
+    params: {
+      id: id,
+      difficulty: difficulty,
+      language: language,
+    },
+  });
+};
