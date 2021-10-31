@@ -24,6 +24,7 @@ import {
 
 @Injectable()
 export class LeetcodeService {
+  private QUESTIONS = QUESTIONS;
   constructor(private httpService: HttpService) {}
 
   getRandomWithFallback(
@@ -40,15 +41,14 @@ export class LeetcodeService {
           console.log('Timeout');
         }
         const random: number = Math.floor(Math.random() * 3);
-        const filteredQuestions = QUESTIONS.filter(
+        const filteredQuestions = this.QUESTIONS.filter(
           (x) => x.difficulty.toLowerCase() === difficulty
         );
         const question = filteredQuestions[random] as any;
         const code = question.code?.filter(
           (snippets) => snippets.langSlug === lang
         )[0];
-        question.code = code.code;
-        return of(question);
+        return of({ ...question, code: code.code });
       })
     );
   }
