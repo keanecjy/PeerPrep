@@ -1,7 +1,8 @@
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
-import { Controller, Get, Query } from '@nestjs/common';
+import { Controller, Delete, Get, Query } from '@nestjs/common';
 import { MatchService } from './match.service';
 import { MatchResponse } from './match-response';
+import { first } from 'rxjs';
 
 @ApiTags('Match')
 @Controller()
@@ -19,5 +20,20 @@ export class MatchController {
     @Query('language') language: string
   ): Promise<MatchResponse> {
     return this.matchService.getMatch(id, difficulty, language);
+  }
+
+  @Delete('delete')
+  async deleteMatch(
+    @Query('first_id') firstId: string,
+    @Query('second_id') secondId: string,
+    @Query('difficulty') difficulty: string,
+    @Query('language') language: string
+  ) {
+    return this.matchService.deleteMatch(
+      firstId,
+      secondId,
+      difficulty,
+      language
+    );
   }
 }

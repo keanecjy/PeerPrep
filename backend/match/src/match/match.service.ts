@@ -63,4 +63,18 @@ export class MatchService {
     }
     console.log(`Starting match for ${id}`);
   }
+
+  async deleteMatch(
+    firstId: string,
+    secondId: string,
+    difficulty: string,
+    language: string
+  ) {
+    const key = `${difficulty}_${language}`;
+    const data = await this.redisService.get(key);
+    const map = JSON.parse(data);
+    delete map[firstId];
+    delete map[secondId];
+    await this.redisService.set(key, JSON.stringify(map));
+  }
 }

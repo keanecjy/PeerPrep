@@ -56,7 +56,10 @@ const MatchPage = () => {
               : `${response.partnerId}+${response.id}`;
           sessionStorage.setItem(
             sessionId,
-            JSON.stringify({ difficulty, language })
+            JSON.stringify({
+              difficulty: difficulty.toLowerCase(),
+              language: language.toLowerCase(),
+            })
           );
           setTimeout(() => {
             history.push(`/interview/${sessionId}`);
