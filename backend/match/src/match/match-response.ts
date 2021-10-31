@@ -9,4 +9,13 @@ export class MatchResponse {
 
   @IsString()
   partnerId?: string;
+
+  @IsString()
+  sessionId?: string;
+
+  @IsString()
+  difficulty: string;
+
+  @IsString()
+  language: string;
 }
