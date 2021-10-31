@@ -1,8 +1,7 @@
-import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { Controller, Delete, Get, Query } from '@nestjs/common';
-import { MatchService } from './match.service';
+import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { MatchResponse } from './match-response';
-import { first } from 'rxjs';
+import { MatchService } from './match.service';
 
 @ApiTags('Match')
 @Controller()
@@ -22,18 +21,15 @@ export class MatchController {
     return this.matchService.getMatch(id, difficulty, language);
   }
 
+  /*
+  Deletes a user from the match database
+  */
   @Delete('delete')
   async deleteMatch(
-    @Query('first_id') firstId: string,
-    @Query('second_id') secondId: string,
+    @Query('id') id: string,
     @Query('difficulty') difficulty: string,
     @Query('language') language: string
   ) {
-    return this.matchService.deleteMatch(
-      firstId,
-      secondId,
-      difficulty,
-      language
-    );
+    return this.matchService.deleteMatch(id, difficulty, language);
   }
 }
