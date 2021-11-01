@@ -11,7 +11,9 @@
     "prettier": "npx prettier --write ./src/*",
     "lint": "npx prettier --write ./src/*",
     "precommit": "lint-staged",
-    "deploy": "yarn build && aws s3 sync build/ s3://peerprep"
+    "s3-deploy": "aws s3 sync build/ s3://peerprep",
+    "s3-cloudfront-invalidate": "aws cloudfront create-invalidation --distribution-id EEPXRVBJNI7S9 --paths '/*'",
+    "deploy": "yarn run build && yarn run s3-deploy && yarn run s3-cloudfront-invalidate"
   },
   "dependencies": {
     "@convergencelabs/codemirror-collab-ext": "^0.1.2",
