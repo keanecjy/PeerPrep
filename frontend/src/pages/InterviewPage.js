@@ -80,7 +80,7 @@ const InterviewPage = () => {
         });
       });
 
-      setInterval(() => {
+      let timer = setInterval(() => {
         setTime((oldTime) => oldTime + 1);
       }, 1000);
 
@@ -94,6 +94,8 @@ const InterviewPage = () => {
         setQuestion(question.content);
         setLoading(false);
       });
+
+      return () => clearInterval(timer);
     }
   }, [sessionParams, editorSocket]);
 
