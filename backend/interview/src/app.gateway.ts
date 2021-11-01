@@ -66,31 +66,35 @@ export class AppGateway
       userId,
       difficulty,
       language,
+      time,
     }: {
       sessionId: string;
       userId: string;
       difficulty: DifficultyType;
       language: LanguageType;
+      time: string;
     }
   ): Promise<void> {
     console.log(sessionId, userId, 'FromserverClientJoinRoom');
     client.join(sessionId);
     const question = await this.redisService.getQuestion(sessionId);
+    const currentTime = await this.redisService.getTime(sessionId);
 
-    if (question) {
+    if (question && currentTime) {
       const code = await this.redisService.getCode(sessionId);
 
-      this.server.in(sessionId).emit('ROOM:CONNECTION', { question, code });
+      this.server.in(sessionId).emit('ROOM:CONNECTION', { question, code, time: currentTime });
     } else {
       const question = await firstValueFrom(
         this.leetcodeService.getRandomWithFallback(difficulty, language)
       );
       this.redisService.setCode(sessionId, question.code);
       this.redisService.setQuestion(sessionId, question);
+      this.redisService.setTime(sessionId, time);
 
       this.server
         .in(sessionId)
-        .emit('ROOM:CONNECTION', { question, code: question.code });
+        .emit('ROOM:CONNECTION', { question, code: question.code, time: time });
     }
   }
 

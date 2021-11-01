@@ -31,6 +31,7 @@ const InterviewPage = () => {
   const [hints, setHints] = useState([]);
   const [question, setQuestion] = useState('This is a sample question....');
   const [initialCode, setInitialCode] = useState('');
+  const [time, setTime] = useState(0); // To send to backend to get the total time taken
   const [messages, setMessages] = useState([]);
   const [currMessage, setCurrMessage] = useState('');
   const { user } = useContext(UserContext);
@@ -67,6 +68,7 @@ const InterviewPage = () => {
           userId: user.id,
           difficulty: sessionParams.difficulty,
           language: sessionParams.language,
+          time: Math.floor(new Date().getTime() / 1000).toString(),
         });
       });
 
@@ -78,12 +80,17 @@ const InterviewPage = () => {
         });
       });
 
-      editorSocket.once('ROOM:CONNECTION', ({ code, question }) => {
-        console.log(code, question);
+      setInterval(() => {
+        setTime((oldTime) => oldTime + 1);
+      }, 1000);
+
+      editorSocket.once('ROOM:CONNECTION', ({ code, question, time }) => {
+        console.log(code, question, time);
         setQuestionTitle(question.title);
         setQuestionSlug(question.titleSlug);
         setHints(question.hints);
         setInitialCode(code);
+        setTime(Math.floor(new Date().getTime() / 1000) - parseInt(time, 10));
         setQuestion(question.content);
         setLoading(false);
       });
@@ -249,6 +256,10 @@ const InterviewPage = () => {
     }
   };
 
+  const handleForfeit = () => {}; // TODO
+
+  const handleSubmit = () => {}; // TODO
+
   return (
     <div className="interview-page">
       <Grid item className="interview-container">
@@ -308,7 +319,7 @@ const InterviewPage = () => {
                         }
                       >
                         <Typography variant="caption" color="textSecondary">
-                          {data.sender}
+                          {data.sender == user.name ? 'You' : data.sender}
                         </Typography>
                         <CustomChip message={data.msg} />
                       </div>
@@ -333,9 +344,9 @@ const InterviewPage = () => {
             </Grid>
           </Grid>
           <Grid item container xs={12} justifyContent="flex-end">
-            <StopWatch />
+            <StopWatch time={time} />
             <Button
-              onClick={handleSend}
+              onClick={handleForfeit}
               variant="outlined"
               style={{
                 backgroundColor: '#cc3733',
@@ -346,7 +357,7 @@ const InterviewPage = () => {
               Forfeit
             </Button>
             <Button
-              onClick={handleSend}
+              onClick={handleSubmit}
               variant="outlined"
               style={{
                 backgroundColor: 'white',

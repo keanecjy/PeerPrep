@@ -20,4 +20,12 @@ export class RedisCacheService {
   async setCode(sessionId: string, code: string): Promise<string> {
     return await this.cache.set(sessionId + '_code', code);
   }
+
+  async getTime(sessionId: string): Promise<string> {
+    return await this.cache.get(sessionId + '_time');
+  }
+
+  async setTime(sessionId: string, time: string): Promise<string> {
+    return await this.cache.set(sessionId + '_time', time);
+  }
 }
