@@ -1,6 +1,8 @@
-name: Build and Push Account Service to EKS
+name: Push Account Service to EKS
 on:
   pull_request:
+    paths:
+      - 'backend/account/**'
     types: [closed]
 
 env:
@@ -10,11 +12,11 @@ env:
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   CONTAINER_IMAGE: peerprep-account
-  IMAGE_TAG: ${{ github.sha }}
+  IMAGE_TAG: 1.0
 
 jobs:
   build-and-push:
-    name: Build and deploy Account Service to ECR
+    name: Push Account Service to ECR
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -31,7 +33,7 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v1
 
       - name: Build and tag the image
-        working-directory: ./backend/accounta
+        working-directory: ./backend/account
         run: |
           # Build and tag the image
           docker build \
