@@ -80,7 +80,8 @@ services:
     image: 656831507331.dkr.ecr.ap-southeast-1.amazonaws.com/peerprep-interview
     environment:
       - PORT=8083
-      - REDIS_HOST=peerprep-redis.9po7zs.ng.0001.apse1.cache.amazonaws.com
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
     ports:
       - 8083:8083
     networks:
@@ -93,7 +94,8 @@ services:
       - redis
     environment:
       - PORT=8084
-      - REDIS_HOST=peerprep-redis.9po7zs.ng.0001.apse1.cache.amazonaws.com
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
     ports:
       - 8084:8084
     networks:
