@@ -1,6 +1,8 @@
-name: Build and Push Interview Service to EKS
+name: Push Interview Service to EKS
 on:
   pull_request:
+    paths:
+      - 'backend/interview/**'
     types: [closed]
 
 env:
@@ -14,7 +16,7 @@ env:
 
 jobs:
   build-and-push:
-    name: Build and deploy Interview Service to ECR
+    name: Push Interview Service to ECR
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

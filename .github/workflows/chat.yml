@@ -1,6 +1,8 @@
-name: Build and Push Chat Service to EKS
+name: Push Chat Service to EKS
 on:
   pull_request:
+    paths:
+      - 'backend/chat/**'
     types: [closed]
 
 env:
@@ -14,7 +16,7 @@ env:
 
 jobs:
   build-and-push:
-    name: Build and deploy Chat Service to ECR
+    name: Push Chat Service to ECR
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

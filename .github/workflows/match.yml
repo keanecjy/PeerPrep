@@ -1,6 +1,8 @@
-name: Build and Push Match Service to EKS
+name: Push Match Service to EKS
 on:
   pull_request:
+    paths:
+      - 'backend/match/**'
     types: [closed]
 
 env:
@@ -14,7 +16,7 @@ env:
 
 jobs:
   build-and-push:
-    name: Build and deploy Match Service to ECR
+    name: Push Match Service to ECR
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
