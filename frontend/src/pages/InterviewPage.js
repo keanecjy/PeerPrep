@@ -15,6 +15,7 @@ import '@convergencelabs/codemirror-collab-ext/css/codemirror-collab-ext.css';
 import CodeMirror from 'codemirror';
 import * as CodeMirrorCollabExt from '@convergencelabs/codemirror-collab-ext';
 import { useParams } from 'react-router';
+import { Chip } from '@material-ui/core';
 
 const CustomChip = ({ message }) => {
   return (
@@ -26,10 +27,11 @@ const CustomChip = ({ message }) => {
 
 const InterviewPage = () => {
   const [loading, setLoading] = useState(true);
-  const [questionTitle, setQuestionTitle] = useState('');
-  const [questionSlug, setQuestionSlug] = useState('');
-  const [hints, setHints] = useState([]);
-  const [question, setQuestion] = useState('This is a sample question....');
+  const [question, setQuestion] = useState({
+    content: 'Loading Question...',
+    hints: [],
+    topics: [],
+  });
   const [initialCode, setInitialCode] = useState('');
   const [time, setTime] = useState(0); // To send to backend to get the total time taken
   const [messages, setMessages] = useState([]);
@@ -39,15 +41,13 @@ const InterviewPage = () => {
   const [sessionParams, setSessionParams] = useState(null);
   const [chatSocket, setChatSocket] = useState(null);
   const [editorSocket, setEditorSocket] = useState(null);
+  const [dirty, setDirty] = useState(false);
 
   useEffect(() => {
     const sessionDetails = sessionStorage.getItem(sessionId);
     if (sessionDetails) {
       const data = JSON.parse(sessionDetails);
-      setSessionParams({
-        difficulty: data.difficulty || 'medium',
-        language: data.language || 'javascript',
-      });
+      setSessionParams(data);
     }
   }, [sessionId]);
 
@@ -86,12 +86,12 @@ const InterviewPage = () => {
 
       editorSocket.once('ROOM:CONNECTION', ({ code, question, time }) => {
         console.log(code, question, time);
-        setQuestionTitle(question.title);
-        setQuestionSlug(question.titleSlug);
-        setHints(question.hints);
+        setQuestion({
+          ...question,
+          content: question.content?.replace(/&nbsp;/g, ' '),
+        });
         setInitialCode(code);
         setTime(Math.floor(new Date().getTime() / 1000) - parseInt(time, 10));
-        setQuestion(question.content);
         setLoading(false);
       });
 
@@ -124,85 +124,100 @@ const InterviewPage = () => {
       tooltipDuration: 2,
     });
 
-    const sourceUserCursor = remoteCursorManager.addCursor(
-      user.id,
-      'orange',
-      'you'
-    );
     const targetUserCursor = remoteCursorManager.addCursor(
-      'Partner_Cursor',
+      'partner',
       'blue',
       'Partner'
     );
     const remoteSelectionManager =
       new CodeMirrorCollabExt.RemoteSelectionManager({ editor: editor });
-    const sourceUserSelection = remoteSelectionManager.addSelection(
-      user.id,
-      'orange'
-    );
     const targetUserSelection = remoteSelectionManager.addSelection(
-      'Partner_selection',
+      'partner',
       'blue'
     );
 
-    editorSocket.on('CODE_CHANGED', (_code) => {
+    editorSocket.on('CODE_CHANGED', (code) => {
       console.log('CODE_CHANGED');
-    });
-
-    editorSocket.on('CURSOR_CHANGED', ({ cursor, from, to }) => {
-      console.log('CURSOR_CHANGED');
-      setTimeout(() => {
-        targetUserCursor.setPosition(cursor);
-        targetUserSelection.setPositions(from, to);
-        targetUserCursor.show();
-        targetUserSelection.show();
-      }, 0);
+      if (dirty) {
+        editor.setValue(code);
+        setDirty(false);
+      }
     });
 
     editor.on('cursorActivity', () => {
-      editorSocket.emit('CURSOR_CHANGED', {
+      const data = {
         cursor: editor.getCursor(),
         from: editor.getCursor('from'),
         to: editor.getCursor('to'),
-      });
-
+      };
       setTimeout(() => {
-        sourceUserCursor.setPosition(editor.getCursor());
-
-        sourceUserSelection.setPositions(
-          editor.getCursor('from'),
-          editor.getCursor('to')
-        );
+        editorSocket.emit('CURSOR_CHANGED', {
+          origin: user.id,
+          sessionId: sessionId,
+          cursor: data.cursor,
+          from: data.from,
+          to: data.to,
+        });
       }, 0);
+    });
+
+    editorSocket.on('CURSOR_CHANGED', ({ origin, cursor, from, to }) => {
+      console.log('CURSOR_CHANGED', origin);
+      try {
+        targetUserCursor.setPosition(cursor);
+        targetUserSelection.setPositions(from, to);
+      } catch (err) {
+        // not important to ensure real-time collab
+        console.log(err);
+      }
     });
 
     const sourceContentManager = new CodeMirrorCollabExt.EditorContentManager({
       editor,
       id: 'source',
       onInsert(index, text) {
-        editorSocket.emit('CODE_INSERTED', { index, text });
+        editorSocket.emit('CODE_INSERTED', {
+          sessionId,
+          index,
+          text,
+        });
       },
       onReplace(index, length, text) {
-        editorSocket.emit('CODE_REPLACED', { index, length, text });
+        editorSocket.emit('CODE_REPLACED', { sessionId, index, length, text });
       },
       onDelete(index, length) {
-        editorSocket.emit('CODE_DELETED', { index, length });
+        editorSocket.emit('CODE_DELETED', { sessionId, index, length });
       },
     });
 
     editorSocket.on('CODE_INSERTED', ({ index, text }) => {
       console.log('insert');
-      sourceContentManager.insert(index, text);
+      try {
+        sourceContentManager.insert(index, text);
+      } catch (err) {
+        console.log(err);
+        setDirty(true);
+      }
     });
 
     editorSocket.on('CODE_REPLACED', ({ index, length, text }) => {
       console.log('replace');
-      sourceContentManager.replace(index, length, text);
+      try {
+        sourceContentManager.replace(index, length, text);
+      } catch (err) {
+        console.log(err);
+        setDirty(true);
+      }
     });
 
     editorSocket.on('CODE_DELETED', ({ index, length }) => {
       console.log('delete');
-      sourceContentManager.delete(index, length);
+      try {
+        sourceContentManager.delete(index, length);
+      } catch (err) {
+        console.log(err);
+        setDirty(true);
+      }
     });
 
     // Codemirror
@@ -218,6 +233,8 @@ const InterviewPage = () => {
     return () => {
       editor.toTextArea();
       sourceContentManager.dispose();
+      targetUserCursor.dispose();
+      targetUserSelection.dispose();
     };
   }, [sessionParams, loading, editorSocket]);
 
@@ -289,21 +306,67 @@ const InterviewPage = () => {
               <Grid item className="question-container">
                 <span className="interview-pg-title">
                   {' '}
-                  {questionTitle || 'Question'}{' '}
+                  {question.title || 'Question'}{' '}
+                  {question.titleSlug && (
+                    <Typography
+                      color="secondary"
+                      component={'a'}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      href={`https://leetcode.com/problems/${question.titleSlug}`}
+                    >
+                      Link
+                    </Typography>
+                  )}
                 </span>
                 <div className="question-container-content">
-                  {parse(question)}
-                  {hints.length > 0 && (
+                  <Chip
+                    label={question.difficulty || 'difficulty'}
+                    color="secondary"
+                    size="small"
+                    style={{
+                      textTransform: 'capitalize',
+                      marginRight: '0.5em',
+                    }}
+                  />
+                  <Chip
+                    label={sessionParams?.language || 'difficulty'}
+                    color="secondary"
+                    size="small"
+                    style={{ textTransform: 'capitalize' }}
+                  />
+                  {parse(question.content)}
+                  {question?.hints.length > 0 && (
                     <>
                       <p>
                         <strong>Hints:</strong>
                       </p>
                       <ul>
-                        {hints.map((hint, index) => (
+                        {question.hints.map((hint, index) => (
                           <li key={index}>{hint}</li>
                         ))}
                       </ul>
                     </>
+                  )}
+                  {question?.topics.length > 0 && (
+                    <div
+                      style={{
+                        display: 'flex',
+                        flexWrap: 'wrap',
+                        alignItems: 'center',
+                      }}
+                    >
+                      <strong>Topics:</strong>
+                      {question.topics.map((topic, index) => (
+                        <Chip
+                          key={index}
+                          label={topic}
+                          style={{ margin: '0.5em' }}
+                          color="secondary"
+                          size="small"
+                        />
+                      ))}
+                    </div>
                   )}
                 </div>
               </Grid>
