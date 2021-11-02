@@ -56,15 +56,18 @@ const MatchPage = () => {
         if (response.status) {
           const sessionId = response.sessionId;
           sessionStorage.setItem(sessionId, JSON.stringify(response));
-          setTimeout(() => {
-            history.push(`/interview/${sessionId}`);
-          }, 150);
+          setTimeout(
+            () => {
+              history.push(`/interview/${sessionId}`);
+            },
+            count ? 150 : 1500
+          );
         } else {
           setCount((count) => count + 1);
         }
       });
     },
-    isRetrying ? 5000 : null
+    isRetrying ? 3000 : null
   );
 
   const DifficultyMenu = () => {
