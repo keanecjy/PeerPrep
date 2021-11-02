@@ -26,8 +26,8 @@ const MatchPage = () => {
   const { user } = useContext(UserContext);
   const history = useHistory();
 
-  const [difficulty, setDifficulty] = useState(difficulties[0]);
-  const [language, setLanguage] = useState(languages[0]);
+  const [difficulty, setDifficulty] = useState(difficulties.Easy);
+  const [language, setLanguage] = useState(languages.Java);
   const [open, openModal] = useState(false);
   const [isRetrying, setIsRetrying] = useState(false);
   const [count, setCount] = useState(0);
@@ -55,14 +55,7 @@ const MatchPage = () => {
       getMatch(user.id, difficulty, language).then((response) => {
         if (response.status) {
           const sessionId = response.sessionId;
-          sessionStorage.setItem(
-            sessionId,
-            JSON.stringify({
-              ...response,
-              difficulty: response.difficulty.toLowerCase(),
-              language: response.language.toLowerCase(),
-            })
-          );
+          sessionStorage.setItem(sessionId, JSON.stringify(response));
           setTimeout(() => {
             history.push(`/interview/${sessionId}`);
           }, 150);
@@ -78,7 +71,7 @@ const MatchPage = () => {
     return (
       <SelectionMenu
         header="Difficulty"
-        list={difficulties}
+        items={difficulties}
         value={difficulty}
         setValue={setDifficulty}
       />
@@ -89,7 +82,7 @@ const MatchPage = () => {
     return (
       <SelectionMenu
         header="Language"
-        list={languages}
+        items={languages}
         value={language}
         setValue={setLanguage}
       />
