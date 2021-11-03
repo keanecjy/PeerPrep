@@ -18,7 +18,7 @@ export const getQuestion = (
   slug: string,
   lang: 'java' | 'javascript' | 'python'
 ) => {
-  return server.get(`${apiKeys.serverCheck.interview}`, {
+  return server.get(`${apiKeys.interview.leetcode.find}`, {
     params: { slug, lang },
   });
 };

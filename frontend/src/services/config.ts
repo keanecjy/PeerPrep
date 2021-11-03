@@ -1,9 +1,9 @@
 export const apiKeys = {
   serverCheck: {
     account: '/',
-    match: '/match',
-    interview: '/interview',
-    chat: '/chat',
+    match: '/match/',
+    interview: '/interview/',
+    chat: '/chat/',
   },
   auth: {
     login: '/auth/login',
@@ -25,7 +25,11 @@ export const apiKeys = {
     find: '/match/find',
     delete: '/match/delete',
   },
+  chat: {
+    socket: '/chat/',
+  },
   interview: {
+    socket: '/interview/',
     leetcode: {
       random: '/interview/leetcode/random',
       find: '/interview/leetcode',

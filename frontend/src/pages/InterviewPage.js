@@ -16,6 +16,8 @@ import CodeMirror from 'codemirror';
 import * as CodeMirrorCollabExt from '@convergencelabs/codemirror-collab-ext';
 import { useParams } from 'react-router';
 import { Chip } from '@material-ui/core';
+import { apiKeys } from '../services/config';
+import { API_URL } from '../shared/variables';
 
 const CustomChip = ({ message }) => {
   return (
@@ -53,7 +55,9 @@ const InterviewPage = () => {
 
   useEffect(() => {
     // editor client socket
-    const editorSocket = io('http://localhost:8083');
+    const editorSocket = io(`${API_URL}${apiKeys.interview.socket}`, {
+      path: '/interview/socket.io',
+    });
     setEditorSocket(editorSocket);
 
     return () => editorSocket.disconnect();
@@ -241,9 +245,8 @@ const InterviewPage = () => {
   // Chat hook
   useEffect(() => {
     // chat client socket
-    const chatSocket = io('http://localhost:8082/', {
-      //forceNew: true,
-      transports: ['websocket', 'polling', 'flashsocket'],
+    const chatSocket = io(`${API_URL}${apiKeys.chat.socket}`, {
+      path: '/chat/socket.io',
     });
     setChatSocket(chatSocket);
 

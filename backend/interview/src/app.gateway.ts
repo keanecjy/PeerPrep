@@ -16,7 +16,11 @@ import { Socket, Server } from 'socket.io';
 import { firstValueFrom } from 'rxjs';
 import { RedisCacheService } from './redis/redisCache.service';
 
-@WebSocketGateway({ cors: true })
+@WebSocketGateway({
+  cors: true,
+  path: '/interview/socket.io',
+  namespace: 'interview/socket',
+})
 export class AppGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
