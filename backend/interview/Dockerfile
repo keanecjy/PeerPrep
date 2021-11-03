@@ -1,12 +1,8 @@
-FROM node:12
+FROM node:12 as build
 WORKDIR /app
 COPY package*.json ./
-RUN yarn install
+RUN yarn
 COPY . .
+RUN yarn build
 
-ARG REDIS_HOST
-
-ENV REDIS_HOST=${REDIS_HOST}
-
-EXPOSE 8083
-CMD ["yarn", "start:dev"]
+CMD ["node", "dist/main"]

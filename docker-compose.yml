@@ -31,9 +31,6 @@ services:
       dockerfile: Dockerfile
     depends_on:
       - nginx
-    environment:
-      # Add any development build env here
-      - BACKEND_URL:localhost
     ports:
       - 3000:3000
     networks:
