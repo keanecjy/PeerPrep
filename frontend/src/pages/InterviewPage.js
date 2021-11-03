@@ -148,21 +148,38 @@ const InterviewPage = () => {
       }
     });
 
+    var isUserActivity = false;
+
+    editor.on('mousedown', function () {
+      isUserActivity = true;
+    });
+
     editor.on('cursorActivity', () => {
-      const data = {
-        cursor: editor.getCursor(),
-        from: editor.getCursor('from'),
-        to: editor.getCursor('to'),
-      };
-      setTimeout(() => {
-        editorSocket.emit('CURSOR_CHANGED', {
-          origin: user.id,
-          sessionId: sessionId,
-          cursor: data.cursor,
-          from: data.from,
-          to: data.to,
-        });
-      }, 0);
+      if (isUserActivity) {
+        isUserActivity = false;
+        const data = {
+          cursor: editor.getCursor(),
+          from: editor.getCursor('from'),
+          to: editor.getCursor('to'),
+        };
+        setTimeout(() => {
+          editorSocket.emit('CURSOR_CHANGED', {
+            origin: user.id,
+            sessionId: sessionId,
+            cursor: data.cursor,
+            from: data.from,
+            to: data.to,
+          });
+        }, 0);
+      }
+    });
+
+    editor.on('keydown', () => {
+      isUserActivity = true;
+    });
+
+    editor.on('beforeChange', () => {
+      isUserActivity = false;
     });
 
     editorSocket.on('CURSOR_CHANGED', ({ origin, cursor, from, to }) => {
