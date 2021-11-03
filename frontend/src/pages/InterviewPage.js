@@ -263,7 +263,7 @@ const InterviewPage = () => {
   useEffect(() => {
     // chat client socket
     const chatSocket = io(`${API_URL}${apiKeys.chat.socket}`, {
-      path: '/chat/socket.io',
+      path: '/chat/new',
     });
     setChatSocket(chatSocket);
 
