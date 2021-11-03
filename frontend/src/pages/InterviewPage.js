@@ -117,7 +117,7 @@ const InterviewPage = () => {
       }
     );
     editor.setValue(initialCode);
-    if (!editorSocket) {
+    if (!editorSocket || !sessionParams) {
       return () => {
         editor.toTextArea();
       };
@@ -127,14 +127,23 @@ const InterviewPage = () => {
       tooltips: true,
       tooltipDuration: 2,
     });
-
+    const sourceUserCursor = remoteCursorManager.addCursor(
+      user.id,
+      'orange',
+      'You'
+    );
     const targetUserCursor = remoteCursorManager.addCursor(
       'partner',
       'blue',
       'Partner'
     );
+
     const remoteSelectionManager =
       new CodeMirrorCollabExt.RemoteSelectionManager({ editor: editor });
+    const sourceUserSelection = remoteSelectionManager.addSelection(
+      'partner',
+      'orange'
+    );
     const targetUserSelection = remoteSelectionManager.addSelection(
       'partner',
       'blue'
@@ -155,13 +164,14 @@ const InterviewPage = () => {
     });
 
     editor.on('cursorActivity', () => {
-      if (isUserActivity) {
+      const data = {
+        cursor: editor.getCursor(),
+        from: editor.getCursor('from'),
+        to: editor.getCursor('to'),
+      };
+
+      if (isUserActivity || editor.getSelection()) {
         isUserActivity = false;
-        const data = {
-          cursor: editor.getCursor(),
-          from: editor.getCursor('from'),
-          to: editor.getCursor('to'),
-        };
         setTimeout(() => {
           editorSocket.emit('CURSOR_CHANGED', {
             origin: user.id,
@@ -172,6 +182,12 @@ const InterviewPage = () => {
           });
         }, 0);
       }
+
+      setTimeout(() => {
+        sourceUserCursor.setPosition(data.cursor);
+
+        sourceUserSelection.setPositions(data.from, data.to);
+      }, 0);
     });
 
     editor.on('keydown', () => {
