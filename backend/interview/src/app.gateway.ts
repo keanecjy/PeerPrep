@@ -58,7 +58,7 @@ export class AppGateway
     client.broadcast.emit('CURSOR_CHANGED', data);
   }
 
-  @SubscribeMessage('CONNECTED_TO_ROOM')
+  @SubscribeMessage('CONNECT_TO_ROOM')
   async joinRoom(
     client: Socket,
     {
@@ -75,7 +75,7 @@ export class AppGateway
       time: string;
     }
   ): Promise<void> {
-    console.log(sessionId, userId, 'FromserverClientJoinRoom');
+    console.log(sessionId, userId, 'ServerReceiveClientWantsToJoinRoom');
     client.join(sessionId);
     const question = await this.redisService.getQuestion(sessionId);
     const currentTime = await this.redisService.getTime(sessionId);
@@ -103,6 +103,13 @@ export class AppGateway
     console.log(sessionId, userId, 'FromserverClientLeftRoom');
     client.leave(sessionId);
     this.server.emit('leftRoom', sessionId, userId);
+  }
+
+  @SubscribeMessage('FORFEIT')
+  forfeitSession(client: Socket, { sessionId, userId }: any): void {
+    console.log(sessionId, userId, 'FromserverClientForfeit');
+    client.leave(sessionId);
+    this.server.emit('FORFEIT', sessionId, userId);
   }
 
   afterInit(server: Server) {
