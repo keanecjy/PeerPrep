@@ -2,7 +2,6 @@ import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
 import { NestFactory, Reflector } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
-import * as cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -13,14 +12,9 @@ async function bootstrap() {
       whitelist: true,
     })
   );
-  app.use(cookieParser());
 
   if (process.env['NODE_ENV'] === 'development') {
-    app.enableCors({
-      origin: true,
-      methods: ['GET', 'POST', 'PUT', 'DELETE'],
-      credentials: true,
-    });
+    app.enableCors();
 
     // setup swagger only on development
     const config = new DocumentBuilder()
@@ -32,11 +26,7 @@ async function bootstrap() {
     const document = SwaggerModule.createDocument(app, config);
     SwaggerModule.setup('api', app, document);
   } else {
-    app.enableCors({
-      origin: true,
-      methods: ['GET', 'POST', 'PUT', 'DELETE'],
-      credentials: true,
-    }); // TODO: configure origin for prod
+    app.enableCors(); // TODO: configure origin for prod
   }
 
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
