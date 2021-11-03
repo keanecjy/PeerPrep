@@ -11,7 +11,7 @@ import { Socket, Server } from 'socket.io';
 
 @WebSocketGateway({
   cors: true,
-  path: '/chat/socket.io',
+  path: '/chat/new',
   namespace: 'chat/socket',
 })
 export class AppGateway

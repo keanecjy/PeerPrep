@@ -18,7 +18,7 @@ import { RedisCacheService } from './redis/redisCache.service';
 
 @WebSocketGateway({
   cors: true,
-  path: '/interview/socket.io',
+  path: '/interview/new',
   namespace: 'interview/socket',
 })
 export class AppGateway
@@ -40,25 +40,25 @@ export class AppGateway
 
   @SubscribeMessage('CODE_INSERTED')
   insert(client: Socket, { sessionId, ...data }: any): void {
-    console.log('insert');
+    // console.log('insert');
     client.to(sessionId).emit('CODE_INSERTED', data);
   }
 
   @SubscribeMessage('CODE_REPLACED')
   replace(client: Socket, { sessionId, ...data }: any): void {
-    console.log('replace');
+    // console.log('replace');
     client.to(sessionId).emit('CODE_REPLACED', data);
   }
 
   @SubscribeMessage('CODE_DELETED')
   delete(client: Socket, { sessionId, ...data }: any): void {
-    console.log('delete');
+    // console.log('delete');
     client.to(sessionId).emit('CODE_DELETED', data);
   }
 
   @SubscribeMessage('CURSOR_CHANGED')
   cursor(client: Socket, { sessionId, ...data }: any): void {
-    console.log('cursor');
+    // console.log('cursor');
     client.to(sessionId).emit('CURSOR_CHANGED', data);
   }
 

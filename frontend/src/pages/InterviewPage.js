@@ -56,7 +56,7 @@ const InterviewPage = () => {
   useEffect(() => {
     // editor client socket
     const editorSocket = io(`${API_URL}${apiKeys.interview.socket}`, {
-      path: '/interview/socket.io',
+      path: '/interview/new',
     });
     setEditorSocket(editorSocket);
 
@@ -355,6 +355,7 @@ const InterviewPage = () => {
                     size="small"
                     style={{ textTransform: 'capitalize' }}
                   />
+                  <br />
                   {parse(question.content)}
                   {question?.hints.length > 0 && (
                     <>
