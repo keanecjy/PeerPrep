@@ -14,7 +14,10 @@ async function bootstrap() {
     })
   );
   if (process.env['NODE_ENV'] === 'development') {
-    app.enableCors();
+    app.enableCors({
+      origin: true,
+      methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    });
 
     const config = new DocumentBuilder()
       .setTitle('Peerprep interview service')
@@ -25,7 +28,10 @@ async function bootstrap() {
     const document = SwaggerModule.createDocument(app, config);
     SwaggerModule.setup('interview/api', app, document);
   } else {
-    app.enableCors(); // TODO: configure origin for prod
+    app.enableCors({
+      origin: true,
+      methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    }); // TODO: configure origin for prod
   }
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
 

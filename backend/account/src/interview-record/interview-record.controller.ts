@@ -1,7 +1,7 @@
 import { ApiTags } from '@nestjs/swagger';
-import { JwtAuthGuard } from './../auth/guard/jwt-auth.guard';
-import { User } from './../users/user.entity';
-import { AuthUser } from './../shared/decorators/user.decorator';
+import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
+import { User } from '../users/user.entity';
+import { AuthUser } from '../shared/decorators/user.decorator';
 import {
   Controller,
   Get,
@@ -11,20 +11,20 @@ import {
   ParseIntPipe,
   NotFoundException,
 } from '@nestjs/common';
-import { InterviewService } from './interview.service';
-import { CreateInterviewDto } from './dto/create-interview.dto';
+import { InterviewRecordService } from './interview-record.service';
+import { CreateRecordDto } from './dto/create-record.dto';
 import { UseAuth } from 'src/shared/decorators/auth.decorator';
 
-@ApiTags('Interview')
-@Controller('interview')
-export class InterviewController {
-  constructor(private readonly interviewService: InterviewService) {}
+@ApiTags('Interview Record')
+@Controller('records')
+export class InterviewRecordController {
+  constructor(private readonly interviewService: InterviewRecordService) {}
 
   @Post()
   @UseAuth(JwtAuthGuard)
   create(
     @AuthUser() requester: User,
-    @Body() createInterviewDto: CreateInterviewDto
+    @Body() createInterviewDto: CreateRecordDto
   ) {
     const participants = [{ id: requester.id }];
     if (createInterviewDto.partner) {
