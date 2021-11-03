@@ -1,3 +1,4 @@
+import { ApiTags } from '@nestjs/swagger';
 import {
   DifficultyType,
   LanguageType,
@@ -7,6 +8,7 @@ import { Controller, Get, Param, Query } from '@nestjs/common';
 import { LeetcodeService } from './leetcode.service';
 import { Observable } from 'rxjs';
 
+@ApiTags('Leetcode')
 @Controller('leetcode')
 export class LeetcodeController {
   constructor(private readonly leetcodeService: LeetcodeService) {}
