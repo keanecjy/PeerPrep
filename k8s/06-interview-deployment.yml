@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: interview
+  namespace: peerprep
+spec:
+  selector:
+    matchLabels:
+      app: interview
+  template:
+    metadata:
+      labels:
+        app: interview
+    spec:
+      containers:
+        - name: interview
+          image: 656831507331.dkr.ecr.ap-southeast-1.amazonaws.com/peerprep-interview
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8083
+              protocol: TCP
+          envFrom:
+            - configMapRef:
+                name: env-config
+      imagePullSecrets:
+        - name: awscred
+
