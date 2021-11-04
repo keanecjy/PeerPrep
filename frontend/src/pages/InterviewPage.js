@@ -23,6 +23,8 @@ import { Chip } from '@material-ui/core';
 import { apiKeys } from '../services/config';
 import { API_URL } from '../shared/variables';
 import { toast } from 'react-toastify';
+import { createInterviewHistory } from '../services/profile';
+
 
 const CustomChip = ({ message }) => {
   return (
@@ -359,6 +361,15 @@ const InterviewPage = () => {
       sessionId: sessionId,
       userId: user.id,
     });
+
+    createInterviewHistory(
+      {leetcodeSlug: question.title,
+      question: question.title,
+      partner:user.id,
+      timeTaken:time.toString(),
+      completed:Boolean(true)
+    })
+
     sessionStorage.removeItem(sessionId);
     editorSocket.disconnect(); // cleanup, avoid memory leak
     history.push('/home'); // route back to home landing
