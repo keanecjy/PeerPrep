@@ -118,6 +118,12 @@ export class AppGateway
     this.server.emit('FORFEIT', sessionId, userId);
   }
 
+  @SubscribeMessage('COMPLETE_SESSION')
+  completeSession(client: Socket, { sessionId, userId }: any): void {
+    console.log(sessionId, userId, 'FromserverClientCompleteSession');
+    this.server.in(sessionId).disconnectSockets(true);
+  }
+
   afterInit(server: Server) {
     this.logger.log('Server Initialised');
   }

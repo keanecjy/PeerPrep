@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import StopWatch from '../components/StopWatch';
+import GeneralModal from '../components/GeneralModal';
 import { io } from 'socket.io-client';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
@@ -10,6 +11,8 @@ import parse from 'html-react-parser';
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/theme/mdn-like.css';
 import 'codemirror/mode/javascript/javascript';
+import 'codemirror/mode/python/python';
+import 'codemirror/mode/clike/clike';
 import 'codemirror/keymap/sublime';
 import '@convergencelabs/codemirror-collab-ext/css/codemirror-collab-ext.css';
 import CodeMirror from 'codemirror';
@@ -19,6 +22,7 @@ import { useHistory } from 'react-router-dom';
 import { Chip } from '@material-ui/core';
 import { apiKeys } from '../services/config';
 import { API_URL } from '../shared/variables';
+import { toast } from 'react-toastify';
 
 const CustomChip = ({ message }) => {
   return (
@@ -26,6 +30,13 @@ const CustomChip = ({ message }) => {
       <span className="chip-msg"> {message} </span>
     </div>
   );
+};
+
+const getLanguageMode = (language) => {
+  if (language == 'python' || language == 'java') {
+    return `text/x-${language}`;
+  }
+  return 'javascript';
 };
 
 const InterviewPage = () => {
@@ -46,12 +57,21 @@ const InterviewPage = () => {
   const [editorSocket, setEditorSocket] = useState(null);
   const history = useHistory();
   const [dirty, setDirty] = useState(false);
+  const [isForfeitModalOpen, setIsForfeitModalOpen] = useState(false);
+  const [isSubmitModalOpen, setIsSubmitModalOpen] = useState(false);
 
   useEffect(() => {
     const sessionDetails = sessionStorage.getItem(sessionId);
     if (sessionDetails) {
       const data = JSON.parse(sessionDetails);
       setSessionParams(data);
+    } else if (sessionStorage.length == 0) {
+      // Security checks to ensure only authorized personel in the room
+      history.push('/home');
+      toast.warn('You are not in an existing session!');
+    } else {
+      history.push('/home');
+      toast.warn('You are not authorized to enter this session!');
     }
   }, [sessionId]);
 
@@ -83,6 +103,8 @@ const InterviewPage = () => {
           sessionId: sessionId,
           userId: user.id,
         });
+        history.push('/home');
+        toast.success('You have successfully completed the interview!');
       });
 
       let timer = setInterval(() => {
@@ -106,13 +128,17 @@ const InterviewPage = () => {
 
   // code editor hook
   useEffect(() => {
-    const editor = CodeMirror.fromTextArea( //Basic CodeMirror editor
+    if (!sessionParams) {
+      return;
+    }
+    // Basic CodeMirror editor
+    const editor = CodeMirror.fromTextArea(
       document.getElementById('code-editor'),
       {
         lineNumbers: true,
         keyMap: 'sublime',
         theme: 'mdn-like',
-        mode: sessionParams?.language || 'javascript',
+        mode: getLanguageMode(sessionParams.language),
         lineWrapping: true,
         scrollBarStyle: 'null',
       }
@@ -120,7 +146,7 @@ const InterviewPage = () => {
     editor.setValue(initialCode);
     if (!editorSocket || !sessionParams) {
       return () => {
-        editor.toTextArea(); 
+        editor.toTextArea();
       };
     }
     const remoteCursorManager = new CodeMirrorCollabExt.RemoteCursorManager({
@@ -284,12 +310,28 @@ const InterviewPage = () => {
     });
     setChatSocket(chatSocket);
 
-    chatSocket.on('connect', () =>
-      setMessages((oldMessages) => [
-        ...oldMessages,
-        { sender: 'System', msg: 'You are connected!' },
-      ])
-    );
+    chatSocket.on('connect', () => {
+      chatSocket.emit('newMessage', {
+        sessionId,
+        payload: {
+          id: 'System',
+          sender: 'System',
+          msg: `${user.name} has joined the room!`,
+        },
+      });
+    });
+
+    chatSocket.on('disconnect', () => {
+      chatSocket.emit('newMessage', {
+        sessionId,
+        payload: {
+          id: 'System',
+          sender: 'System',
+          msg: `${user.name} has left the room.`,
+        },
+      });
+    });
+
     chatSocket.on(sessionId, (message) => {
       setMessages((oldMessages) => [...oldMessages, message]);
       const ref = document.getElementById('chat-box');
@@ -311,19 +353,29 @@ const InterviewPage = () => {
       setCurrMessage('');
     }
   };
+
   const handleForfeit = () => {
     editorSocket.emit('FORFEIT', {
       sessionId: sessionId,
       userId: user.id,
-    });   
-    sessionStorage.removeItem(sessionId); 
-    editorSocket.disconnect(); //cleanup, avoid memory leak
-    history.push('/home') // route back to home landing
-  }; 
+    });
+    sessionStorage.removeItem(sessionId);
+    editorSocket.disconnect(); // cleanup, avoid memory leak
+    history.push('/home'); // route back to home landing
+  };
 
   const handleSubmit = () => {
-    history.push('/home') // route back to home landing
+    // routing is handled by the event listener on top
+    editorSocket.emit('COMPLETE_SESSION', {
+      sessionId: sessionId,
+      userId: user.id,
+    });
+    editorSocket.disconnect(); // cleanup, avoid memory leak
   }; // TODO
+
+  if (!sessionStorage.getItem(sessionId)) {
+    return <></>;
+  }
 
   return (
     <div className="interview-page">
@@ -456,9 +508,25 @@ const InterviewPage = () => {
             </Grid>
           </Grid>
           <Grid item container xs={12} justifyContent="flex-end">
+            <GeneralModal
+              displayText={
+                'Are you sure you want to quit? Your partner will be left alone...'
+              }
+              isOpen={isForfeitModalOpen}
+              handleConfirm={handleForfeit}
+              handleCloseModal={() => setIsForfeitModalOpen(false)}
+            />
+            <GeneralModal
+              displayText={
+                'Are you sure you want to submit your answer? This room will be closed!'
+              }
+              isOpen={isSubmitModalOpen}
+              handleConfirm={handleSubmit}
+              handleCloseModal={() => setIsSubmitModalOpen(false)}
+            />
             <StopWatch time={time} />
             <Button
-              onClick={handleForfeit}
+              onClick={() => setIsForfeitModalOpen(true)}
               variant="outlined"
               style={{
                 backgroundColor: '#cc3733',
@@ -469,7 +537,7 @@ const InterviewPage = () => {
               Forfeit
             </Button>
             <Button
-              onClick={handleSubmit}
+              onClick={() => setIsSubmitModalOpen(true)}
               variant="outlined"
               style={{
                 backgroundColor: 'white',

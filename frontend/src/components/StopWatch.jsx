@@ -24,9 +24,7 @@ const Stopwatch = ({ time }) => {
 
   return (
     <div className="stopwatch-container">
-      <p>{`${hour}`}</p>
-      <p>{`:${min}`}</p>
-      <p>{`:${second}`}</p>
+      <p>{`${hour}:${min}:${second}`}</p>
     </div>
   );
 };
