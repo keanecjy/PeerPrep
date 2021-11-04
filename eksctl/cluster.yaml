@@ -1,0 +1,31 @@
+# Eksctl creation config
+# Reference: https://towardsdatascience.com/kubernetes-application-deployment-with-aws-eks-and-ecr-4600e11b2d3c
+
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+metadata:
+  name: peerprep
+  region: ap-southeast-1
+
+vpc:
+  id: vpc-0ec2c9cc7e991599a
+  cidr: "192.168.0.0/16"
+  subnets:
+    public:
+      ap-southeast-1a:
+        id: subnet-06e5e5f8aeb021f0b
+      ap-southeast-1b:
+        id: subnet-09c538ef8e1ac0721
+    private:
+      ap-southeast-1a:
+        id: subnet-0528ad63848c27c1c
+      ap-southeast-1b:
+        id: subnet-0679b1126511b05b3
+
+nodeGroups:
+  - name: peerprep-private-workers
+    instanceType: t2.micro
+    desiredCapacity: 4
+    privateNetworking: true
+    minSize: 1
+    maxSize: 8

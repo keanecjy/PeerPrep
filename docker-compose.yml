@@ -25,15 +25,12 @@ services:
       - 6379:6379
 
   client:
-    image: peerprep-client
+    image: peerprep-client-dev
     build:
       context: ./frontend
       dockerfile: Dockerfile
     depends_on:
       - nginx
-    environment:
-      # Add any development build env here
-      - BACKEND_URL:localhost
     ports:
       - 3000:3000
     networks:
@@ -43,7 +40,7 @@ services:
       - ./frontend:/app
 
   account:
-    image: peerprep-account
+    image: peerprep-account-dev
     build:
       context: ./backend/account
       dockerfile: ../Dockerfile
@@ -73,7 +70,7 @@ services:
       - ./backend/account:/app
 
   chat:
-    image: peerprep-chat
+    image: peerprep-chat-dev
     build:
       context: ./backend/chat
       dockerfile: ../Dockerfile
@@ -88,7 +85,7 @@ services:
       - ./backend/chat:/app
 
   interview:
-    image: peerprep-interview
+    image: peerprep-interview-dev
     build:
       context: ./backend/interview
       dockerfile: ../Dockerfile
@@ -105,7 +102,7 @@ services:
       - ./backend/interview:/app
 
   match:
-    image: peerprep-match
+    image: peerprep-match-dev
     build:
       context: ./backend/match
       dockerfile: ../Dockerfile

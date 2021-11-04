@@ -30,6 +30,17 @@ export const updateProfile = async (
 export const getInterviewHistory = async (
   id: string
 ): Promise<InterviewHistory> => {
-  const res = await server.get(`${apiKeys.profile.interview}/${id}`);
+  const res = await server.get(`${apiKeys.profile.user_records}/${id}`);
   return res.data as InterviewHistory;
+};
+
+export const createInterviewHistory = async (data: {
+  leetcodeSlug: string;
+  questionName: string;
+  partner?: string;
+  timeTaken: string;
+  completed: boolean;
+}): Promise<InterviewHistory> => {
+  const res = await server.post(`${apiKeys.profile.records}`, data);
+  return res.data as any as InterviewHistory;
 };

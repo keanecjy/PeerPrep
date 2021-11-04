@@ -1,4 +1,4 @@
-import { Profile } from './../profile/profile.entity';
+import { Profile } from '../profile/profile.entity';
 import {
   Column,
   CreateDateColumn,
@@ -9,7 +9,7 @@ import {
 } from 'typeorm';
 
 @Entity()
-export class Interview {
+export class InterviewRecord {
   @PrimaryGeneratedColumn('increment')
   id: number;
 

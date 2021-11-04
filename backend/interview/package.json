@@ -20,9 +20,9 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "aws:login": "aws ecr get-login-password --region ap-southeast-1 | docker login --username AWS --password-stdin 656831507331.dkr.ecr.ap-southeast-1.amazonaws.com",
-    "docker:tag": "docker tag peerprep-interview:latest 656831507331.dkr.ecr.ap-southeast-1.amazonaws.com/peerprep-interview:latest",
+    "docker:build": "docker build -t peerprep-interview:latest -t 656831507331.dkr.ecr.ap-southeast-1.amazonaws.com/peerprep-interview:latest .",
     "docker:push": "docker push 656831507331.dkr.ecr.ap-southeast-1.amazonaws.com/peerprep-interview:latest",
-    "aws:build": "npm run aws:login && npm run docker:build && npm run docker:tag && npm run docker:push"
+    "aws:build": "npm run aws:login && npm run docker:build && npm run docker:push"
   },
   "dependencies": {
     "@nestjs/axios": "^0.0.3",
