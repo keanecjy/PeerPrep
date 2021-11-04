@@ -15,6 +15,7 @@ import '@convergencelabs/codemirror-collab-ext/css/codemirror-collab-ext.css';
 import CodeMirror from 'codemirror';
 import * as CodeMirrorCollabExt from '@convergencelabs/codemirror-collab-ext';
 import { useParams } from 'react-router';
+import { useHistory } from 'react-router-dom';
 import { Chip } from '@material-ui/core';
 import { apiKeys } from '../services/config';
 import { API_URL } from '../shared/variables';
@@ -43,6 +44,7 @@ const InterviewPage = () => {
   const [sessionParams, setSessionParams] = useState(null);
   const [chatSocket, setChatSocket] = useState(null);
   const [editorSocket, setEditorSocket] = useState(null);
+  const history = useHistory();
   const [dirty, setDirty] = useState(false);
 
   useEffect(() => {
@@ -59,15 +61,14 @@ const InterviewPage = () => {
       path: '/interview/new',
     });
     setEditorSocket(editorSocket);
-
-    return () => editorSocket.disconnect();
+    return () => editorSocket.disconnect(); //cleanup, avoid memory leak
   }, []);
 
   useEffect(() => {
     if (sessionParams && editorSocket) {
       editorSocket.on('connect', () => {
         console.log('connect');
-        editorSocket.emit('CONNECTED_TO_ROOM', {
+        editorSocket.emit('CONNECT_TO_ROOM', {
           sessionId: sessionId,
           userId: user.id,
           difficulty: sessionParams.difficulty,
@@ -105,7 +106,7 @@ const InterviewPage = () => {
 
   // code editor hook
   useEffect(() => {
-    const editor = CodeMirror.fromTextArea(
+    const editor = CodeMirror.fromTextArea( //Basic CodeMirror editor
       document.getElementById('code-editor'),
       {
         lineNumbers: true,
@@ -119,7 +120,7 @@ const InterviewPage = () => {
     editor.setValue(initialCode);
     if (!editorSocket || !sessionParams) {
       return () => {
-        editor.toTextArea();
+        editor.toTextArea(); 
       };
     }
     const remoteCursorManager = new CodeMirrorCollabExt.RemoteCursorManager({
@@ -210,7 +211,7 @@ const InterviewPage = () => {
     });
 
     const sourceContentManager = new CodeMirrorCollabExt.EditorContentManager({
-      editor,
+      editor, // sourceContentManager + basic editor = jacked-up collab editor
       id: 'source',
       onInsert(index, text) {
         editorSocket.emit('CODE_INSERTED', {
@@ -310,10 +311,19 @@ const InterviewPage = () => {
       setCurrMessage('');
     }
   };
+  const handleForfeit = () => {
+    editorSocket.emit('FORFEIT', {
+      sessionId: sessionId,
+      userId: user.id,
+    });   
+    sessionStorage.removeItem(sessionId); 
+    editorSocket.disconnect(); //cleanup, avoid memory leak
+    history.push('/home') // route back to home landing
+  }; 
 
-  const handleForfeit = () => {}; // TODO
-
-  const handleSubmit = () => {}; // TODO
+  const handleSubmit = () => {
+    history.push('/home') // route back to home landing
+  }; // TODO
 
   return (
     <div className="interview-page">
