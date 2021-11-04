@@ -23,9 +23,8 @@ vpc:
         id: subnet-0679b1126511b05b3
 
 nodeGroups:
-  - name: peerprep-private-workers
+  - name: peerprep-workers
     instanceType: t2.micro
-    desiredCapacity: 4
-    privateNetworking: true
+    desiredCapacity: 2
     minSize: 1
     maxSize: 8

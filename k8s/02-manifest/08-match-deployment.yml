@@ -4,6 +4,7 @@ metadata:
   name: match
   namespace: peerprep
 spec:
+  replicas: 1
   selector:
     matchLabels:
       app: match
@@ -22,5 +23,9 @@ spec:
           envFrom:
             - configMapRef:
                 name: env-config
+          resources:
+            requests:
+              cpu: 100m
+              memory: 64Mi
       imagePullSecrets:
         - name: awscred

@@ -49,5 +49,9 @@ spec:
 
             - --feature-gates=waf=false,wafv2=false
           # Repository location of the ALB Ingress Controller.
-          image: docker.io/amazon/aws-alb-ingress-controller:v1.1.8    
+          image: docker.io/amazon/aws-alb-ingress-controller:v1.1.8
+          resources:
+            requests:
+              cpu: 100m
+              memory: 64Mi
       serviceAccountName: alb-ingress-controller

@@ -1,26 +1,32 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: account
+  name: interview
   namespace: peerprep
 spec:
+  replicas: 1
   selector:
     matchLabels:
-      app: account
+      app: interview
   template:
     metadata:
       labels:
-        app: account
+        app: interview
     spec:
       containers:
-        - name: account
-          image: 656831507331.dkr.ecr.ap-southeast-1.amazonaws.com/peerprep-account
+        - name: interview
+          image: 656831507331.dkr.ecr.ap-southeast-1.amazonaws.com/peerprep-interview
           imagePullPolicy: Always
           ports:
-            - containerPort: 8081
+            - containerPort: 8083
               protocol: TCP
           envFrom:
             - configMapRef:
                 name: env-config
+          resources:
+            requests:
+              cpu: 100m
+              memory: 64Mi
       imagePullSecrets:
         - name: awscred
+
