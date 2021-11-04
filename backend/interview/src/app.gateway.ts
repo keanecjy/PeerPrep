@@ -16,7 +16,11 @@ import { Socket, Server } from 'socket.io';
 import { firstValueFrom } from 'rxjs';
 import { RedisCacheService } from './redis/redisCache.service';
 
-@WebSocketGateway({ cors: true })
+@WebSocketGateway({
+  cors: true,
+  path: '/interview/new',
+  namespace: 'interview/socket',
+})
 export class AppGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
@@ -31,31 +35,31 @@ export class AppGateway
   @SubscribeMessage('CODE_CHANGED')
   notifyClients(client: Socket, { sessionId, code }: any): void {
     this.redisService.setCode(sessionId, code);
-    client.broadcast.emit('CODE_CHANGED', code);
+    client.to(sessionId).emit('CODE_CHANGED', code);
   }
 
   @SubscribeMessage('CODE_INSERTED')
-  insert(client: Socket, data: any): void {
-    console.log('insert');
-    client.broadcast.emit('CODE_INSERTED', data);
+  insert(client: Socket, { sessionId, ...data }: any): void {
+    // console.log('insert');
+    client.to(sessionId).emit('CODE_INSERTED', data);
   }
 
   @SubscribeMessage('CODE_REPLACED')
-  replace(client: Socket, data: any): void {
-    console.log('replace');
-    client.broadcast.emit('CODE_REPLACED', data);
+  replace(client: Socket, { sessionId, ...data }: any): void {
+    // console.log('replace');
+    client.to(sessionId).emit('CODE_REPLACED', data);
   }
 
   @SubscribeMessage('CODE_DELETED')
-  delete(client: Socket, data: any): void {
-    console.log('delete');
-    client.broadcast.emit('CODE_DELETED', data);
+  delete(client: Socket, { sessionId, ...data }: any): void {
+    // console.log('delete');
+    client.to(sessionId).emit('CODE_DELETED', data);
   }
 
   @SubscribeMessage('CURSOR_CHANGED')
-  cursor(client: Socket, data: any): void {
-    console.log('cursor');
-    client.broadcast.emit('CURSOR_CHANGED', data);
+  cursor(client: Socket, { sessionId, ...data }: any): void {
+    // console.log('cursor');
+    client.to(sessionId).emit('CURSOR_CHANGED', data);
   }
 
   @SubscribeMessage('CONNECT_TO_ROOM')
@@ -83,7 +87,9 @@ export class AppGateway
     if (question && currentTime) {
       const code = await this.redisService.getCode(sessionId);
 
-      this.server.in(sessionId).emit('ROOM:CONNECTION', { question, code, time: currentTime });
+      this.server
+        .in(sessionId)
+        .emit('ROOM:CONNECTION', { question, code, time: currentTime });
     } else {
       const question = await firstValueFrom(
         this.leetcodeService.getRandomWithFallback(difficulty, language)
@@ -102,7 +108,7 @@ export class AppGateway
   leaveRoom(client: Socket, { sessionId, userId }: any): void {
     console.log(sessionId, userId, 'FromserverClientLeftRoom');
     client.leave(sessionId);
-    this.server.emit('leftRoom', sessionId, userId);
+    this.server.in(sessionId).emit('leftRoom', sessionId, userId);
   }
 
   @SubscribeMessage('FORFEIT')
@@ -120,7 +126,7 @@ export class AppGateway
     this.logger.log(`Client disconnected: ${client.id}`);
   }
 
-  handleConnection(client: Socket, room: string) {
+  handleConnection(client: Socket) {
     this.logger.log(`Client connected: ${client.id}`);
   }
 }

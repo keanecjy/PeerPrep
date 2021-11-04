@@ -3,13 +3,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { ISeeder } from '../seeder.interface';
-import { Interview } from 'src/interview/interview.entity';
+import { InterviewRecord } from '../../interview-record/interview-record.entity';
 
 @Injectable()
 export class InterviewsSeeder implements ISeeder {
   constructor(
-    @InjectRepository(Interview)
-    private readonly interviewRepository: Repository<Interview>
+    @InjectRepository(InterviewRecord)
+    private readonly interviewRepository: Repository<InterviewRecord>
   ) {}
 
   async seed(): Promise<any> {

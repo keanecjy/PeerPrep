@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { RedisCacheService } from '../redis/redisCache.service';
 import { MatchResponse } from './match-response';
+import { v4 } from 'uuid';
 
 @Injectable()
 export class MatchService {
@@ -26,13 +27,16 @@ export class MatchService {
       const map = JSON.parse(data);
 
       // Terminate if it gets matched with another user
-      if (map[id] !== '') {
-        console.log(`${id} has been matched with ${map[id]}`);
+      if (map[id] !== null) {
+        const matchDetails = map[id];
+        delete map[id];
+        await this.redisService.set(key, JSON.stringify(map));
+        console.log(`${id} has been matched with ${matchDetails.partner}`);
         return resolve({
           status: true,
           id: id,
-          partnerId: map[id],
-          sessionId: this.generateSessionId(id, map[id]),
+          partnerId: matchDetails.partner,
+          sessionId: matchDetails.sessionId,
           difficulty: difficulty,
           language: language,
         });
@@ -40,24 +44,18 @@ export class MatchService {
 
       // Finds a matching user
       for (const [otherId, partnerId] of Object.entries(map)) {
-        if (otherId !== id && partnerId === '') {
-          map[id] = otherId;
-          map[otherId] = id;
+        if (otherId !== id && partnerId === null) {
+          const sessionId = this.generateSessionId();
+          delete map[id];
+          map[otherId] = { partner: id, sessionId: sessionId };
           await this.redisService.set(key, JSON.stringify(map));
           console.log(`Successfully matched ${id} with ${otherId}`);
-
-          // Delete match from cache after sending both users into the interview session
-          setTimeout(() => {
-            delete map[id];
-            delete map[otherId];
-            this.redisService.set(key, JSON.stringify(map));
-          }, 6000);
 
           return resolve({
             status: true,
             id: id,
             partnerId: otherId,
-            sessionId: this.generateSessionId(id, otherId),
+            sessionId: sessionId,
             difficulty: difficulty,
             language: language,
           });
@@ -74,10 +72,8 @@ export class MatchService {
     });
   }
 
-  generateSessionId(firstId: string, secondId: string): string {
-    return firstId < secondId
-      ? `${firstId}+${secondId}`
-      : `${secondId}+${firstId}`;
+  generateSessionId(): string {
+    return v4();
   }
 
   async createMatch(id: string, difficulty: string, language: string) {
@@ -85,7 +81,7 @@ export class MatchService {
     const data = await this.redisService.get(key);
     const map = data !== null ? JSON.parse(data) : {};
     if (!(id in map)) {
-      map[id] = '';
+      map[id] = null;
       await this.redisService.set(key, JSON.stringify(map));
     }
     console.log(`Starting match for ${id}`);

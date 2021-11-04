@@ -1,6 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ConfigType, registerAs } from '@nestjs/config';
 import { TypeOrmModuleOptions, TypeOrmOptionsFactory } from '@nestjs/typeorm';
+import { readFileSync } from 'fs';
+import { join } from 'path';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 import { AppConfigService } from './app.config';
 
@@ -23,7 +25,13 @@ export class DatabaseConfigService implements TypeOrmOptionsFactory {
   createTypeOrmOptions(): TypeOrmModuleOptions {
     return {
       ...this.dbConfig,
-      ssl: this.appConfig.isProd,
+      ssl: this.appConfig.isProd
+        ? {
+            ca: readFileSync(
+              join(__dirname, 'certs/ap-southeast-1-bundle.pem')
+            ).toString(),
+          }
+        : false,
       type: 'postgres',
       namingStrategy: new SnakeNamingStrategy(),
     };

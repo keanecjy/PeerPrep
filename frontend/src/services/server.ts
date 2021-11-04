@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import { AuthData } from '../shared/types';
 
 import { API_URL } from '../shared/variables';
 import { apiKeys } from './config';
@@ -11,7 +12,6 @@ const server = axios.create({
     Accept: 'application/json',
     'Content-Type': 'application/json',
   },
-  withCredentials: true,
 });
 
 server.interceptors.response.use(
@@ -33,7 +33,16 @@ server.interceptors.response.use(
         })
         .then((res) => {
           if (res.status === 201) {
-            RefreshTokenService.store(res.data?.refreshToken || '');
+            const tokenObj = res.data as AuthData;
+
+            RefreshTokenService.store(tokenObj?.refreshToken || '');
+            (server.defaults.headers as any).common[
+              'Authorization'
+            ] = `Bearer ${tokenObj.accessToken || ''}`;
+
+            originalRequest.headers[
+              'Authorization'
+            ] = `Bearer ${tokenObj.accessToken}`;
             return server(originalRequest);
           }
         })

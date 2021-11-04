@@ -1,7 +1,7 @@
 import { Box, MenuItem, TextField, Typography } from '@material-ui/core';
 
 const SelectionMenu = (props) => {
-  const { header, list, value, setValue } = props;
+  const { header, items, value, setValue } = props;
 
   const setItem = (event) => {
     setValue(event.target.value);
@@ -25,9 +25,9 @@ const SelectionMenu = (props) => {
           },
         }}
       >
-        {list.map((item) => (
-          <MenuItem key={item} value={item}>
-            {item}
+        {Object.keys(items).map((key) => (
+          <MenuItem key={key} value={items[key]}>
+            {key}
           </MenuItem>
         ))}
       </TextField>

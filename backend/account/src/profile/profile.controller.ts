@@ -16,7 +16,7 @@ import { AuthUser } from '../shared/decorators/user.decorator';
 import { UseAuth } from '../shared/decorators/auth.decorator';
 import { Profile } from './profile.entity';
 import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
-import { Interview } from 'src/interview/interview.entity';
+import { InterviewRecord } from '../interview-record/interview-record.entity';
 
 @ApiTags('Profile')
 @Controller('profile')
@@ -47,7 +47,7 @@ export class ProfileController {
    */
   @ApiOkResponse({ type: Profile })
   @Get('/interview/:id')
-  findOneWithInterview(@Param('id') id: string): Promise<Interview[]> {
+  findOneWithInterview(@Param('id') id: string): Promise<InterviewRecord[]> {
     return this.profileService
       .findOneWithInterviews(id)
       .then((profile) =>

@@ -1,4 +1,3 @@
-import { Interview } from 'src/interview/interview.entity';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
@@ -9,9 +8,10 @@ import { ISeeder } from './seeder.interface';
 import { SeederService } from './seeder.service';
 import { UsersSeeder } from './seeds/users.seeder';
 import { InterviewsSeeder } from './seeds/interviews.seeder';
+import { InterviewRecord } from '../interview-record/interview-record.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, Interview]), AppConfigModule],
+  imports: [TypeOrmModule.forFeature([User, InterviewRecord]), AppConfigModule],
   providers: [
     { provide: ISeeder, useClass: UsersSeeder },
     UsersSeeder,

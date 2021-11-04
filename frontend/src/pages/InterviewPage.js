@@ -16,6 +16,9 @@ import CodeMirror from 'codemirror';
 import * as CodeMirrorCollabExt from '@convergencelabs/codemirror-collab-ext';
 import { useParams } from 'react-router';
 import { useHistory } from 'react-router-dom';
+import { Chip } from '@material-ui/core';
+import { apiKeys } from '../services/config';
+import { API_URL } from '../shared/variables';
 
 const CustomChip = ({ message }) => {
   return (
@@ -27,10 +30,11 @@ const CustomChip = ({ message }) => {
 
 const InterviewPage = () => {
   const [loading, setLoading] = useState(true);
-  const [questionTitle, setQuestionTitle] = useState('');
-  const [questionSlug, setQuestionSlug] = useState('');
-  const [hints, setHints] = useState([]);
-  const [question, setQuestion] = useState('This is a sample question....');
+  const [question, setQuestion] = useState({
+    content: 'Loading Question...',
+    hints: [],
+    topics: [],
+  });
   const [initialCode, setInitialCode] = useState('');
   const [time, setTime] = useState(0); // To send to backend to get the total time taken
   const [messages, setMessages] = useState([]);
@@ -41,21 +45,21 @@ const InterviewPage = () => {
   const [chatSocket, setChatSocket] = useState(null);
   const [editorSocket, setEditorSocket] = useState(null);
   const history = useHistory();
-
+  const [dirty, setDirty] = useState(false);
 
   useEffect(() => {
     const sessionDetails = sessionStorage.getItem(sessionId);
     if (sessionDetails) {
       const data = JSON.parse(sessionDetails);
-      setSessionParams({
-        difficulty: data.difficulty || 'medium',
-        language: data.language || 'javascript',
-      });
+      setSessionParams(data);
     }
   }, [sessionId]);
 
   useEffect(() => {
-    const editorSocket = io('http://localhost:8083');// editor client socket
+    // editor client socket
+    const editorSocket = io(`${API_URL}${apiKeys.interview.socket}`, {
+      path: '/interview/new',
+    });
     setEditorSocket(editorSocket);
     return () => editorSocket.disconnect(); //cleanup, avoid memory leak
   }, []);
@@ -87,12 +91,12 @@ const InterviewPage = () => {
 
       editorSocket.once('ROOM:CONNECTION', ({ code, question, time }) => {
         console.log(code, question, time);
-        setQuestionTitle(question.title);
-        setQuestionSlug(question.titleSlug);
-        setHints(question.hints);
+        setQuestion({
+          ...question,
+          content: question.content?.replace(/&nbsp;/g, ' '),
+        });
         setInitialCode(code);
         setTime(Math.floor(new Date().getTime() / 1000) - parseInt(time, 10));
-        setQuestion(question.content);
         setLoading(false);
       });
 
@@ -114,7 +118,7 @@ const InterviewPage = () => {
       }
     );
     editor.setValue(initialCode);
-    if (!editorSocket) {
+    if (!editorSocket || !sessionParams) {
       return () => {
         editor.toTextArea(); 
       };
@@ -124,86 +128,134 @@ const InterviewPage = () => {
       tooltips: true,
       tooltipDuration: 2,
     });
-
     const sourceUserCursor = remoteCursorManager.addCursor(
       user.id,
       'orange',
-      'you'
+      'You'
     );
     const targetUserCursor = remoteCursorManager.addCursor(
-      'Partner_Cursor',
+      'partner',
       'blue',
       'Partner'
     );
+
     const remoteSelectionManager =
       new CodeMirrorCollabExt.RemoteSelectionManager({ editor: editor });
     const sourceUserSelection = remoteSelectionManager.addSelection(
-      user.id,
+      'partner',
       'orange'
     );
     const targetUserSelection = remoteSelectionManager.addSelection(
-      'Partner_selection',
+      'partner',
       'blue'
     );
 
-    editorSocket.on('CODE_CHANGED', (_code) => {
-      console.log('CODE_CHANGEDMAYABEE');
+    editorSocket.on('CODE_CHANGED', (code) => {
+      console.log('CODE_CHANGED');
+      if (dirty) {
+        editor.setValue(code);
+        setDirty(false);
+      }
     });
 
-    editorSocket.on('CURSOR_CHANGED', ({ cursor, from, to }) => {
-      console.log('CURSOR_CHANGED');
-      setTimeout(() => {
-        targetUserCursor.setPosition(cursor);
-        targetUserSelection.setPositions(from, to);
-        targetUserCursor.show();
-        targetUserSelection.show();
-      }, 0);
+    var isUserActivity = false;
+
+    editor.on('mousedown', function () {
+      isUserActivity = true;
     });
 
     editor.on('cursorActivity', () => {
-      editorSocket.emit('CURSOR_CHANGED', {
+      const data = {
         cursor: editor.getCursor(),
         from: editor.getCursor('from'),
         to: editor.getCursor('to'),
-      });
+      };
+
+      if (isUserActivity || editor.getSelection()) {
+        isUserActivity = false;
+        setTimeout(() => {
+          editorSocket.emit('CURSOR_CHANGED', {
+            origin: user.id,
+            sessionId: sessionId,
+            cursor: data.cursor,
+            from: data.from,
+            to: data.to,
+          });
+        }, 0);
+      }
 
       setTimeout(() => {
-        sourceUserCursor.setPosition(editor.getCursor());
+        sourceUserCursor.setPosition(data.cursor);
 
-        sourceUserSelection.setPositions(
-          editor.getCursor('from'),
-          editor.getCursor('to')
-        );
+        sourceUserSelection.setPositions(data.from, data.to);
       }, 0);
+    });
+
+    editor.on('keydown', () => {
+      isUserActivity = true;
+    });
+
+    editor.on('beforeChange', () => {
+      isUserActivity = false;
+    });
+
+    editorSocket.on('CURSOR_CHANGED', ({ origin, cursor, from, to }) => {
+      console.log('CURSOR_CHANGED', origin);
+      try {
+        targetUserCursor.setPosition(cursor);
+        targetUserSelection.setPositions(from, to);
+      } catch (err) {
+        // not important to ensure real-time collab
+        console.log(err);
+      }
     });
 
     const sourceContentManager = new CodeMirrorCollabExt.EditorContentManager({
       editor, // sourceContentManager + basic editor = jacked-up collab editor
       id: 'source',
       onInsert(index, text) {
-        editorSocket.emit('CODE_INSERTED', { index, text });
+        editorSocket.emit('CODE_INSERTED', {
+          sessionId,
+          index,
+          text,
+        });
       },
       onReplace(index, length, text) {
-        editorSocket.emit('CODE_REPLACED', { index, length, text });
+        editorSocket.emit('CODE_REPLACED', { sessionId, index, length, text });
       },
       onDelete(index, length) {
-        editorSocket.emit('CODE_DELETED', { index, length });
+        editorSocket.emit('CODE_DELETED', { sessionId, index, length });
       },
     });
 
     editorSocket.on('CODE_INSERTED', ({ index, text }) => {
       console.log('insert');
-      sourceContentManager.insert(index, text);
+      try {
+        sourceContentManager.insert(index, text);
+      } catch (err) {
+        console.log(err);
+        setDirty(true);
+      }
     });
 
     editorSocket.on('CODE_REPLACED', ({ index, length, text }) => {
       console.log('replace');
-      sourceContentManager.replace(index, length, text);
+      try {
+        sourceContentManager.replace(index, length, text);
+      } catch (err) {
+        console.log(err);
+        setDirty(true);
+      }
     });
 
     editorSocket.on('CODE_DELETED', ({ index, length }) => {
       console.log('delete');
-      sourceContentManager.delete(index, length);
+      try {
+        sourceContentManager.delete(index, length);
+      } catch (err) {
+        console.log(err);
+        setDirty(true);
+      }
     });
 
     // Codemirror
@@ -219,15 +271,16 @@ const InterviewPage = () => {
     return () => {
       editor.toTextArea();
       sourceContentManager.dispose();
+      targetUserCursor.dispose();
+      targetUserSelection.dispose();
     };
   }, [sessionParams, loading, editorSocket]);
 
   // Chat hook
   useEffect(() => {
     // chat client socket
-    const chatSocket = io('http://localhost:8082/', {
-      //forceNew: true,
-      transports: ['websocket', 'polling', 'flashsocket'],
+    const chatSocket = io(`${API_URL}${apiKeys.chat.socket}`, {
+      path: '/chat/new',
     });
     setChatSocket(chatSocket);
 
@@ -298,21 +351,68 @@ const InterviewPage = () => {
               <Grid item className="question-container">
                 <span className="interview-pg-title">
                   {' '}
-                  {questionTitle || 'Question'}{' '}
+                  {question.title || 'Question'}{' '}
+                  {question.titleSlug && (
+                    <Typography
+                      color="secondary"
+                      component={'a'}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      href={`https://leetcode.com/problems/${question.titleSlug}`}
+                    >
+                      Link
+                    </Typography>
+                  )}
                 </span>
                 <div className="question-container-content">
-                  {parse(question)}
-                  {hints.length > 0 && (
+                  <Chip
+                    label={question.difficulty || 'difficulty'}
+                    color="secondary"
+                    size="small"
+                    style={{
+                      textTransform: 'capitalize',
+                      marginRight: '0.5em',
+                    }}
+                  />
+                  <Chip
+                    label={sessionParams?.language || 'difficulty'}
+                    color="secondary"
+                    size="small"
+                    style={{ textTransform: 'capitalize' }}
+                  />
+                  <br />
+                  {parse(question.content)}
+                  {question?.hints.length > 0 && (
                     <>
                       <p>
                         <strong>Hints:</strong>
                       </p>
                       <ul>
-                        {hints.map((hint, index) => (
+                        {question.hints.map((hint, index) => (
                           <li key={index}>{hint}</li>
                         ))}
                       </ul>
                     </>
+                  )}
+                  {question?.topics.length > 0 && (
+                    <div
+                      style={{
+                        display: 'flex',
+                        flexWrap: 'wrap',
+                        alignItems: 'center',
+                      }}
+                    >
+                      <strong>Topics:</strong>
+                      {question.topics.map((topic, index) => (
+                        <Chip
+                          key={index}
+                          label={topic}
+                          style={{ margin: '0.5em' }}
+                          color="secondary"
+                          size="small"
+                        />
+                      ))}
+                    </div>
                   )}
                 </div>
               </Grid>
