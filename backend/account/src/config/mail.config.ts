@@ -4,8 +4,11 @@ import { ConfigType, registerAs } from '@nestjs/config';
 const env = process.env;
 
 export const mailConfig = registerAs('mailer', () => ({
-  user: env.HOTMAIL_ID,
-  pass: env.HOTMAIL_PASS,
+  user: env.EMAIL_ID,
+  pass: env.EMAIL_PASS,
+  host: env.EMAIL_HOST,
+  port: env.EMAIL_PORT as unknown as number,
+  from: env.EMAIL_FROM,
 }));
 
 @Injectable()
@@ -25,5 +28,17 @@ export class MailConfigService {
 
   public get pass() {
     return this.config.pass;
+  }
+
+  public get host() {
+    return this.config.host;
+  }
+
+  public get port() {
+    return this.config.port;
+  }
+
+  public get from() {
+    return this.config.from;
   }
 }

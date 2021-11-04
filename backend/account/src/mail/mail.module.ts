@@ -11,13 +11,15 @@ import { MailService } from './mail.service';
   imports: [
     AppConfigModule,
     MailerModule.forRootAsync({
-      useFactory: ({ user, pass }: MailConfigService) => ({
+      useFactory: ({ host, port, user, pass, from }: MailConfigService) => ({
         transport: {
-          service: 'Hotmail',
+          host,
+          port,
+          secure: false, // upgrade later with STARTTLS
           auth: { user, pass },
         },
         defaults: {
-          from: `PeerPrep Team`,
+          from: `PeerPrep Team <${from}>`,
         },
         template: {
           dir: join(__dirname, 'templates'),

@@ -12,12 +12,7 @@ export class MailService {
   ) {}
 
   async sendEmailConfirmation(user: User, url: string): Promise<boolean> {
-    console.log(this.mailConfigService.pass);
     await this.mailerService.sendMail({
-      from: {
-        name: 'PeerPrep Team',
-        address: this.mailConfigService.user,
-      },
       to: user.email,
       subject: 'PeerPrep Email Confirmation',
       template: './index',
@@ -37,10 +32,6 @@ export class MailService {
 
   async sendPasswordReset(user: User, url: string): Promise<boolean> {
     await this.mailerService.sendMail({
-      from: {
-        name: 'PeerPrep Team',
-        address: this.mailConfigService.user,
-      },
       to: user.email,
       subject: 'PeerPrep Password Reset',
       template: './index',
