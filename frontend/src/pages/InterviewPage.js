@@ -33,7 +33,7 @@ const CustomChip = ({ message }) => {
 };
 
 const getLanguageMode = (language) => {
-  if (language == "python" || language == "java") {
+  if (language == 'python' || language == 'java') {
     return `text/x-${language}`;
   }
   return 'javascript';
@@ -61,11 +61,12 @@ const InterviewPage = () => {
   const [isSubmitModalOpen, setIsSubmitModalOpen] = useState(false);
 
   useEffect(() => {
-    const sessionDetails = sessionStorage.getItem(sessionId)
+    const sessionDetails = sessionStorage.getItem(sessionId);
     if (sessionDetails) {
       const data = JSON.parse(sessionDetails);
       setSessionParams(data);
-    } else if (sessionStorage.length == 0) { // Security checks to ensure only authorized personel in the room
+    } else if (sessionStorage.length == 0) {
+      // Security checks to ensure only authorized personel in the room
       history.push('/home');
       toast.warn('You are not in an existing session!');
     } else {
@@ -103,7 +104,7 @@ const InterviewPage = () => {
           userId: user.id,
         });
         history.push('/home');
-        toast.success("You have successfully completed the interview!")
+        toast.success('You have successfully completed the interview!');
       });
 
       let timer = setInterval(() => {
@@ -130,7 +131,8 @@ const InterviewPage = () => {
     if (!sessionParams) {
       return;
     }
-    const editor = CodeMirror.fromTextArea( //Basic CodeMirror editor
+    // Basic CodeMirror editor
+    const editor = CodeMirror.fromTextArea(
       document.getElementById('code-editor'),
       {
         lineNumbers: true,
@@ -507,20 +509,24 @@ const InterviewPage = () => {
           </Grid>
           <Grid item container xs={12} justifyContent="flex-end">
             <GeneralModal
-              displayText={'Are you sure you want to quit? Your partner will be left alone...'}
+              displayText={
+                'Are you sure you want to quit? Your partner will be left alone...'
+              }
               isOpen={isForfeitModalOpen}
               handleConfirm={handleForfeit}
-              handleCloseModal={()=>setIsForfeitModalOpen(false)}
+              handleCloseModal={() => setIsForfeitModalOpen(false)}
             />
             <GeneralModal
-              displayText={'Are you sure you want to submit your answer? This room will be closed!'}
+              displayText={
+                'Are you sure you want to submit your answer? This room will be closed!'
+              }
               isOpen={isSubmitModalOpen}
               handleConfirm={handleSubmit}
-              handleCloseModal={()=>setIsSubmitModalOpen(false)}
+              handleCloseModal={() => setIsSubmitModalOpen(false)}
             />
             <StopWatch time={time} />
             <Button
-              onClick={()=>setIsForfeitModalOpen(true)}
+              onClick={() => setIsForfeitModalOpen(true)}
               variant="outlined"
               style={{
                 backgroundColor: '#cc3733',
@@ -531,7 +537,7 @@ const InterviewPage = () => {
               Forfeit
             </Button>
             <Button
-              onClick={()=>setIsSubmitModalOpen(true)}
+              onClick={() => setIsSubmitModalOpen(true)}
               variant="outlined"
               style={{
                 backgroundColor: 'white',

@@ -1,5 +1,5 @@
-import { Box, Button, Modal, Paper, Typography, Grid } from '@material-ui/core';
-import React, { useState } from 'react';
+import { Box, Button, Modal, Typography, Grid } from '@material-ui/core';
+import React from 'react';
 import '../styles/match.css';
 
 const modalStyle = {
@@ -14,7 +14,12 @@ const modalStyle = {
   p: 4,
 };
 
-const GeneralModal = ({ displayText, isOpen, handleConfirm, handleCloseModal }) => {
+const GeneralModal = ({
+  displayText,
+  isOpen,
+  handleConfirm,
+  handleCloseModal,
+}) => {
   return (
     <Modal
       open={isOpen}
@@ -30,10 +35,8 @@ const GeneralModal = ({ displayText, isOpen, handleConfirm, handleCloseModal }) 
           flexDirection: 'column',
         }}
       >
-        <Typography color="primary">
-          {displayText}
-        </Typography>
-        <Grid style={{ marginTop: '10px'}}>
+        <Typography color="primary">{displayText}</Typography>
+        <Grid style={{ marginTop: '10px' }}>
           <Button
             type="submit"
             variant="outlined"
