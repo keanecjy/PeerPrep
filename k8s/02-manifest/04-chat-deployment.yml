@@ -4,6 +4,7 @@ metadata:
   name: chat
   namespace: peerprep
 spec:
+  replicas: 1
   selector:
     matchLabels:
       app: chat
@@ -22,5 +23,9 @@ spec:
           envFrom:
             - configMapRef:
                 name: env-config
+          resources:
+            requests:
+              cpu: 100m
+              memory: 64Mi
       imagePullSecrets:
         - name: awscred

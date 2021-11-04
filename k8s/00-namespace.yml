@@ -1,9 +1,0 @@
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: peerprep
-# kubectl create secret docker-registry awscred \
-#    --docker-server=656831507331.dkr.ecr.ap-southeast-1.amazonaws.com \
-#    --docker-username=AWS \
-#    --docker-password=$(aws ecr get-login-password) \
-#    --namespace=peerprep

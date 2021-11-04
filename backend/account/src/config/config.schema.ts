@@ -16,6 +16,9 @@ export default Joi.object({
   JWT_PASSWORD_RESET_SECRET: Joi.string().required(),
   JWT_PASSWORD_RESET_EXPIRATION_TIME: Joi.string().default(1200), // 20min in seconds
 
-  HOTMAIL_ID: Joi.string().required(), // user@outlook.com
-  HOTMAIL_PASS: Joi.string().required(), // password
+  EMAIL_FROM: Joi.string().default('noreply@peerprep.com'),
+  EMAIL_HOST: Joi.string().default('smtp.gmail.com'), // smtp.office365.com
+  EMAIL_PORT: Joi.number().default(587), // 587
+  EMAIL_ID: Joi.string().required(), // user@outlook.com
+  EMAIL_PASS: Joi.string().required(), // password
 });
