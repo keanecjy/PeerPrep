@@ -315,7 +315,8 @@ const InterviewPage = () => {
     editorSocket.emit('FORFEIT', {
       sessionId: sessionId,
       userId: user.id,
-    });    
+    });   
+    sessionStorage.removeItem(sessionId); 
     editorSocket.disconnect(); //cleanup, avoid memory leak
     history.push('/home') // route back to home landing
   }; 
