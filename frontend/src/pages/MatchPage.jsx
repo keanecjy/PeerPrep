@@ -7,7 +7,7 @@ import useInterval from '../hooks/useInterval';
 import { difficulties, languages, sessionText } from '../match/constants';
 import LoadingButton from '../match/LoadingButton';
 import SelectionMenu from '../match/SelectionMenu';
-import { getMatch } from '../services/match';
+import { deleteMatch, getMatch } from '../services/match';
 import '../styles/match.css';
 
 const modalStyle = {
@@ -26,8 +26,8 @@ const MatchPage = () => {
   const { user } = useContext(UserContext);
   const history = useHistory();
 
-  const [difficulty, setDifficulty] = useState(difficulties[0]);
-  const [language, setLanguage] = useState(languages[0]);
+  const [difficulty, setDifficulty] = useState(difficulties.Easy);
+  const [language, setLanguage] = useState(languages.Java);
   const [open, openModal] = useState(false);
   const [isRetrying, setIsRetrying] = useState(false);
   const [count, setCount] = useState(0);
@@ -36,6 +36,10 @@ const MatchPage = () => {
     openModal(false);
     setIsRetrying(false);
     setCount(0);
+    console.log(`Deleting match for ${user.id}`);
+    deleteMatch(user.id, difficulty, language).then((response) => {
+      console.log(response);
+    });
   };
 
   useInterval(
@@ -50,30 +54,27 @@ const MatchPage = () => {
 
       getMatch(user.id, difficulty, language).then((response) => {
         if (response.status) {
-          const sessionId =
-            response.partnerId > response.id
-              ? `${response.id}+${response.partnerId}`
-              : `${response.partnerId}+${response.id}`;
-          sessionStorage.setItem(
-            sessionId,
-            JSON.stringify({ difficulty, language })
+          const sessionId = response.sessionId;
+          sessionStorage.setItem(sessionId, JSON.stringify(response));
+          setTimeout(
+            () => {
+              history.push(`/interview/${sessionId}`);
+            },
+            count ? 150 : 1500
           );
-          setTimeout(() => {
-            history.push(`/interview/${sessionId}`);
-          }, 150);
         } else {
           setCount((count) => count + 1);
         }
       });
     },
-    isRetrying ? 5000 : null
+    isRetrying ? 3000 : null
   );
 
   const DifficultyMenu = () => {
     return (
       <SelectionMenu
         header="Difficulty"
-        list={difficulties}
+        items={difficulties}
         value={difficulty}
         setValue={setDifficulty}
       />
@@ -84,7 +85,7 @@ const MatchPage = () => {
     return (
       <SelectionMenu
         header="Language"
-        list={languages}
+        items={languages}
         value={language}
         setValue={setLanguage}
       />

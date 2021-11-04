@@ -2,16 +2,18 @@
   "name": "@peerprep/client",
   "version": "0.1.0",
   "private": true,
-  "proxy": "http://localhost:8080",
   "scripts": {
     "start": "cross-env PORT=3000 react-scripts start",
-    "build": "react-scripts build",
+    "build": "cross-env REACT_APP_API_URL=https://api.peer-prep.live react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "prettier": "npx prettier --write ./src/*",
     "lint": "npx prettier --write ./src/*",
     "precommit": "lint-staged",
-    "deploy": "yarn build && aws s3 sync build/ s3://peerprep"
+    "s3-deploy": "aws s3 sync build/ s3://peerprep",
+    "s3-cloudfront-invalidate": "aws cloudfront create-invalidation --distribution-id EEPXRVBJNI7S9 --paths '/*'",
+    "deploy": "yarn run build && yarn run s3-deploy && yarn run s3-cloudfront-invalidate",
+    "aws:build": "echo 'Build not required for frontend'"
   },
   "dependencies": {
     "@convergencelabs/codemirror-collab-ext": "^0.1.2",

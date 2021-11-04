@@ -1,20 +1,20 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CreateInterviewDto } from './dto/create-interview.dto';
-import { Interview } from './interview.entity';
+import { CreateRecordDto } from './dto/create-record.dto';
+import { InterviewRecord } from './interview-record.entity';
 
 @Injectable()
-export class InterviewService {
+export class InterviewRecordService {
   constructor(
-    @InjectRepository(Interview)
-    private interviewRepository: Repository<Interview>
+    @InjectRepository(InterviewRecord)
+    private interviewRepository: Repository<InterviewRecord>
   ) {}
 
   create(
-    createInterviewDto: CreateInterviewDto,
+    createInterviewDto: CreateRecordDto,
     participants: { id: string }[]
-  ): Promise<Interview> {
+  ): Promise<InterviewRecord> {
     const interview = this.interviewRepository.create({
       ...createInterviewDto,
       participants,
@@ -22,7 +22,7 @@ export class InterviewService {
     return this.interviewRepository.save(interview);
   }
 
-  findOne(id: number): Promise<Interview> {
+  findOne(id: number): Promise<InterviewRecord> {
     return this.interviewRepository.findOne({ id });
   }
 }

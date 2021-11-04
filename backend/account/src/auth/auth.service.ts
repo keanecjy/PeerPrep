@@ -12,7 +12,6 @@ import { UsersService } from '../users/users.service';
 import { MailService } from '../mail/mail.service';
 import { AppConfigService } from '../config/app.config';
 import { JwtConfigService } from '../config/jwt.config';
-import { generateCookie } from '../shared/utils/cookies.helper';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { ConfirmEmailDto } from './dto/confirm-email.dto';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -62,7 +61,7 @@ export class AuthService {
     return this.usersService.findById(payload.userId);
   }
 
-  public getJwtAccessTokenCookie(user: User) {
+  public getJwtAccessToken(user: User) {
     const payload: TokenPayload = {
       userId: user.id,
       type: 'access',
@@ -73,19 +72,10 @@ export class AuthService {
       expiresIn: `${jwtOptions.expiry}s`,
     });
 
-    const cookie = generateCookie({
-      name: 'tkn',
-      value: token,
-      httpOnly: true,
-      sameSite: 'Strict',
-      secure: this.appConfigService.isProd,
-      path: '/',
-      maxAge: jwtOptions.expiry,
-    });
-    return { cookie, token, expiresIn: jwtOptions.expiry };
+    return { token, expiresIn: jwtOptions.expiry };
   }
 
-  public getJwtRefreshTokenCookie(user: User) {
+  public getJwtRefreshToken(user: User) {
     const payload: TokenPayload = {
       userId: user.id,
       type: 'refresh',
@@ -97,29 +87,6 @@ export class AuthService {
     });
 
     return { token, expiresIn: refreshOptions.expiry };
-  }
-
-  public getLogoutCookies() {
-    const unsetRefreshCookie = generateCookie({
-      name: 'ref',
-      value: '',
-      httpOnly: true,
-      sameSite: 'Strict',
-      secure: this.appConfigService.isProd,
-      path: '/',
-      maxAge: 0,
-    });
-
-    const unsetAccessCookie = generateCookie({
-      name: 'tkn',
-      value: '',
-      httpOnly: true,
-      sameSite: 'Strict',
-      secure: this.appConfigService.isProd,
-      path: '/',
-      maxAge: 0,
-    });
-    return [unsetRefreshCookie, unsetAccessCookie];
   }
 
   public async saveRefreshToken(

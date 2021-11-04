@@ -9,7 +9,7 @@ import { UsersModule } from './users/users.module';
 import { DatabaseConfigService } from './config/database.config';
 import { AuthModule } from './auth/auth.module';
 import { SeederModule } from './seeders/seeder.module';
-import { InterviewModule } from './interview/interview.module';
+import { InterviewRecordModule } from './interview-record/interview-record.module';
 
 @Module({
   imports: [
@@ -21,7 +21,7 @@ import { InterviewModule } from './interview/interview.module';
     AuthModule,
     UsersModule,
     ProfileModule,
-    InterviewModule,
+    InterviewRecordModule,
   ],
   controllers: [AppController],
   providers: [AppService],

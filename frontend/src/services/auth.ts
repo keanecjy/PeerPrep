@@ -23,6 +23,9 @@ export const refresh = async () => {
     refreshToken,
   });
   const data = res.data as any as AuthData;
+  (server.defaults.headers as any).common['Authorization'] = `Bearer ${
+    data?.accessToken || ''
+  }`;
   RefreshTokenService.store(data?.refreshToken || '');
   return true;
 };

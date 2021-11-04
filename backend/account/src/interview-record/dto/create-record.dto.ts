@@ -6,7 +6,7 @@ import {
   IsBoolean,
 } from 'class-validator';
 
-export class CreateInterviewDto {
+export class CreateRecordDto {
   @IsString()
   @IsNotEmpty()
   leetcodeSlug: string;

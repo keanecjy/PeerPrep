@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: match
+  namespace: peerprep
+spec:
+  selector:
+    matchLabels:
+      app: match
+  template:
+    metadata:
+      labels:
+        app: match
+    spec:
+      containers:
+        - name: match
+          image: 656831507331.dkr.ecr.ap-southeast-1.amazonaws.com/peerprep-match
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8084
+              protocol: TCP
+          envFrom:
+            - configMapRef:
+                name: env-config
+      imagePullSecrets:
+        - name: awscred

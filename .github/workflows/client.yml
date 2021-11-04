@@ -1,6 +1,8 @@
-name: Build and Push Frontend Client to S3
+name: Push Frontend Client to S3
 on:
   pull_request:
+    paths:
+      - 'frontend/**'
     types: [closed]
 
 env:
@@ -12,34 +14,40 @@ env:
 
 jobs:
   build-and-push:
-    name: Build and deploy Frontend Client to S3
+    name: Push Frontend Client to S3
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Cache modules
-        uses: actions/cache@v1
-        id: yarn-cache
-        with:
-          path: node_modules
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: ${{ runner.os }}-yarn-
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: $AWS_ACCESS_KEY_ID
           aws-secret-access-key: $AWS_SECRET_ACCESS_KEY
           aws-region: $AWS_DEFAULT_REGION
+
+      - name: Cache modules
+        uses: actions/cache@v2
+        with:
+          path: ./frontend/node_modules
+          key: ${{ runner.os }}-yarn-${{ hashFiles('./frontend/yarn.lock') }}
+
       - name: Use Node.js 12.x
         uses: actions/setup-node@v1
         with:
           node-version: 12.x
+
       - name: Install dependencies
         working-directory: ./frontend
         run: yarn
+
       - name: Build
         working-directory: ./frontend
-        run: yarn build
-      - name: Deploy
+        env:
+          CI: ""
+        run: yarn Build
+
+      - name: Deploy to S3
         working-directory: ./frontend
         run: aws s3 sync build/ s3://peerprep

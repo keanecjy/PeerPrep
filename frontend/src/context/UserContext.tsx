@@ -19,7 +19,7 @@ const UserProvider: React.FC = ({ children }) => {
 
   // init connection with background and maintain synced data
   useEffect(() => {
-    RefreshTokenService.addListener(getUser);
+    const unsubscribe = RefreshTokenService.addListener(getUser);
 
     // auto login
     refresh().catch(() => {
@@ -28,6 +28,7 @@ const UserProvider: React.FC = ({ children }) => {
       setUser(guest);
       setLoading(false);
     });
+    return unsubscribe;
   }, []);
 
   const getUser = async (auth?: string | null) => {

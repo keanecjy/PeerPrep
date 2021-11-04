@@ -1,4 +1,4 @@
-import { Interview } from './../interview/interview.entity';
+import { InterviewRecord } from '../interview-record/interview-record.entity';
 import { ApiHideProperty } from '@nestjs/swagger';
 import {
   Column,
@@ -32,8 +32,11 @@ export class Profile {
   @Column('varchar', { nullable: true })
   photo: string;
 
-  @ManyToMany(() => Interview, (interview: Interview) => interview.participants)
-  interviews: Interview[];
+  @ManyToMany(
+    () => InterviewRecord,
+    (interview: InterviewRecord) => interview.participants
+  )
+  interviews: InterviewRecord[];
 
   @Exclude()
   @CreateDateColumn()

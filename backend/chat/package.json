@@ -20,9 +20,9 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "aws:login": "aws ecr get-login-password --region ap-southeast-1 | docker login --username AWS --password-stdin 656831507331.dkr.ecr.ap-southeast-1.amazonaws.com",
-    "docker:tag": "docker tag peerprep-chat:latest 656831507331.dkr.ecr.ap-southeast-1.amazonaws.com/peerprep-chat:latest",
+    "docker:build": "docker build -t peerprep-chat:latest -t 656831507331.dkr.ecr.ap-southeast-1.amazonaws.com/peerprep-chat:latest .",
     "docker:push": "docker push 656831507331.dkr.ecr.ap-southeast-1.amazonaws.com/peerprep-chat:latest",
-    "aws:build": "npm run aws:login && npm run docker:build && npm run docker:tag && npm run docker:push"
+    "aws:build": "npm run aws:login && npm run docker:build && npm run docker:push"
   },
   "dependencies": {
     "@nestjs/common": "^8.0.0",
@@ -30,14 +30,12 @@
     "@nestjs/mapped-types": "*",
     "@nestjs/platform-express": "^8.0.0",
     "@nestjs/platform-socket.io": "^8.1.1",
-    "@nestjs/swagger": "^5.1.0",
     "@nestjs/websockets": "^8.1.1",
     "class-transformer": "^0.4.0",
     "class-validator": "^0.13.1",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
-    "rxjs": "^7.2.0",
-    "swagger-ui-express": "^4.1.6"
+    "rxjs": "^7.2.0"
   },
   "devDependencies": {
     "@nestjs/cli": "^8.0.0",

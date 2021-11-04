@@ -19,7 +19,12 @@ const get = () => {
 
 const addListener = (cb: TokenListenerType) => {
   listeners.push(cb);
-  return () => listeners.filter((x) => x !== cb);
+  return () => {
+    const index = listeners.indexOf(cb);
+    if (index > -1) {
+      listeners.splice(index, 1);
+    }
+  };
 };
 
 const RefreshTokenService = {

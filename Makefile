@@ -1,4 +1,4 @@
-run:
+start:
 	docker-compose up
 
 run_detach:

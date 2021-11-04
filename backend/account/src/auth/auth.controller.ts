@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Res } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
   ApiBody,
@@ -6,7 +6,6 @@ import {
   ApiCreatedResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { Response } from 'express';
 
 import { User } from '../users/user.entity';
 import { AuthService } from './auth.service';
@@ -42,21 +41,18 @@ export class AuthController {
   @ApiBody({ type: LoginUserDto })
   @UseAuth(LoginAuthGuard, 'Wrong email or password')
   @Post('/login')
-  public async login(
-    @AuthUser() user: User,
-    @Res({ passthrough: true }) response: Response
-  ): Promise<JwtResponseDto> {
-    const accessTokenCookie = this.authService.getJwtAccessTokenCookie(user);
-    const refreshToken = this.authService.getJwtRefreshTokenCookie(user);
+  public async login(@AuthUser() user: User): Promise<JwtResponseDto> {
+    const accessToken = this.authService.getJwtAccessToken(user);
+    const refreshToken = this.authService.getJwtRefreshToken(user);
 
     await this.authService.saveRefreshToken(refreshToken.token, user);
 
-    response.setHeader('Set-Cookie', [accessTokenCookie.cookie]);
     return {
       userId: user.id,
+      accessToken: accessToken.token,
       refreshToken: refreshToken.token,
       userEmail: user.email,
-      expiresIn: +accessTokenCookie.expiresIn,
+      expiresIn: +accessToken.expiresIn,
       tokenType: 'cookie',
     };
   }
@@ -95,20 +91,19 @@ export class AuthController {
   @Post('/refresh')
   public async refresh(
     @AuthUser() user: User,
-    @Body() _refreshTokenDto: RefreshTokenDto,
-    @Res({ passthrough: true }) response: Response
+    @Body() _refreshTokenDto: RefreshTokenDto
   ): Promise<JwtResponseDto> {
-    const newAccessTokenCookie = this.authService.getJwtAccessTokenCookie(user);
-    const newRefreshToken = this.authService.getJwtRefreshTokenCookie(user);
+    const newAccessToken = this.authService.getJwtAccessToken(user);
+    const newRefreshToken = this.authService.getJwtRefreshToken(user);
 
     await this.authService.saveRefreshToken(newRefreshToken.token, user);
 
-    response.setHeader('Set-Cookie', [newAccessTokenCookie.cookie]);
     return {
       userId: user.id,
+      accessToken: newAccessToken.token,
       refreshToken: newRefreshToken.token,
       userEmail: user.email,
-      expiresIn: +newAccessTokenCookie.expiresIn,
+      expiresIn: +newAccessToken.expiresIn,
       tokenType: 'cookie',
     };
   }
@@ -121,13 +116,8 @@ export class AuthController {
   })
   @UseAuth(JwtAuthGuard)
   @Post('/logout')
-  public async logout(
-    @AuthUser() user: User,
-    @Res({ passthrough: true }) response: Response
-  ): Promise<string> {
-    const logoutCookies = this.authService.getLogoutCookies();
+  public async logout(@AuthUser() user: User): Promise<string> {
     await this.authService.deleteRefreshToken(user);
-    response.setHeader('Set-Cookie', logoutCookies);
     return 'Successfully logged out. See you again!';
   }
 
