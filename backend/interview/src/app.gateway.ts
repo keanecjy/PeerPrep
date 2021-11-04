@@ -115,7 +115,6 @@ export class AppGateway
   forfeitSession(client: Socket, { sessionId, userId }: any): void {
     console.log(sessionId, userId, 'FromserverClientForfeit');
     client.leave(sessionId);
-    this.server.in(sessionId).disconnectSockets(true);
     this.server.emit('FORFEIT', sessionId, userId);
   }
 
