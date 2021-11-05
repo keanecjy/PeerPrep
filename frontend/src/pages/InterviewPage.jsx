@@ -24,7 +24,7 @@ import { apiKeys } from '../services/config';
 import { API_URL, SUBMISSION_STATUS } from '../shared/variables';
 import { toast } from 'react-toastify';
 import { createInterviewHistory } from '../services/profile';
-import LoadingProgress from '../match/LoadingIndicator';
+import LoadingProgress from '../match/LoadingProgress';
 import { parseSecondsToDuration } from '../shared/functions';
 import { styles } from '../theme';
 
@@ -123,9 +123,7 @@ const InterviewPage = () => {
 
       editorSocket.on('partnerForfeited', (sessionId, forfeiterUserId) => {
         console.log('your partner has forfeited', sessionId, forfeiterUserId);
-        toast.success(
-          'Your partner has forfeited the interview! You are alone'
-        );
+        toast.warn('Your partner has forfeited the interview! You are alone');
       });
 
       let timer = setInterval(() => {
@@ -420,7 +418,7 @@ const InterviewPage = () => {
     // At this point, other users in room should have been notified
     // that I left the room and I receive my InterviewHistory
     sessionStorage.removeItem(sessionId);
-    editorSocket.disconnect();
+    history.push('/home');
   };
 
   const handleSubmitRequest = () => {

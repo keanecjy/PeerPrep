@@ -143,7 +143,9 @@ const MatchPage = () => {
           }}
         >
           <LoadingProgress loading={true} />
-          <Typography color="primary">Matching is in progress...</Typography>
+          <Typography color="primary" style={{ margin: '10px 0px' }}>
+            Matching is in progress...
+          </Typography>
           <Button
             type="submit"
             fullWidth
