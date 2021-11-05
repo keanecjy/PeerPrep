@@ -14,6 +14,7 @@ import 'codemirror/mode/javascript/javascript';
 import 'codemirror/mode/python/python';
 import 'codemirror/mode/clike/clike';
 import 'codemirror/keymap/sublime';
+import 'codemirror/addon/comment/comment';
 import '@convergencelabs/codemirror-collab-ext/css/codemirror-collab-ext.css';
 import CodeMirror from 'codemirror';
 import * as CodeMirrorCollabExt from '@convergencelabs/codemirror-collab-ext';
@@ -63,7 +64,6 @@ const InterviewPage = () => {
   const [chatSocket, setChatSocket] = useState(null);
   const [editorSocket, setEditorSocket] = useState(null);
   const history = useHistory();
-  const [dirty, setDirty] = useState(false);
   const [isForfeitModalOpen, setIsForfeitModalOpen] = useState(false);
   const [isSubmitModalOpen, setIsSubmitModalOpen] = useState(false);
   const [submissionStatus, setSubmissionStatus] = useState(
@@ -213,13 +213,13 @@ const InterviewPage = () => {
       'partner',
       'blue'
     );
-
+    let dirty = false;
     editorSocket.on('CODE_CHANGED', (code) => {
-      console.log('CODE_CHANGED');
       setCurrentCode(code);
       if (dirty) {
+        console.log('UPDATED_CODE', dirty);
         editor.setValue(code);
-        setDirty(false);
+        dirty = false;
       }
     });
 
@@ -264,8 +264,7 @@ const InterviewPage = () => {
       isUserActivity = false;
     });
 
-    editorSocket.on('CURSOR_CHANGED', ({ origin, cursor, from, to }) => {
-      console.log('CURSOR_CHANGED', origin);
+    editorSocket.on('CURSOR_CHANGED', ({ cursor, from, to }) => {
       try {
         targetUserCursor.setPosition(cursor);
         targetUserSelection.setPositions(from, to);
@@ -299,7 +298,7 @@ const InterviewPage = () => {
         sourceContentManager.insert(index, text);
       } catch (err) {
         console.log(err);
-        setDirty(true);
+        dirty = true;
       }
     });
 
@@ -309,7 +308,7 @@ const InterviewPage = () => {
         sourceContentManager.replace(index, length, text);
       } catch (err) {
         console.log(err);
-        setDirty(true);
+        dirty = true;
       }
     });
 
@@ -319,7 +318,7 @@ const InterviewPage = () => {
         sourceContentManager.delete(index, length);
       } catch (err) {
         console.log(err);
-        setDirty(true);
+        dirty = true;
       }
     });
 
@@ -450,7 +449,6 @@ const InterviewPage = () => {
     );
     editorSocket.once('COMPLETE_SESSION_REJECT', () => {
       // stop listening to accept event
-      console.log('COMPLETE_SESSION_REJECT');
       setSubmissionStatus(SUBMISSION_STATUS.Rejected);
       setTimeout(() => {
         setSubmissionStatus(SUBMISSION_STATUS.None);
