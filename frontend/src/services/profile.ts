@@ -38,7 +38,7 @@ export const createInterviewHistory = async (data: {
   leetcodeSlug: string;
   questionName: string;
   partner?: string;
-  timeTaken: string;
+  timeTaken: number;
   completed: boolean;
 }): Promise<InterviewHistory> => {
   const res = await server.post(`${apiKeys.profile.records}`, data);

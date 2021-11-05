@@ -17,7 +17,7 @@ export class InterviewsSeeder implements ISeeder {
       leetcodeSlug: 'two-sum',
       questionName: 'Two Sum',
       participants: [{ id: '10c7e0a8-120b-45e0-a37f-be92170bfb8d' }],
-      timeTaken: '2min',
+      timeTaken: 180,
       isCompleted: true,
     });
 

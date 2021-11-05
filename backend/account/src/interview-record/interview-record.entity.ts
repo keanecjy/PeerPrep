@@ -26,8 +26,8 @@ export class InterviewRecord {
   @JoinTable()
   participants: Profile[];
 
-  @Column({ type: 'varchar' })
-  timeTaken: string;
+  @Column({ type: 'integer' })
+  timeTaken: number;
 
   @Column({ type: 'boolean', default: true })
   isCompleted: boolean;

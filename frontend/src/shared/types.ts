@@ -17,7 +17,7 @@ export interface InterviewHistory {
   id: number;
   questionName: string;
   participants: UserProfile[];
-  timeTaken: string;
+  timeTaken: number;
   isCompleted: boolean;
   createdAt: Date;
 }

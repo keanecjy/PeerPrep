@@ -17,6 +17,7 @@ export class InterviewRecordService {
   ): Promise<InterviewRecord> {
     const interview = this.interviewRepository.create({
       ...createInterviewDto,
+      isCompleted: createInterviewDto.completed,
       participants,
     });
     return this.interviewRepository.save(interview);

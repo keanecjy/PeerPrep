@@ -5,6 +5,7 @@ import {
   IsDefined,
   IsBoolean,
   IsUUID,
+  IsNumber,
 } from 'class-validator';
 
 export class CreateRecordDto {
@@ -20,8 +21,8 @@ export class CreateRecordDto {
   @IsOptional()
   partner?: string;
 
-  @IsString()
-  timeTaken: string;
+  @IsNumber()
+  timeTaken: number;
 
   @IsBoolean()
   @IsDefined()
