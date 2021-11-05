@@ -363,9 +363,9 @@ const InterviewPage = () => {
     });
 
     createInterviewHistory(
-      {leetcodeSlug: question.title,
-      question: question.title,
-      partner:user.id,
+      {leetcodeSlug: question.titleSlug,
+      questionName: question.title,
+      partner:sessionParams.partnerId,
       timeTaken:time.toString(),
       completed:Boolean(true)
     })
@@ -381,6 +381,14 @@ const InterviewPage = () => {
       sessionId: sessionId,
       userId: user.id,
     });
+    createInterviewHistory(
+      {leetcodeSlug: question.titleSlug,
+      questionName: question.title,
+      partner:sessionParams.partnerId,
+      timeTaken:time.toString(),
+      completed:Boolean(true)
+    })
+
     editorSocket.disconnect(); // cleanup, avoid memory leak
   }; // TODO
 

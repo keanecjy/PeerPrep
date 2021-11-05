@@ -4,6 +4,7 @@ import {
   IsOptional,
   IsDefined,
   IsBoolean,
+  IsUUID,
 } from 'class-validator';
 
 export class CreateRecordDto {
@@ -15,7 +16,7 @@ export class CreateRecordDto {
   @IsNotEmpty()
   questionName: string;
 
-  @IsString()
+  @IsUUID()
   @IsOptional()
   partner?: string;
 

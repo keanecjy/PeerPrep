@@ -20,7 +20,7 @@ export class InterviewRecord {
   questionName: string;
 
   @ManyToMany(() => Profile, (profile: Profile) => profile.interviews, {
-    cascade: true,
+    onDelete: 'CASCADE',
     eager: true,
   })
   @JoinTable()
