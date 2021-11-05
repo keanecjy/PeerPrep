@@ -10,6 +10,6 @@ export const difficulties = {
 
 export const languages = {
   Java: 'java',
-  JavaScript: 'javaScript',
+  JavaScript: 'javascript',
   Python: 'python',
 };
