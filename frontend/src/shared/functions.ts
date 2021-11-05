@@ -33,3 +33,18 @@ export const getGuestAccount = (): UserProfile => {
   );
   return guest;
 };
+
+export const parseSecondsToDuration = (timeInSeconds: number) => {
+  const dateObj = new Date(timeInSeconds * 1000);
+  const hours = dateObj.getUTCHours().toString();
+  const minutes = dateObj.getUTCMinutes().toString();
+  const seconds = dateObj.getSeconds().toString();
+
+  return (
+    hours.padStart(2, '0') +
+    ':' +
+    minutes.padStart(2, '0') +
+    ':' +
+    seconds.padStart(2, '0')
+  );
+};

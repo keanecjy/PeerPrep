@@ -1,17 +1,11 @@
 import { GiSpellBook } from 'react-icons/gi';
-import { useHistory } from 'react-router';
 
 const PeerPrepLogo = () => {
-  const history = useHistory();
   return (
-    <div
-      className="logo-container"
-      onClick={() => history.push('/')}
-      role="button"
-    >
+    <a className="logo-container" href={'/'} role="button">
       <GiSpellBook className="logo" />
       <span className="logo-title"> PeerPrep </span>
-    </div>
+    </a>
   );
 };
 

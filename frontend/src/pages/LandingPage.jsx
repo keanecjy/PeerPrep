@@ -22,7 +22,7 @@ const LandingPage = () => {
             Get better today!
           </Typography>
           <Typography variant="h5" component="p">
-            PeerPreps is a collaborative coding platform for you to practise
+            PeerPrep is a collaborative coding platform for you to practise
             coding interviews. Match with a partner and start coding with them
             now!
           </Typography>

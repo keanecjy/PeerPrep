@@ -4,6 +4,7 @@ import {
   IsOptional,
   IsDefined,
   IsBoolean,
+  IsNumber,
 } from 'class-validator';
 
 export class CreateRecordDto {
@@ -17,12 +18,12 @@ export class CreateRecordDto {
 
   @IsString()
   @IsOptional()
-  partner?: string;
+  partnerName: string;
 
-  @IsString()
-  timeTaken: string;
+  @IsNumber()
+  timeTaken: number;
 
   @IsBoolean()
   @IsDefined()
-  completed: boolean;
+  isCompleted: boolean;
 }

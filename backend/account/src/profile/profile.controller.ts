@@ -46,7 +46,7 @@ export class ProfileController {
    * Get a user profile
    */
   @ApiOkResponse({ type: Profile })
-  @Get('/interview/:id')
+  @Get('/records/:id')
   findOneWithInterview(@Param('id') id: string): Promise<InterviewRecord[]> {
     return this.profileService
       .findOneWithInterviews(id)

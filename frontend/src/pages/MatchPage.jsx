@@ -5,7 +5,7 @@ import { toast } from 'react-toastify';
 import { UserContext } from '../context/UserContext';
 import useInterval from '../hooks/useInterval';
 import { difficulties, languages, sessionText } from '../match/constants';
-import LoadingButton from '../match/LoadingButton';
+import LoadingProgress from '../match/LoadingProgress';
 import SelectionMenu from '../match/SelectionMenu';
 import { deleteMatch, getMatch } from '../services/match';
 import '../styles/match.css';
@@ -142,8 +142,10 @@ const MatchPage = () => {
             flexDirection: 'column',
           }}
         >
-          <LoadingButton loading={true} />
-          <Typography color="primary">Matching is in progress...</Typography>
+          <LoadingProgress loading={true} />
+          <Typography color="primary" style={{ margin: '10px 0px' }}>
+            Matching is in progress...
+          </Typography>
           <Button
             type="submit"
             fullWidth

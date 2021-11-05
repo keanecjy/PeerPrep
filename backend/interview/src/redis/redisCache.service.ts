@@ -28,4 +28,20 @@ export class RedisCacheService {
   async setTime(sessionId: string, time: string): Promise<string> {
     return await this.cache.set(sessionId + '_time', time);
   }
+
+  async deleteCache(sessionId: string) {
+    const sessionKeys = [
+      sessionId + '_qn',
+      sessionId + '_code',
+      sessionId + '_time',
+    ];
+    return await Promise.all(
+      sessionKeys.map((key) =>
+        this.cache.del(key, (err) => {
+          console.log('Failed to delete session cache for' + sessionId);
+          console.log(err);
+        })
+      )
+    );
+  }
 }

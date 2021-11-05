@@ -4,7 +4,7 @@ import {
   CreateDateColumn,
   Entity,
   JoinTable,
-  ManyToMany,
+  ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -19,15 +19,17 @@ export class InterviewRecord {
   @Column({ type: 'varchar' })
   questionName: string;
 
-  @ManyToMany(() => Profile, (profile: Profile) => profile.interviews, {
-    cascade: true,
-    eager: true,
+  @ManyToOne(() => Profile, (profile: Profile) => profile.interviews, {
+    onDelete: 'CASCADE',
   })
   @JoinTable()
-  participants: Profile[];
+  owner: Profile;
 
-  @Column({ type: 'varchar' })
-  timeTaken: string;
+  @Column({ type: 'varchar', nullable: true })
+  partnerName: string;
+
+  @Column({ type: 'integer' })
+  timeTaken: number;
 
   @Column({ type: 'boolean', default: true })
   isCompleted: boolean;

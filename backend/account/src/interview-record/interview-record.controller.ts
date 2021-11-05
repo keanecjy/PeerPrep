@@ -14,23 +14,23 @@ import {
 import { InterviewRecordService } from './interview-record.service';
 import { CreateRecordDto } from './dto/create-record.dto';
 import { UseAuth } from 'src/shared/decorators/auth.decorator';
+import { ProfileService } from 'src/profile/profile.service';
 
 @ApiTags('Interview Record')
 @Controller('records')
 export class InterviewRecordController {
-  constructor(private readonly interviewService: InterviewRecordService) {}
+  constructor(
+    private readonly interviewService: InterviewRecordService,
+    private readonly profileService: ProfileService
+  ) {}
 
   @Post()
   @UseAuth(JwtAuthGuard)
-  create(
+  async create(
     @AuthUser() requester: User,
     @Body() createInterviewDto: CreateRecordDto
   ) {
-    const participants = [{ id: requester.id }];
-    if (createInterviewDto.partner) {
-      participants.push({ id: createInterviewDto.partner });
-    }
-    return this.interviewService.create(createInterviewDto, participants);
+    return this.interviewService.create(createInterviewDto, requester.id);
   }
 
   @Get(':id')

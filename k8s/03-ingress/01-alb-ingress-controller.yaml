@@ -36,11 +36,11 @@ spec:
             # Name of your cluster. Used when naming resources created
             # by the ALB Ingress Controller, providing distinction between
             # clusters.
-            - --cluster-name=peerprep
+            - --cluster-name=peerprep-cluster
 
             # AWS VPC ID this ingress controller will use to create AWS resources.
             # If unspecified, it will be discovered from ec2metadata.
-            - --aws-vpc-id=vpc-0ec2c9cc7e991599a
+            - --aws-vpc-id=vpc-038437d15a9a145fa
 
             # AWS region this ingress controller will operate in.
             # If unspecified, it will be discovered from ec2metadata.
