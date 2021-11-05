@@ -5,7 +5,7 @@ import { AuthData } from '../shared/types';
 
 export const login = async (email: string, password: string) => {
   const res = await server.post(apiKeys.auth.login, {
-    email,
+    email: email.toLowerCase(),
     password,
   });
   const data = res.data as any as AuthData;
@@ -35,7 +35,10 @@ export const signup = async (signupDetails: {
   name: string;
   password: string;
 }) => {
-  const res = await server.post(apiKeys.auth.signup, signupDetails);
+  const res = await server.post(apiKeys.auth.signup, {
+    ...signupDetails,
+    email: signupDetails.email.toLowerCase(),
+  });
   return res.data as any as string;
 };
 
@@ -46,7 +49,9 @@ export const logout = async () => {
 };
 
 export const resendConfirmationMail = async (email: string) => {
-  const res = await server.post(apiKeys.auth.resendConfirm, { email });
+  const res = await server.post(apiKeys.auth.resendConfirm, {
+    email: email.toLowerCase(),
+  });
   return res.data as any as string;
 };
 
@@ -56,7 +61,9 @@ export const verifyEmailConfirmation = async (token: string) => {
 };
 
 export const sendPasswordReset = async (email: string) => {
-  const res = await server.post(apiKeys.auth.forgetPassword, { email });
+  const res = await server.post(apiKeys.auth.forgetPassword, {
+    email: email.toLowerCase(),
+  });
   return res.data as any as string;
 };
 
