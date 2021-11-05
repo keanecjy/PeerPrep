@@ -13,9 +13,23 @@ import { CARDS } from '../shared/variables';
 import { HighlightedText } from './HighlightedText';
 
 const validationSchema = yup.object({
+  // checks according to OWASP password policy
   password: yup
-    .string('Enter your new password')
+    .string('Enter your password')
     .min(8, 'Password should be of minimum 8 characters length')
+    .matches(
+      /^(?=.*[~`!@#$%^&*+=\-\[\]\\';,/{}|":<>?()._])/,
+      'Password should contain at least one special character'
+    )
+    .matches(/^(?=.*[0-9])/, 'Password should contain at least one number')
+    .matches(
+      /^(?=.*[a-z])/,
+      'Password should contain at least one lowercase letter'
+    )
+    .matches(
+      /^(?=.*[A-Z])/,
+      'Password should contain at least one uppercase letter'
+    )
     .required('Password is required'),
   confirm: yup
     .string('Confirm your new password')
