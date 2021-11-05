@@ -6,17 +6,17 @@ import { HistoryItem } from '../components/HistoryItem';
 import theme from '../theme';
 import { useHistory } from 'react-router';
 
-const mockData = [
-  {
-    id: 'number',
-    leetcodeSlug: 'two-sum',
-    questionName: 'Two Sum',
-    partnerName: 'Guest',
-    timeTaken: 180,
-    isCompleted: true,
-    createdAt: new Date(),
-  },
-];
+// const mockData = [
+//   {
+//     id: 'number',
+//     leetcodeSlug: 'two-sum',
+//     questionName: 'Two Sum',
+//     partnerName: 'Guest',
+//     timeTaken: 180,
+//     isCompleted: true,
+//     createdAt: new Date(),
+//   },
+// ];
 
 const HistorySection = () => {
   const [interviewHistory, setInterviewHistory] = useState([]);

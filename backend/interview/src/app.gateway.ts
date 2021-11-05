@@ -104,12 +104,13 @@ export class AppGateway
     }
 
     client.on('disconnecting', async () => {
-      const numUsers = (await this.server.in(sessionId).allSockets()).size;
-      if (numUsers === 1) {
-        // last user - clear cache
-        console.log('Clearing session data for ', sessionId);
-        this.redisService.deleteCache(sessionId);
-      }
+      // deletion is unecessary (TTL and uuid 'uniqueness' reduces clash in sessions)
+      // const numUsers = (await this.server.in(sessionId).allSockets()).size;
+      // if (numUsers === 1) {
+      //   // last user - clear cache
+      //   console.log('Clearing session data for ', sessionId);
+      //   this.redisService.deleteCache(sessionId);
+      // }
       client.broadcast.in(sessionId).emit('leftRoom', { sessionId, userId });
       client.broadcast
         .in(sessionId)
@@ -126,7 +127,7 @@ export class AppGateway
 
   @SubscribeMessage('GREET')
   greetUser(client: Socket, { sessionId, ...userDetails }: any): void {
-    this.server.in(sessionId).emit('GREET', userDetails);
+    client.to(sessionId).emit('GREET', userDetails);
   }
 
   @SubscribeMessage('FORFEIT_SESSION')
