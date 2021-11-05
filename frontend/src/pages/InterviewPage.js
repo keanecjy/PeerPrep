@@ -25,7 +25,6 @@ import { API_URL } from '../shared/variables';
 import { toast } from 'react-toastify';
 import { createInterviewHistory } from '../services/profile';
 
-
 const CustomChip = ({ message }) => {
   return (
     <div className="custom-chip">
@@ -107,6 +106,11 @@ const InterviewPage = () => {
         });
         history.push('/home');
         toast.success('You have successfully completed the interview!');
+      });
+
+      editorSocket.on('partnerForfeited', (sessionId, forfeiterUserId) => {
+        console.log('your partner has forfeited', sessionId, forfeiterUserId);
+        toast.success('Your partner has forfeited the interview! You are alone');
       });
 
       let timer = setInterval(() => {
@@ -357,22 +361,20 @@ const InterviewPage = () => {
   };
 
   const handleForfeit = () => {
-    editorSocket.emit('FORFEIT', {
+    editorSocket.emit('FORFEIT_SESSION', {
       sessionId: sessionId,
       userId: user.id,
     });
-
-    createInterviewHistory(
-      {leetcodeSlug: question.titleSlug,
+    createInterviewHistory({ 
+      leetcodeSlug: question.titleSlug,
       questionName: question.title,
-      partner:sessionParams.partnerId,
-      timeTaken:time.toString(),
-      completed:Boolean(true)
-    })
-
+      partner: sessionParams.partnerId,
+      timeTaken: time.toString(),
+      completed: Boolean(true),
+    });
+    console.log('At this point, other users in room should have been notified that I left the room and I receive my InterviewHistory');
     sessionStorage.removeItem(sessionId);
-    editorSocket.disconnect(); // cleanup, avoid memory leak
-    history.push('/home'); // route back to home landing
+    editorSocket.disconnect();
   };
 
   const handleSubmit = () => {
@@ -381,16 +383,15 @@ const InterviewPage = () => {
       sessionId: sessionId,
       userId: user.id,
     });
-    createInterviewHistory(
-      {leetcodeSlug: question.titleSlug,
+    createInterviewHistory({
+      leetcodeSlug: question.titleSlug,
       questionName: question.title,
-      partner:sessionParams.partnerId,
-      timeTaken:time.toString(),
-      completed:Boolean(true)
-    })
-
+      partner: sessionParams.partnerId,
+      timeTaken: time.toString(),
+      completed: Boolean(true),
+    });
     editorSocket.disconnect(); // cleanup, avoid memory leak
-  }; // TODO
+  };
 
   if (!sessionStorage.getItem(sessionId)) {
     return <></>;

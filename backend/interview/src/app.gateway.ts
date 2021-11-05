@@ -111,11 +111,11 @@ export class AppGateway
     this.server.in(sessionId).emit('leftRoom', sessionId, userId);
   }
 
-  @SubscribeMessage('FORFEIT')
-  forfeitSession(client: Socket, { sessionId, userId }: any): void {
-    console.log(sessionId, userId, 'FromserverClientForfeit');
+  @SubscribeMessage('FORFEIT_SESSION')
+  forfeitSession(client: Socket, { sessionId, forfeiterUserId }: any): void {
+    console.log(sessionId, forfeiterUserId, 'FromserverClientForfeit');
     client.leave(sessionId);
-    this.server.emit('FORFEIT', sessionId, userId);
+    this.server.in(sessionId).emit('partnerForfeited', sessionId, forfeiterUserId);
   }
 
   @SubscribeMessage('COMPLETE_SESSION')
