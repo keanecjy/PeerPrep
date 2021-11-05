@@ -1,3 +1,4 @@
+import { Backdrop, CircularProgress, Typography } from '@material-ui/core';
 import React, { createContext, useState, useEffect } from 'react';
 import { refresh } from '../services/auth';
 import { getUserProfile } from '../services/profile';
@@ -43,12 +44,14 @@ const UserProvider: React.FC = ({ children }) => {
     return user;
   };
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
   return (
-    <UserContext.Provider value={{ user }}>{children}</UserContext.Provider>
+    <UserContext.Provider value={{ user }}>
+      <Backdrop style={{ zIndex: 99, flexDirection: 'column' }} open={loading}>
+        <CircularProgress color="secondary" style={{ margin: '10px' }} />
+        <Typography color="secondary">Loading...</Typography>
+      </Backdrop>
+      {!loading && children}
+    </UserContext.Provider>
   );
 };
 
