@@ -15,7 +15,7 @@ import { HighlightedText } from './HighlightedText';
 const validationSchema = yup.object({
   // checks according to OWASP password policy
   password: yup
-    .string('Enter your password')
+    .string('Enter your new password')
     .min(8, 'Password should be of minimum 8 characters length')
     .matches(
       /^(?=.*[~`!@#$%^&*+=\-\[\]\\';,/{}|":<>?()._])/,
