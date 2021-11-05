@@ -19,11 +19,14 @@ import CodeMirror from 'codemirror';
 import * as CodeMirrorCollabExt from '@convergencelabs/codemirror-collab-ext';
 import { useParams } from 'react-router';
 import { useHistory } from 'react-router-dom';
-import { Chip } from '@material-ui/core';
+import { Chip, Table, TableRow, TableCell, TableHead } from '@material-ui/core';
 import { apiKeys } from '../services/config';
-import { API_URL } from '../shared/variables';
+import { API_URL, SUBMISSION_STATUS } from '../shared/variables';
 import { toast } from 'react-toastify';
 import { createInterviewHistory } from '../services/profile';
+import LoadingProgress from '../match/LoadingIndicator';
+import { parseSecondsToDuration } from '../shared/functions';
+import { styles } from '../theme';
 
 const CustomChip = ({ message }) => {
   return (
@@ -48,11 +51,14 @@ const InterviewPage = () => {
     topics: [],
   });
   const [initialCode, setInitialCode] = useState('');
+  const [currentCode, setCurrentCode] = useState('');
   const [time, setTime] = useState(0); // To send to backend to get the total time taken
+  const [timer, setTimer] = useState(0);
   const [messages, setMessages] = useState([]);
   const [currMessage, setCurrMessage] = useState('');
   const { user } = useContext(UserContext);
   const { sessionId } = useParams('sessionId');
+  const [partner, setPartner] = useState(null);
   const [sessionParams, setSessionParams] = useState(null);
   const [chatSocket, setChatSocket] = useState(null);
   const [editorSocket, setEditorSocket] = useState(null);
@@ -60,6 +66,9 @@ const InterviewPage = () => {
   const [dirty, setDirty] = useState(false);
   const [isForfeitModalOpen, setIsForfeitModalOpen] = useState(false);
   const [isSubmitModalOpen, setIsSubmitModalOpen] = useState(false);
+  const [submissionStatus, setSubmissionStatus] = useState(
+    SUBMISSION_STATUS.None
+  );
 
   useEffect(() => {
     const sessionDetails = sessionStorage.getItem(sessionId);
@@ -76,8 +85,8 @@ const InterviewPage = () => {
     }
   }, [sessionId]);
 
+  // editor client socket
   useEffect(() => {
-    // editor client socket
     const editorSocket = io(`${API_URL}${apiKeys.interview.socket}`, {
       path: '/interview/new',
     });
@@ -85,6 +94,7 @@ const InterviewPage = () => {
     return () => editorSocket.disconnect(); //cleanup, avoid memory leak
   }, []);
 
+  // code editor hook
   useEffect(() => {
     if (sessionParams && editorSocket) {
       editorSocket.on('connect', () => {
@@ -96,6 +106,11 @@ const InterviewPage = () => {
           language: sessionParams.language,
           time: Math.floor(new Date().getTime() / 1000).toString(),
         });
+
+        editorSocket.emit('GREET', {
+          sessionId: sessionId,
+          ...user,
+        });
       });
 
       editorSocket.on('disconnect', () => {
@@ -104,18 +119,19 @@ const InterviewPage = () => {
           sessionId: sessionId,
           userId: user.id,
         });
-        history.push('/home');
-        toast.success('You have successfully completed the interview!');
       });
 
       editorSocket.on('partnerForfeited', (sessionId, forfeiterUserId) => {
         console.log('your partner has forfeited', sessionId, forfeiterUserId);
-        toast.success('Your partner has forfeited the interview! You are alone');
+        toast.success(
+          'Your partner has forfeited the interview! You are alone'
+        );
       });
 
       let timer = setInterval(() => {
         setTime((oldTime) => oldTime + 1);
       }, 1000);
+      setTimer(timer);
 
       editorSocket.once('ROOM:CONNECTION', ({ code, question, time }) => {
         console.log(code, question, time);
@@ -128,11 +144,29 @@ const InterviewPage = () => {
         setLoading(false);
       });
 
+      // greet each other and exchange details
+      editorSocket.once('GREET', (details) => {
+        setPartner(details);
+        editorSocket.emit('GREET', {
+          sessionId: sessionId,
+          ...user,
+        });
+      });
+
+      editorSocket.on('COMPLETE_SESSION_REQUEST', () => {
+        setSubmissionStatus(SUBMISSION_STATUS.Prompted);
+        editorSocket.once('COMPLETE_SESSION_CANCEL', () => {
+          if (submissionStatus === SUBMISSION_STATUS.Prompted) {
+            setSubmissionStatus(SUBMISSION_STATUS.None);
+          }
+        });
+      });
+
       return () => clearInterval(timer);
     }
   }, [sessionParams, editorSocket]);
 
-  // code editor hook
+  // code mirror hook
   useEffect(() => {
     if (!sessionParams) {
       return;
@@ -184,6 +218,7 @@ const InterviewPage = () => {
 
     editorSocket.on('CODE_CHANGED', (code) => {
       console.log('CODE_CHANGED');
+      setCurrentCode(code);
       if (dirty) {
         editor.setValue(code);
         setDirty(false);
@@ -360,40 +395,107 @@ const InterviewPage = () => {
     }
   };
 
+  const createRecord = (timeTaken, isCompleted) => {
+    sessionStorage.removeItem(sessionId);
+    if (user.isGuest) {
+      // no record
+      return;
+    }
+    createInterviewHistory({
+      leetcodeSlug: question.titleSlug,
+      questionName: question.title,
+      partnerName: partner?.name,
+      timeTaken: timeTaken,
+      isCompleted: Boolean(isCompleted),
+    });
+  };
+
   const handleForfeit = () => {
     editorSocket.emit('FORFEIT_SESSION', {
       sessionId: sessionId,
       userId: user.id,
     });
-    createInterviewHistory({ 
-      leetcodeSlug: question.titleSlug,
-      questionName: question.title,
-      partner: sessionParams.partnerId,
-      timeTaken: time.toString(),
-      completed: Boolean(true),
-    });
-    console.log('At this point, other users in room should have been notified that I left the room and I receive my InterviewHistory');
+    createRecord(time, false);
+
+    // At this point, other users in room should have been notified
+    // that I left the room and I receive my InterviewHistory
     sessionStorage.removeItem(sessionId);
     editorSocket.disconnect();
   };
 
-  const handleSubmit = () => {
-    // routing is handled by the event listener on top
-    editorSocket.emit('COMPLETE_SESSION', {
+  const handleSubmitRequest = () => {
+    editorSocket.emit('COMPLETE_SESSION_REQUEST', {
+      sessionId: sessionId,
+      userId: user.id,
+      time: time,
+    });
+    setSubmissionStatus(SUBMISSION_STATUS.Requesting);
+
+    editorSocket.once(
+      'COMPLETE_SESSION_CONFIRM',
+      ({ time: confirmationTime }) => {
+        setSubmissionStatus(SUBMISSION_STATUS.Accepted);
+
+        confirmationTime = confirmationTime || time;
+        createRecord(confirmationTime, true);
+        clearInterval(timer);
+        setTime(confirmationTime);
+
+        setTimeout(() => {
+          setSubmissionStatus(SUBMISSION_STATUS.Summary);
+          setIsSubmitModalOpen(false);
+        }, 1500);
+
+        // stop listening to reject event
+        editorSocket.off('COMPLETE_SESSION_REJECT');
+      }
+    );
+    editorSocket.once('COMPLETE_SESSION_REJECT', () => {
+      // stop listening to accept event
+      console.log('COMPLETE_SESSION_REJECT');
+      setSubmissionStatus(SUBMISSION_STATUS.Rejected);
+      setTimeout(() => {
+        setSubmissionStatus(SUBMISSION_STATUS.None);
+        setIsSubmitModalOpen(false);
+      }, 1500);
+
+      // stop listening to reject event
+      editorSocket.off('COMPLETE_SESSION_CONFIRM');
+    });
+  };
+
+  const handleSubmitAccept = () => {
+    clearInterval(timer);
+    editorSocket.emit('COMPLETE_SESSION_CONFIRM', {
+      sessionId: sessionId,
+      userId: user.id,
+      time: time,
+    });
+    createRecord(time, true);
+    setSubmissionStatus(SUBMISSION_STATUS.Summary);
+  };
+
+  const handleSubmitReject = () => {
+    editorSocket.emit('COMPLETE_SESSION_REJECT', {
       sessionId: sessionId,
       userId: user.id,
     });
-    createInterviewHistory({
-      leetcodeSlug: question.titleSlug,
-      questionName: question.title,
-      partner: sessionParams.partnerId,
-      timeTaken: time.toString(),
-      completed: Boolean(true),
-    });
-    editorSocket.disconnect(); // cleanup, avoid memory leak
+    setSubmissionStatus(SUBMISSION_STATUS.None);
   };
 
-  if (!sessionStorage.getItem(sessionId)) {
+  const cancelSubmitRequest = () => {
+    editorSocket.emit('COMPLETE_SESSION_CANCEL', {
+      sessionId: sessionId,
+      userId: user.id,
+      time: time,
+    });
+    editorSocket.off('COMPLETE_SESSION_REJECT');
+    editorSocket.off('COMPLETE_SESSION_CONFIRM');
+    setSubmissionStatus(SUBMISSION_STATUS.None);
+    setIsSubmitModalOpen(false);
+  };
+
+  if (!sessionParams) {
     return <></>;
   }
 
@@ -439,7 +541,7 @@ const InterviewPage = () => {
                 </span>
                 <div className="question-container-content">
                   <Chip
-                    label={question.difficulty || 'difficulty'}
+                    label={question.difficulty || 'easy'}
                     color="secondary"
                     size="small"
                     style={{
@@ -448,7 +550,7 @@ const InterviewPage = () => {
                     }}
                   />
                   <Chip
-                    label={sessionParams?.language || 'difficulty'}
+                    label={sessionParams?.language || 'javascript'}
                     color="secondary"
                     size="small"
                     style={{ textTransform: 'capitalize' }}
@@ -528,22 +630,6 @@ const InterviewPage = () => {
             </Grid>
           </Grid>
           <Grid item container xs={12} justifyContent="flex-end">
-            <GeneralModal
-              displayText={
-                'Are you sure you want to quit? Your partner will be left alone...'
-              }
-              isOpen={isForfeitModalOpen}
-              handleConfirm={handleForfeit}
-              handleCloseModal={() => setIsForfeitModalOpen(false)}
-            />
-            <GeneralModal
-              displayText={
-                'Are you sure you want to submit your answer? This room will be closed!'
-              }
-              isOpen={isSubmitModalOpen}
-              handleConfirm={handleSubmit}
-              handleCloseModal={() => setIsSubmitModalOpen(false)}
-            />
             <StopWatch time={time} />
             <Button
               onClick={() => setIsForfeitModalOpen(true)}
@@ -568,6 +654,188 @@ const InterviewPage = () => {
           </Grid>
         </Grid>
       </Grid>
+
+      <GeneralModal
+        isOpen={submissionStatus === SUBMISSION_STATUS.Summary}
+        handleConfirm={() => {
+          setIsSubmitModalOpen(false);
+          history.push('/home');
+        }}
+        confirmText={'Return to Dashboard'}
+      >
+        <Typography color="primary" variant="h6">
+          Your interview statistics
+        </Typography>
+        <Typography style={{ margin: '10px 0px' }}>
+          Congratulations on completing your peer interview!
+        </Typography>
+        <Table>
+          <TableHead>
+            <TableRow hover>
+              <TableCell
+                padding="none"
+                color="primary"
+                style={{ borderBottom: 'none', color: styles.BLUE, width: 100 }}
+              >
+                Question:
+              </TableCell>
+              <TableCell
+                colSpan="5"
+                align="right"
+                color="primary"
+                padding="none"
+                style={{ borderBottom: 'none', color: styles.BLUE }}
+              >
+                <Table
+                  component="a"
+                  target="_blank"
+                  padding="none"
+                  rel="noreferrer"
+                  href={`https://leetcode.com/problems/${question.titleSlug}`}
+                >
+                  {question.title}
+                </Table>
+              </TableCell>
+            </TableRow>
+            <TableRow hover>
+              <TableCell
+                padding="none"
+                color="primary"
+                style={{ borderBottom: 'none', color: styles.BLUE }}
+              >
+                Difficulty:
+              </TableCell>
+              <TableCell
+                colSpan="5"
+                align="right"
+                color="primary"
+                padding="none"
+                style={{
+                  borderBottom: 'none',
+                  color: styles.BLUE,
+                  textTransform: 'capitalize',
+                }}
+              >
+                {question.difficulty}
+              </TableCell>
+            </TableRow>
+            <TableRow hover>
+              <TableCell
+                padding="none"
+                color="primary"
+                style={{ borderBottom: 'none', color: styles.BLUE }}
+              >
+                Language:
+              </TableCell>
+              <TableCell
+                colSpan="5"
+                align="right"
+                color="primary"
+                padding="none"
+                style={{
+                  borderBottom: 'none',
+                  color: styles.BLUE,
+                  textTransform: 'capitalize',
+                }}
+              >
+                {sessionParams.language}
+              </TableCell>
+            </TableRow>
+            <TableRow hover>
+              <TableCell
+                padding="none"
+                color="primary"
+                style={{ borderBottom: 'none', color: styles.BLUE }}
+              >
+                Time Taken:
+              </TableCell>
+              <TableCell
+                colSpan="5"
+                align="right"
+                color="primary"
+                padding="none"
+                style={{ borderBottom: 'none', color: styles.BLUE }}
+              >
+                {parseSecondsToDuration(time)}
+              </TableCell>
+            </TableRow>
+          </TableHead>
+        </Table>
+        <Typography style={{ margin: '40px 0px 0px 0px' }} align="justify">
+          Feel free to copy your code and run it on LeetCode to check for
+          correctness Do note that we do not save a copy of your code!
+        </Typography>
+        <Button
+          align="center"
+          color="primary"
+          disableElevation={true}
+          disableRipple={true}
+          variant="text"
+          color="primary"
+          onClick={() => {
+            navigator.clipboard.writeText(currentCode);
+            toast.info('Copied to clipboard');
+          }}
+        >
+          Copy my code
+        </Button>
+      </GeneralModal>
+
+      <GeneralModal
+        isOpen={submissionStatus === SUBMISSION_STATUS.Prompted}
+        confirmText={'Yes'}
+        handleConfirm={handleSubmitAccept}
+        cancelText={'No'}
+        handleCancel={handleSubmitReject}
+      >
+        <Typography color="primary" align="center">
+          Your partner has requested to submit the answer. Are you ready to
+          submit?
+        </Typography>
+      </GeneralModal>
+
+      <GeneralModal
+        isOpen={[
+          SUBMISSION_STATUS.Requesting,
+          SUBMISSION_STATUS.Accepted,
+          SUBMISSION_STATUS.Rejected,
+        ].includes(submissionStatus)}
+        handleCancel={cancelSubmitRequest}
+      >
+        <LoadingProgress
+          loading={submissionStatus === SUBMISSION_STATUS.Requesting}
+          success={submissionStatus === SUBMISSION_STATUS.Accepted}
+        />
+
+        <Typography color="primary" align="center">
+          {submissionStatus === SUBMISSION_STATUS.Requesting
+            ? 'Requesting confirmation from partner...'
+            : submissionStatus === SUBMISSION_STATUS.Accepted
+            ? 'Partner accepted submission request'
+            : 'Partner rejected submission request'}
+        </Typography>
+      </GeneralModal>
+
+      <GeneralModal
+        isOpen={isForfeitModalOpen}
+        handleConfirm={handleForfeit}
+        handleCancel={() => setIsForfeitModalOpen(false)}
+      >
+        <Typography color="primary" align="center">
+          Are you sure you want to quit? Your partner will be left alone...
+        </Typography>
+      </GeneralModal>
+
+      <GeneralModal
+        isOpen={isSubmitModalOpen}
+        handleConfirm={handleSubmitRequest}
+        handleCancel={() => setIsSubmitModalOpen(false)}
+      >
+        <Typography color="primary" align="center">
+          Are you sure you want to submit your answer? Confirmation is required
+          from your partner
+        </Typography>
+      </GeneralModal>
     </div>
   );
 };

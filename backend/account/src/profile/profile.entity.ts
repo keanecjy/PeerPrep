@@ -8,7 +8,7 @@ import {
   JoinColumn,
   PrimaryColumn,
   Entity,
-  ManyToMany,
+  OneToMany,
 } from 'typeorm';
 import { User } from '../users/user.entity';
 import { Exclude } from 'class-transformer';
@@ -32,9 +32,9 @@ export class Profile {
   @Column('varchar', { nullable: true })
   photo: string;
 
-  @ManyToMany(
+  @OneToMany(
     () => InterviewRecord,
-    (interview: InterviewRecord) => interview.participants
+    (interview: InterviewRecord) => interview.owner
   )
   interviews: InterviewRecord[];
 

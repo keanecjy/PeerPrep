@@ -8,37 +8,10 @@ import {
   TableRow,
   Typography,
 } from '@material-ui/core';
-import React, { useContext, useMemo } from 'react';
-import { UserContext } from '../context/UserContext';
+import { parseSecondsToDuration } from '../shared/functions';
 import { styles } from '../theme';
 
 export const HistoryItem = ({ data }) => {
-  const { user } = useContext(UserContext);
-
-  const partnerName = useMemo(() => {
-    if (data.participants.length < 2) {
-      return 'Guest user';
-    }
-
-    return data.participants.filter((x) => x !== user.id)[0].name;
-  }, [data]);
-
-  const getTimeString = (timeInSeconds) => {
-    console.log(timeInSeconds);
-    const dateObj = new Date(timeInSeconds * 1000);
-    const hours = dateObj.getUTCHours().toString();
-    const minutes = dateObj.getUTCMinutes().toString();
-    const seconds = dateObj.getSeconds().toString();
-
-    return (
-      hours.padStart(2, '0') +
-      ':' +
-      minutes.padStart(2, '0') +
-      ':' +
-      seconds.padStart(2, '0')
-    );
-  };
-
   return (
     <Paper
       style={{
@@ -48,7 +21,9 @@ export const HistoryItem = ({ data }) => {
         flexGrow: 1,
       }}
     >
-      <Typography variant="h6">PeerPrepped with {partnerName}!</Typography>
+      <Typography variant="h6">
+        PeerPrepped with {data.partnerName || 'Guest'}!
+      </Typography>
       <TableContainer component={Box}>
         <Table>
           <TableHead>
@@ -116,7 +91,7 @@ export const HistoryItem = ({ data }) => {
                 padding="none"
                 style={{ borderBottom: 'none', color: styles.BLUE }}
               >
-                {getTimeString(data.timeTaken)}
+                {parseSecondsToDuration(data.timeTaken)}
               </TableCell>
             </TableRow>
             <TableRow hover>
@@ -135,7 +110,7 @@ export const HistoryItem = ({ data }) => {
                 padding="none"
                 style={{ borderBottom: 'none', color: styles.BLUE }}
               >
-                {data.isCompleted ? 'Completed' : 'Forfeitted'}
+                {data.isCompleted ? 'Completed' : 'Forfeited'}
               </TableCell>
             </TableRow>
           </TableHead>

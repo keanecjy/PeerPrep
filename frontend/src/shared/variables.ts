@@ -7,3 +7,12 @@ export const CARDS = {
   CHECK_CONFIRMATION: 'check',
   RESET_PASSWORD: 'reset',
 };
+
+export const SUBMISSION_STATUS = {
+  Requesting: 'REQUESTING',
+  Rejected: 'REJECTED',
+  Accepted: 'ACCEPTED',
+  Prompted: 'PROMPTED',
+  Summary: 'SUMMARY',
+  None: null,
+};

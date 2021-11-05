@@ -16,7 +16,7 @@ export interface AuthData {
 export interface InterviewHistory {
   id: number;
   questionName: string;
-  participants: UserProfile[];
+  partnerName: string;
   timeTaken: number;
   isCompleted: boolean;
   createdAt: Date;

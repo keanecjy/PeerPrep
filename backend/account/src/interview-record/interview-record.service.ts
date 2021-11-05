@@ -13,17 +13,16 @@ export class InterviewRecordService {
 
   create(
     createInterviewDto: CreateRecordDto,
-    participants: { id: string }[]
+    requesterId: string
   ): Promise<InterviewRecord> {
     const interview = this.interviewRepository.create({
       ...createInterviewDto,
-      isCompleted: createInterviewDto.completed,
-      participants,
+      owner: { id: requesterId },
     });
     return this.interviewRepository.save(interview);
   }
 
   findOne(id: number): Promise<InterviewRecord> {
-    return this.interviewRepository.findOne({ id });
+    return this.interviewRepository.findOne({ id }, { relations: ['owner'] });
   }
 }

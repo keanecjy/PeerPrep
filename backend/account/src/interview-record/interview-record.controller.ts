@@ -30,15 +30,7 @@ export class InterviewRecordController {
     @AuthUser() requester: User,
     @Body() createInterviewDto: CreateRecordDto
   ) {
-    const participants = [{ id: requester.id }];
-    if (
-      createInterviewDto.partner &&
-      (await this.profileService.findOne(createInterviewDto.partner))
-    ) {
-      participants.push({ id: createInterviewDto.partner });
-    }
-    console.log(participants, createInterviewDto); //
-    return this.interviewService.create(createInterviewDto, participants);
+    return this.interviewService.create(createInterviewDto, requester.id);
   }
 
   @Get(':id')

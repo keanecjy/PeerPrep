@@ -1,4 +1,4 @@
-import { Box, Button, Modal, Typography, Grid } from '@material-ui/core';
+import { Box, Button, Modal, Grid } from '@material-ui/core';
 import React from 'react';
 import '../styles/match.css';
 
@@ -7,18 +7,21 @@ const modalStyle = {
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  width: 400,
+  minWidth: 400,
+  maxWidth: 500,
   bgcolor: 'background.paper',
-  borderRadius: 25,
+  borderRadius: 15,
   boxShadow: 24,
-  p: 4,
+  p: 3,
 };
 
 const GeneralModal = ({
-  displayText,
+  children,
   isOpen,
   handleConfirm,
-  handleCloseModal,
+  handleCancel,
+  confirmText = 'Confirm',
+  cancelText = 'Cancel',
 }) => {
   return (
     <Modal
@@ -35,28 +38,32 @@ const GeneralModal = ({
           flexDirection: 'column',
         }}
       >
-        <Typography color="primary">{displayText}</Typography>
-        <Grid style={{ marginTop: '10px' }}>
-          <Button
-            type="submit"
-            variant="outlined"
-            onClick={handleCloseModal}
-            style={{
-              backgroundColor: '#cc3733',
-              color: 'white',
-              marginRight: '20px',
-            }}
-          >
-            Cancel
-          </Button>
-          <Button
-            type="submit"
-            onClick={handleConfirm}
-            variant="contained"
-            color="primary"
-          >
-            Confirm
-          </Button>
+        {children}
+        <Grid style={{ marginTop: '30px' }}>
+          {handleCancel && (
+            <Button
+              type="submit"
+              variant="outlined"
+              onClick={handleCancel}
+              style={{
+                backgroundColor: '#cc3733',
+                color: 'white',
+                marginRight: handleConfirm ? '20px' : 'inherit',
+              }}
+            >
+              {cancelText}
+            </Button>
+          )}
+          {handleConfirm && (
+            <Button
+              type="submit"
+              onClick={handleConfirm}
+              variant="contained"
+              color="primary"
+            >
+              {confirmText}
+            </Button>
+          )}
         </Grid>
       </Box>
     </Modal>

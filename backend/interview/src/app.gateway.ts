@@ -35,7 +35,7 @@ export class AppGateway
   @SubscribeMessage('CODE_CHANGED')
   notifyClients(client: Socket, { sessionId, code }: any): void {
     this.redisService.setCode(sessionId, code);
-    client.to(sessionId).emit('CODE_CHANGED', code);
+    this.server.in(sessionId).emit('CODE_CHANGED', code);
   }
 
   @SubscribeMessage('CODE_INSERTED')
@@ -102,25 +102,81 @@ export class AppGateway
         .in(sessionId)
         .emit('ROOM:CONNECTION', { question, code: question.code, time: time });
     }
+
+    client.on('disconnecting', async () => {
+      const numUsers = (await this.server.in(sessionId).allSockets()).size;
+      if (numUsers === 1) {
+        // last user - clear cache
+        console.log('Clearing session data for ', sessionId);
+        this.redisService.deleteCache(sessionId);
+      }
+      client.broadcast.in(sessionId).emit('leftRoom', { sessionId, userId });
+      client.broadcast
+        .in(sessionId)
+        .emit('COMPLETE_SESSION_CONFIRM', { time: null });
+    });
   }
 
   @SubscribeMessage('DISCONNECT_FROM_ROOM')
   leaveRoom(client: Socket, { sessionId, userId }: any): void {
     console.log(sessionId, userId, 'FromserverClientLeftRoom');
     client.leave(sessionId);
-    this.server.in(sessionId).emit('leftRoom', sessionId, userId);
+    this.server.in(sessionId).emit('leftRoom', { sessionId, userId });
+  }
+
+  @SubscribeMessage('GREET')
+  greetUser(client: Socket, { sessionId, ...userDetails }: any): void {
+    this.server.in(sessionId).emit('GREET', userDetails);
   }
 
   @SubscribeMessage('FORFEIT_SESSION')
   forfeitSession(client: Socket, { sessionId, forfeiterUserId }: any): void {
     console.log(sessionId, forfeiterUserId, 'FromserverClientForfeit');
     client.leave(sessionId);
-    this.server.in(sessionId).emit('partnerForfeited', sessionId, forfeiterUserId);
+    this.server
+      .in(sessionId)
+      .emit('partnerForfeited', sessionId, forfeiterUserId);
   }
 
-  @SubscribeMessage('COMPLETE_SESSION')
-  completeSession(client: Socket, { sessionId, userId }: any): void {
-    console.log(sessionId, userId, 'FromserverClientCompleteSession');
+  @SubscribeMessage('COMPLETE_SESSION_REQUEST')
+  async requestCompleteSession(
+    client: Socket,
+    { sessionId, userId, ...data }: any
+  ): Promise<void> {
+    console.log(sessionId, userId, 'FromserverClientCompleteSessionRequest');
+    const numUsers = (await this.server.in(sessionId).allSockets()).size;
+    if (numUsers === 1) {
+      this.server.in(sessionId).emit('COMPLETE_SESSION_CONFIRM', data);
+    } else {
+      client.to(sessionId).emit('COMPLETE_SESSION_REQUEST', data);
+    }
+  }
+
+  @SubscribeMessage('COMPLETE_SESSION_CANCEL')
+  cancelCompleteSessionRequest(
+    client: Socket,
+    { sessionId, userId, ...data }: any
+  ): void {
+    console.log(sessionId, userId, 'FromserverClientCompleteSessionCancel');
+    client.to(sessionId).emit('COMPLETE_SESSION_CANCEL', data);
+  }
+
+  @SubscribeMessage('COMPLETE_SESSION_REJECT')
+  rejectCompleteSession(
+    client: Socket,
+    { sessionId, userId, ...data }: any
+  ): void {
+    console.log(sessionId, userId, 'FromserverClientCompleteSessionReject');
+    client.to(sessionId).emit('COMPLETE_SESSION_REJECT', data);
+  }
+
+  @SubscribeMessage('COMPLETE_SESSION_CONFIRM')
+  confirmCompleteSession(
+    client: Socket,
+    { sessionId, userId, ...data }: any
+  ): void {
+    console.log(sessionId, userId, 'FromserverClientCompleteSessionConfirm');
+    client.to(sessionId).emit('COMPLETE_SESSION_CONFIRM', data);
     this.server.in(sessionId).disconnectSockets(true);
   }
 
@@ -129,6 +185,7 @@ export class AppGateway
   }
 
   handleDisconnect(client: Socket) {
+    console.log(client.rooms);
     this.logger.log(`Client disconnected: ${client.id}`);
   }
 
