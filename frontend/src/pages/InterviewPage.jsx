@@ -29,6 +29,8 @@ import LoadingProgress from '../match/LoadingProgress';
 import { parseSecondsToDuration } from '../shared/functions';
 import { styles } from '../theme';
 
+const TOAST_ID = 'joinStatus';
+
 const CustomChip = ({ message }) => {
   return (
     <div className="custom-chip">
@@ -126,6 +128,13 @@ const InterviewPage = () => {
         toast.warn('Your partner has forfeited the interview! You are alone');
       });
 
+      editorSocket.on('leftRoom', () => {
+        toast.warn('Your partner has disconnected from the session', {
+          toastId: TOAST_ID,
+          updateId: TOAST_ID,
+        });
+      });
+
       let timer = setInterval(() => {
         setTime((oldTime) => oldTime + 1);
       }, 1000);
@@ -145,6 +154,19 @@ const InterviewPage = () => {
       // greet each other and exchange details
       editorSocket.once('GREET', (details) => {
         setPartner(details);
+        editorSocket.on('ROOM:CONNECTION', () => {
+          if (toast.isActive(TOAST_ID)) {
+            toast.update(TOAST_ID, {
+              type: toast.TYPE.SUCCESS,
+              render: 'Your partner has connected to the session',
+            });
+          } else {
+            toast.success('Your partner has connected to the session', {
+              toastId: TOAST_ID,
+              updateId: TOAST_ID,
+            });
+          }
+        });
         editorSocket.emit('GREET', {
           sessionId: sessionId,
           ...user,

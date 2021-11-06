@@ -42,7 +42,9 @@ const App = () => {
         position="top-right"
         hideProgressBar={true}
         pauseOnHover={false}
+        pauseOnFocusLoss={false}
         autoClose={3000}
+        limit={3}
       />
       <Switch>
         <Route exact path="/home" component={HomePage} />
