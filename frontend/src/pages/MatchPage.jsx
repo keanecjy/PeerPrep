@@ -67,7 +67,7 @@ const MatchPage = () => {
         }
       });
     },
-    isRetrying ? 3000 : null
+    isRetrying ? 5000 : null
   );
 
   const DifficultyMenu = () => {
