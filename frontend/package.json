@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "cross-env PORT=3000 react-scripts start",
-    "build": "cross-env REACT_APP_API_URL=https://api.peer-prep.live react-scripts build",
+    "build": "cross-env REACT_APP_API_URL=https://api.peer-prep.live INLINE_RUNTIME_CHUNK=false react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "prettier": "npx prettier --write ./src/*",
