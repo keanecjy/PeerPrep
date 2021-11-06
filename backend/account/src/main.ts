@@ -30,9 +30,9 @@ async function bootstrap() {
     SwaggerModule.setup('api', app, document);
   } else {
     app.enableCors({
-      origin: true,
+      origin: process.env['CLIENT_URL'] || true,
       methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    }); // TODO: configure origin for prod
+    });
   }
 
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
