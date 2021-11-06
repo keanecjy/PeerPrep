@@ -154,9 +154,13 @@ const InterviewPage = () => {
       editorSocket.on('COMPLETE_SESSION_REQUEST', () => {
         setSubmissionStatus(SUBMISSION_STATUS.Prompted);
         editorSocket.once('COMPLETE_SESSION_CANCEL', () => {
-          if (submissionStatus === SUBMISSION_STATUS.Prompted) {
-            setSubmissionStatus(SUBMISSION_STATUS.None);
-          }
+          setSubmissionStatus((status) => {
+            if (status === SUBMISSION_STATUS.Prompted) {
+              return SUBMISSION_STATUS.None;
+            } else {
+              return status;
+            }
+          });
         });
       });
 
