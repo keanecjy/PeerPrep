@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="frontend/build/peerprep.svg" width="320" alt="PeerPrep Logo" />
+  <img src="frontend/public/peerprep.svg" width="320" alt="PeerPrep Logo" />
 </p>
 <h1 align="center">PeerPrep v2.0</h1>
 <p align="center">PeerPrep is a collaborative coding platform for you to practise coding interviews. <br/>Match with a partner and start coding with them now!</p>
