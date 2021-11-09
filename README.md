@@ -18,6 +18,7 @@ Table of Contents
       - [Setting up the env secrets](#setting-up-the-env-secrets)
       - [Running](#running)
       - [Ports](#ports)
+      - [Swagger documentation](#swagger-documentation)
       - [Without Docker](#without-docker)
   - [Deployment](#deployment)
   - [Some helpful scripts](#some-helpful-scripts)
@@ -108,6 +109,22 @@ $ docker-compose down -v
 | Match Service     	| 8084 	|
 | Postgres Service  	| 5432 	|
 | Redis Service     	| 6379 	|
+
+To simulate the Ingress routing in actual deployment, we use Nginx to do route requests to the appropriate microservice
+
+The Nginx routing is exposed on port **3031**
+
+#### Swagger documentation
+
+To allow different team members to quickly understand and familarise with the usage of the different services.
+We use Swagger Docs to produce REST API Documentation for some services
+
+| Service           	| Swagger Endpoint 	                                              |
+|-------------------	|---------------------------------------------------------------  |
+| Account Service   	| `localhost:8081/api` or `localhost:3031/api`	                  |
+| Chat Service      	| **NIL** *as it is mostly websocket connection*	                |
+| Interview Service 	| `localhost:8083/interview/api` or `localhost:3031/interview/api`|
+| Match Service     	| `localhost:8084/match/api` or `localhost:3031/match/api` 	      |
 
 To simulate the Ingress routing in actual deployment, we use Nginx to do route requests to the appropriate microservice
 

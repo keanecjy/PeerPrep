@@ -38,6 +38,7 @@ $ yarn install
 ## Running the app
 
 * Server is exposed on localhost port 8083 by default
+* Swagger API is available at `/interview/api` endpoint
 ```bash
 # development
 $ yarn run start
