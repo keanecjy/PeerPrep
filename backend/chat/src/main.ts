@@ -15,9 +15,15 @@ async function bootstrap() {
   );
 
   if (process.env['NODE_ENV'] === 'development') {
-    app.enableCors();
+    app.enableCors({
+      origin: true,
+      methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    });
   } else {
-    app.enableCors(); // TODO: configure origin for prod
+    app.enableCors({
+      origin: process.env['CLIENT_URL'] || true,
+      methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    });
   }
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
 

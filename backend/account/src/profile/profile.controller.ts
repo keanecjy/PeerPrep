@@ -43,7 +43,7 @@ export class ProfileController {
   }
 
   /**
-   * Get a user profile
+   * Get a user's interview history
    */
   @ApiOkResponse({ type: Profile })
   @Get('/records/:id')

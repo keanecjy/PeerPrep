@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "cross-env PORT=3000 react-scripts start",
-    "build": "cross-env REACT_APP_API_URL=https://api.peer-prep.live react-scripts build",
+    "build": "cross-env REACT_APP_API_URL=https://api.peer-prep.live INLINE_RUNTIME_CHUNK=false react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "prettier": "npx prettier --write ./src/*",
@@ -34,7 +34,6 @@
     "react-router-dom": "^5.3.0",
     "react-scripts": "4.0.3",
     "react-simple-code-editor": "^0.11.0",
-    "react-stopwatch": "^2.0.4",
     "react-toastify": "^8.0.3",
     "socket.io-client": "^4.3.2",
     "unique-names-generator": "^4.6.0",

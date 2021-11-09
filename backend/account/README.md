@@ -1,73 +1,77 @@
 <p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo_text.svg" width="320" alt="Nest Logo" /></a>
+  <img src="../../frontend/public/peerprep.svg" width="320" alt="PeerPrep Logo" />
 </p>
+<h1 align="center">PeerPrep Account Service</h1>
+<p align="center">PeerPrep is a collaborative coding platform for you to practise coding interviews. <br/>Match with a partner and start coding with them now!</p>
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+---
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+This project was bootstrapped with [NestJS](https://nestjs.com/), a progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
 
-## Description
+## Account Microservice
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+Account microservice for PeerPrep's backend built using NestJS. 
+
+### Features
+* Provides JWT authentication functionality
+* CRUD functionality for user profiles and interview history
+* Provides email authentication for new user
+* Provides email service for user to reset/change password
+
+## Requirements
+* Locally running PostgreSQL server
+* Or PostgreSQL image if using docker (exposed on localhost)
 
 ## Installation
 
 ```bash
-$ npm install
+$ yarn install
 ```
 
+## Setting up the environment variables
+1. Rename the `.env.sample` file to `.env`
+2. Add in your email credentials (used for sending verification mail to users)
+    ```
+    EMAIL_HOST=smtp.gmail.com
+    EMAIL_PORT=587
+    EMAIL_ID=<your email>
+    EMAIL_PASS=<your email password>
+    ```
+3. If necessary, update the `EMAIL_HOST` and `EMAIL_PORT` to fit the user case
+4. Update the postgres connection url. 
+    
+    The format is as follows:
+    ``` bash
+    # DATABASE_URL=postgresql://[user[:password]@][netloc][:port][/dbname]
+    DATABASE_URL=postgres://postgres:postgres@postgres:5432/postgres
+    ```
 ## Running the app
 
+* Server is exposed on localhost port 8080 by default
+* Swagger API is available at `/api` endpoint
 ```bash
 # development
-$ npm run start
+$ yarn run start
 
 # watch mode
-$ npm run start:dev
+$ yarn run start:dev
 
 # production mode
-$ npm run start:prod
+$ yarn run start:prod
 ```
 
-## Test
+## Pushing to AWS server
 
 ```bash
-# unit tests
-$ npm run test
+# Update the image tag and AWS account in package.json as required
 
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+# Build and push
+$ yarn run aws:build
 ```
 
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](LICENSE).
+## Technology
+* Built using NestJS
+* Passport.js for authentication strategies
+* NodeMailer for mailing functionality
+* TypeORM for mapping relational database to objects
+* Swagger for automated REST API documentation
