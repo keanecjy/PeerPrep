@@ -116,8 +116,8 @@ The Nginx routing is exposed on port **3031**
 
 #### Swagger documentation
 
-To allow different team members to quickly understand and familarise with the usage of the different services.
-We use Swagger Docs to produce REST API Documentation for some services
+To allow different team members to quickly understand and familarise with the usage of the different services,
+we use Swagger Docs to produce REST API Documentation for some services
 
 | Service           	| Swagger Endpoint 	                                              |
 |-------------------	|---------------------------------------------------------------  |
@@ -137,7 +137,7 @@ If you choose to run the application without Docker support, you can refer to th
 Note that you will need to have your own instance of Postgres or Redis running locally and also set up the necessary environment variables. More instructions is located in indivudal README
 
 ## Deployment
-For our deployment build, we uses kubernetes to orchestrate our docker images. Kubernetes provide support for autoscaling, metrics and pod management. 
+For our deployment build, we used kubernetes to orchestrate our docker images. Kubernetes provide support for autoscaling, metrics and pod management. 
 
 We deploy our kubernetes cluster onto AWS EKS. For more information refer to the [README](./k8s/README.md) file in `k8s` folder.
 
